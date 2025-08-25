@@ -1,0 +1,28 @@
+// Docs: https://aka.ms/devcontainer.json.
+{
+        "name": "Express, PostgreSQL",
+
+        // Compose para el manejo de la Imagen Base y Base de Datos
+        "dockerComposeFile": "docker-compose.yml",
+
+        // Imagen Base
+        "service": "system",
+        "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+        // 5432: Base de Datos. PostgreSQL
+        // 5050: Administrador de Base de Datos, PgAdmin
+        "forwardPorts": [5432, 5050, 8080],
+
+        // Usuario del Devcontainer.
+        "remoteUser": "vscode"
+
+        // Configuracion para Editores
+        // "customizations": {
+        //         "vscode": {
+        //                 "settings": {
+        //                 },
+        //                 "extensions": [
+        //                 ]
+        //         }
+        // }
+}
