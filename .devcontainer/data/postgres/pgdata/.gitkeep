@@ -1,0 +1,3 @@
+# Mantener los directorios de data para permitir la creacion del devcontainer
+*
+!.gitkeep
