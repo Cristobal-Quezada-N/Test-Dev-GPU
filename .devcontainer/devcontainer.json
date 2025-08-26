@@ -17,7 +17,14 @@
         "postCreateCommand": ".devcontainer/scripts/post-create.sh",
 
         // Usuario del Devcontainer.
-        "remoteUser": "vscode"
+        "remoteUser": "vscode",
+        "customizations": {
+                "vscode": {
+                        "extensions": [
+                                "Vue.volar"
+                        ]
+                }
+        }
 
         // Configuracion para Editores
         // "customizations": {
