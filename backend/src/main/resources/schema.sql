@@ -16,19 +16,19 @@ CREATE TYPE auth_factor_type as ENUM (
 
 CREATE TABLE User_status (
     id SERIAL PRIMARY KEY,
-    code VARCHAR(50),
-    name VARCHAR(20)
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE Role (
     id SERIAL PRIMARY KEY,
-    code VARCHAR(50),
-    name VARCHAR(20)
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE Item (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50)
+    name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE App_user (
@@ -59,6 +59,6 @@ CREATE TABLE Loan (
 
 CREATE TABLE Loan_Status (
     id SERIAL PRIMARY KEY,
-    code VARCHAR(50),
-    name VARCHAR(20)
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(20) NOT NULL
 );
