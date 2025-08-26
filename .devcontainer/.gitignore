@@ -1,0 +1,4 @@
+# Ignorar contenidos generados, pero conservar la carpeta para ser utilizada
+
+backups/*
+backups/.gitkeep
