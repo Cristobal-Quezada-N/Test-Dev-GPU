@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS Auth_factor    CASCADE;
 DROP TABLE IF EXISTS Loan           CASCADE;
 DROP TABLE IF EXISTS Loan_Status    CASCADE;
 
+DROP TYPE IF EXISTS auth_factor_type    CASCADE;
+
 CREATE TYPE auth_factor_type as ENUM (
     'totp'
 );
