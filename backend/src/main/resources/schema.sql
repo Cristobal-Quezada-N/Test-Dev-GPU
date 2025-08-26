@@ -1,3 +1,15 @@
+-- ==========
+-- Limpieza (debug)
+-- ==========
+
+DROP TABLE IF EXISTS User_status    CASCADE;
+DROP TABLE IF EXISTS Role           CASCADE;
+DROP TABLE IF EXISTS Item           CASCADE;
+DROP TABLE IF EXISTS App_user       CASCADE;
+DROP TABLE IF EXISTS Auth_factor    CASCADE;
+DROP TABLE IF EXISTS Loan           CASCADE;
+DROP TABLE IF EXISTS Loan_Status    CASCADE;
+
 CREATE TYPE auth_factor_type as ENUM (
     'totp'
 );
