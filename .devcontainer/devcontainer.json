@@ -1,6 +1,6 @@
 // Docs: https://aka.ms/devcontainer.json.
 {
-        "name": "Express, PostgreSQL",
+        "name": "Springboot, PostgreSQL",
 
         // Compose para el manejo de la Imagen Base y Base de Datos
         "dockerComposeFile": "docker-compose.yml",
