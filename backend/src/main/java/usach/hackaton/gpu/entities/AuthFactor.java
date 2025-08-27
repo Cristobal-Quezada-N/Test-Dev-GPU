@@ -28,6 +28,6 @@ public class AuthFactor {
     private LocalDate expirationDate;
 
     // Many To One
-    @Column(nullable = false)
-    private String user_id;
+    @Column(nullable = false, name = "user_id")
+    private String userId;
 }
