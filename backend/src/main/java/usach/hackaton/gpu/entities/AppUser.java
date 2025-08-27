@@ -28,6 +28,6 @@ public class AppUser {
     private Long role_id;
 
     //Many To One
-    @Column(nullable = false)
-    private Long status_id;
+    @Column(nullable = false, name = "status_id")
+    private Long statusId;
 }
