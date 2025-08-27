@@ -11,6 +11,7 @@ declare module 'vue' {
     AdminQuickActions: typeof import('./components/admin-quick-actions.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    ItemDialog: typeof import('./components/ItemDialog.vue')['default']
     LoadingScreen: typeof import('./components/LoadingScreen.vue')['default']
     QuickActions: typeof import('./components/quick-actions.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
