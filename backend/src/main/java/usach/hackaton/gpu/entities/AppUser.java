@@ -29,7 +29,7 @@ public class AppUser {
 
     //Many To One
     @Column(nullable = false)
-    private Long role_id;
+    private Long roleId;
 
     //Many To One
     @Column(nullable = false, name = "status_id")
