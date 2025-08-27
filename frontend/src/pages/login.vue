@@ -1,14 +1,16 @@
 <template>
   <div class="login-container">
     <!-- Background Pattern -->
-    <div class="background-pattern"></div>
-    
+    <div class="background-pattern" />
+
     <!-- Login Card -->
     <v-card class="login-card elevation-12">
       <!-- Header -->
       <div class="login-header text-center pa-6">
-        <v-avatar size="80" color="primary" class="mb-4">
-          <v-icon size="40" color="white">mdi-handshake</v-icon>
+        <v-avatar class="mb-4" color="primary" size="80">
+          <v-icon color="white" size="40">
+            mdi-handshake
+          </v-icon>
         </v-avatar>
         <h1 class="text-h4 font-weight-bold text-primary mb-2">
           Prestamos CEII
@@ -18,14 +20,14 @@
         </p>
       </div>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <!-- Demo Credentials Info -->
       <v-alert
-        type="info"
-        variant="tonal"
         class="ma-4"
         icon="mdi-information"
+        type="info"
+        variant="tonal"
       >
         <div class="text-body-2">
           <strong>Credenciales de Demostración:</strong><br>
@@ -41,43 +43,43 @@
           <!-- Email Field -->
           <v-text-field
             v-model="authStore.loginForm.email"
+            autocomplete="username"
+            class="mb-4"
             label="Correo Electrónico"
+            prepend-inner-icon="mdi-email"
+            required
+            :rules="authStore.emailRules"
             type="email"
             variant="outlined"
-            prepend-inner-icon="mdi-email"
-            :rules="authStore.emailRules"
-            required
-            class="mb-4"
-            autocomplete="username"
-          ></v-text-field>
+          />
 
           <!-- Password Field -->
           <v-text-field
             v-model="authStore.loginForm.password"
+            :append-inner-icon="authStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            autocomplete="current-password"
+            class="mb-6"
             label="Contraseña"
+            prepend-inner-icon="mdi-lock"
+            required
+            :rules="authStore.passwordRules"
             :type="authStore.showPassword ? 'text' : 'password'"
             variant="outlined"
-            prepend-inner-icon="mdi-lock"
-            :append-inner-icon="authStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="authStore.showPassword = !authStore.showPassword"
-            :rules="authStore.passwordRules"
-            required
-            class="mb-6"
-            autocomplete="current-password"
-          ></v-text-field>
+          />
 
           <!-- Remember Me & Forgot Password -->
           <div class="d-flex justify-space-between align-center mb-6">
             <v-checkbox
               v-model="authStore.loginForm.rememberMe"
-              label="Recordarme"
               color="primary"
               hide-details
-            ></v-checkbox>
+              label="Recordarme"
+            />
             <v-btn
-              variant="text"
               color="primary"
               size="small"
+              variant="text"
               @click="authStore.forgotPassword"
             >
               ¿Olvidaste tu contraseña?
@@ -87,14 +89,16 @@
           <!-- Login Button -->
           <v-btn
             block
+            class="mb-4"
             color="primary"
+            :disabled="authStore.loading"
+            :loading="authStore.loading"
             size="large"
             type="submit"
-            :loading="authStore.loading"
-            :disabled="authStore.loading"
-            class="mb-4"
           >
-            <v-icon left>mdi-login</v-icon>
+            <v-icon left>
+              mdi-login
+            </v-icon>
             Iniciar Sesión
           </v-btn>
 
@@ -103,31 +107,35 @@
             <v-divider class="mb-4">
               <span class="text-caption text-medium-emphasis">O usar cuenta de demostración</span>
             </v-divider>
-            
+
             <v-row>
               <v-col cols="6">
                 <v-btn
                   block
-                  variant="outlined"
                   color="primary"
-                  size="small"
-                  @click="authStore.demoLogin('user')"
                   :loading="authStore.demoLoading === 'user'"
+                  size="small"
+                  variant="outlined"
+                  @click="authStore.demoLogin('user')"
                 >
-                  <v-icon left size="small">mdi-account</v-icon>
+                  <v-icon left size="small">
+                    mdi-account
+                  </v-icon>
                   Usuario
                 </v-btn>
               </v-col>
               <v-col cols="6">
                 <v-btn
                   block
-                  variant="outlined"
                   color="secondary"
-                  size="small"
-                  @click="authStore.demoLogin('admin')"
                   :loading="authStore.demoLoading === 'admin'"
+                  size="small"
+                  variant="outlined"
+                  @click="authStore.demoLogin('admin')"
                 >
-                  <v-icon left size="small">mdi-shield-account</v-icon>
+                  <v-icon left size="small">
+                    mdi-shield-account
+                  </v-icon>
                   Admin
                 </v-btn>
               </v-col>
@@ -140,11 +148,11 @@
       <v-card-actions class="pa-6 pt-0">
         <div class="text-center w-100">
           <p class="text-caption text-medium-emphasis">
-            ¿No tienes una cuenta? 
+            ¿No tienes una cuenta?
             <v-btn
-              variant="text"
               color="primary"
               size="small"
+              variant="text"
               @click="authStore.register"
             >
               Regístrate aquí
@@ -158,11 +166,11 @@
     <v-snackbar
       v-model="authStore.showError"
       color="error"
-      timeout="5000"
       location="top"
+      timeout="5000"
     >
       {{ authStore.errorMessage }}
-      <template v-slot:actions>
+      <template #actions>
         <v-btn
           variant="text"
           @click="authStore.clearError"
@@ -175,41 +183,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
-import { useLogin } from '@/services/auth/auth.mutations'
-import { useNotificationStore } from '@/stores/notification'
+  import { useLogin } from '@/services/auth/auth.mutations'
+  import { useAuthStore } from '@/stores/auth'
+  import { useNotificationStore } from '@/stores/notification'
 
-// Define page meta to use auth layout
-definePage({
-  meta: {
-    layout: 'auth',
-    requiresAuth: false
+  // Define page meta to use auth layout
+  definePage({
+    meta: {
+      layout: 'auth',
+      requiresAuth: false,
+    },
+  })
+
+  const authStore = useAuthStore()
+  const loginForm = authStore.loginForm
+  const router = useRouter()
+  const { mutate: login } = useLogin()
+  const notificationStore = useNotificationStore()
+
+  // Handle form submission with validation
+  const handleSubmit = async () => {
+    console.log('handleSubmit', loginForm)
+    try {
+      login(loginForm, {
+        onSuccess: () => {
+          router.push('/')
+        },
+        onError: error => {
+          notificationStore.notify(error.message, 'error')
+        },
+      })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    }
   }
-})
-
-const authStore = useAuthStore()
-const loginForm = authStore.loginForm
-const router = useRouter();
-const { mutate: login } = useLogin();
-const notificationStore = useNotificationStore();
-
-// Handle form submission with validation
-const handleSubmit = async () => {
-  console.log('handleSubmit', loginForm)
-  try {
-    login(loginForm, {
-      onSuccess: () => {
-        router.push("/");
-      },
-      onError: (error) => {
-        notificationStore.notify(error.message, 'error')
-      }
-    });
-  } catch (error) {
-    console.error('Error submitting form:', error)
-  }
-}
 </script>
 
 <style scoped>
@@ -229,7 +236,7 @@ const handleSubmit = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
+  background-image:
     radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
   pointer-events: none;
@@ -259,11 +266,11 @@ const handleSubmit = async () => {
     margin: 10px;
     border-radius: 12px;
   }
-  
+
   .login-header {
     padding: 24px !important;
   }
-  
+
   .login-card .v-card-text {
     padding: 24px !important;
   }
