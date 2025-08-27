@@ -24,6 +24,8 @@ export default vuetify(
       'unused-imports': unusedImports,
     },
     rules: {
+      '@stylistic/no-multiple-empty-lines': 'warn',
+      '@stylistic/eol-last': 'off',
       'import/no-duplicates': 'off',
       'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
 

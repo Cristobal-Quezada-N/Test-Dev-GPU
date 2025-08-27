@@ -1,10 +1,10 @@
-import client from "../api.client";
-import { AUTH_API, mockUsers } from "./auth.defaults";
-import type { MockUser } from "./auth.types";
+import type { MockUser } from './auth.types'
+import client from '../api.client'
+import { AUTH_API, mockUsers } from './auth.defaults'
 
 export const authApi = {
   login: async (data: any) => {
-    return (await client.post(AUTH_API.login, data)).data;
+    return (await client.post(AUTH_API.login, data)).data
   },
   mockLogin: async (email: string, password: string) => {
     // Simulate API delay
@@ -27,10 +27,10 @@ export const authApi = {
         name: user.name,
         email: user.email,
         role: user.role,
-        avatar: user.avatar
+        avatar: user.avatar,
       },
       token,
-      refreshToken
+      refreshToken,
     }
-  }
+  },
 }

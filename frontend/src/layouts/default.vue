@@ -3,28 +3,29 @@
     <!-- Navigation Drawer -->
     <v-navigation-drawer
       v-model="appStore.drawer"
-      :rail="rail"
+      class="elevation-2"
       permanent
+      :rail="rail"
       @mouseenter="rail = false"
       @mouseleave="rail = true"
-      class="elevation-2"
-      
     >
       <!-- Logo Section -->
       <v-list>
-          <v-list-item>
-            <template v-slot:prepend>
-              <v-icon size="32" color="primary">mdi-handshake</v-icon>
-            </template>
-            <template v-slot:title>
-              <div class="text-h6 font-weight-bold text-primary">
-                Prestamos CEII
-              </div>
-            </template>
-          </v-list-item>
-        </v-list>
+        <v-list-item>
+          <template #prepend>
+            <v-icon color="primary" size="32">
+              mdi-handshake
+            </v-icon>
+          </template>
+          <template #title>
+            <div class="text-h6 font-weight-bold text-primary">
+              Prestamos CEII
+            </div>
+          </template>
+        </v-list-item>
+      </v-list>
 
-      <v-divider class="mb-2"></v-divider>
+      <v-divider class="mb-2" />
 
       <!-- Navigation Menu based on user role -->
       <template v-if="appStore.isAdmin">
@@ -33,88 +34,85 @@
           <v-list-item
             v-for="item in userNavigationItems"
             :key="item.title"
-            :to="item.to"
-            :prepend-icon="item.icon"
-            :title="item.title"
-            :subtitle="item.subtitle"
-            rounded="lg"
             :class="{ 'v-list-item--active': $route.path === item.to }"
-          >
-          </v-list-item>
+            :prepend-icon="item.icon"
+            rounded="lg"
+            :subtitle="item.subtitle"
+            :title="item.title"
+            :to="item.to"
+          />
         </v-list>
       </template>
-      
+
       <template v-else>
         <!-- User Navigation -->
         <v-list density="compact" nav>
           <v-list-item
             v-for="item in userNavigationItems"
             :key="item.title"
-            :to="item.to"
-            :prepend-icon="item.icon"
-            :title="item.title"
-            :subtitle="item.subtitle"
-            rounded="lg"          
             :class="{ 'v-list-item--active': $route.path === item.to }"
-          >
-          </v-list-item>
+            :prepend-icon="item.icon"
+            rounded="lg"
+            :subtitle="item.subtitle"
+            :title="item.title"
+            :to="item.to"
+          />
         </v-list>
       </template>
 
       <!-- Logout Button -->
-      <v-spacer></v-spacer>
-      <v-list density="compact" nav class="mt-auto">
+      <v-spacer />
+      <v-list class="mt-auto" density="compact" nav>
         <v-list-item
-          @click="handleLogout"
-          prepend-icon="mdi-logout"
-          title="Cerrar Sesión"
-          subtitle="Salir del sistema"
-          rounded="lg"
           class="mb-2"
-        >
-        </v-list-item>
+          prepend-icon="mdi-logout"
+          rounded="lg"
+          subtitle="Salir del sistema"
+          title="Cerrar Sesión"
+          @click="handleLogout"
+        />
       </v-list>
     </v-navigation-drawer>
 
     <!-- Top App Bar -->
     <v-app-bar
-      elevation="1"
-      color="surface"
       class="border-b"
+      color="surface"
+      elevation="1"
     >
       <v-app-bar-nav-icon
-        @click="appStore.toggleDrawer"
         class="d-md-none"
-      ></v-app-bar-nav-icon>
+        @click="appStore.toggleDrawer"
+      />
 
       <v-app-bar-title class="text-h6 font-weight-bold text-primary">
         {{ currentPageTitle }}
       </v-app-bar-title>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       <!-- Search Bar -->
       <v-text-field
         v-model="searchQuery"
-        prepend-inner-icon="mdi-magnify"
-        placeholder="Search items..."
-        variant="outlined"
+        class="max-width-300 mr-4"
         density="compact"
         hide-details
-        class="max-width-300 mr-4"
+        placeholder="Search items..."
+        prepend-inner-icon="mdi-magnify"
         style="max-width: 300px"
-      ></v-text-field>
+        variant="outlined"
+      />
 
       <!-- Notifications -->
       <v-btn
+        class="mr-2"
         icon
         variant="text"
-        class="mr-2"
       >
         <v-badge
+          color="error"
           :content="notificationsCount"
           :model-value="notificationsCount > 0"
-          color="error"
         >
           <v-icon>mdi-bell</v-icon>
         </v-badge>
@@ -126,16 +124,16 @@
         :close-on-content-click="false"
         location="bottom end"
       >
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn
             v-bind="props"
-            variant="text"
             class="text-none"
+            variant="text"
           >
             <v-avatar
-              size="32"
-              color="primary"
               class="mr-2"
+              color="primary"
+              size="32"
             >
               <span class="text-caption font-weight-bold text-white">
                 {{ appStore.userInitials }}
@@ -148,13 +146,13 @@
           </v-btn>
         </template>
 
-        <v-card min-width="200" class="elevation-8">
+        <v-card class="elevation-8" min-width="200">
           <v-list>
             <v-list-item>
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-avatar
-                  size="40"
                   color="primary"
+                  size="40"
                 >
                   <span class="text-body-1 font-weight-bold text-white">
                     {{ appStore.userInitials }}
@@ -170,25 +168,25 @@
             </v-list-item>
           </v-list>
 
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-list>
             <v-list-item
               prepend-icon="mdi-account"
               title="Profile"
               @click="userMenu = false"
-            ></v-list-item>
+            />
             <v-list-item
               prepend-icon="mdi-cog"
               title="Settings"
               @click="userMenu = false"
-            ></v-list-item>
-            <v-divider></v-divider>
+            />
+            <v-divider />
             <v-list-item
               prepend-icon="mdi-logout"
               title="Sign Out"
               @click="handleLogout"
-            ></v-list-item>
+            />
           </v-list>
         </v-card>
       </v-menu>
@@ -196,7 +194,7 @@
 
     <!-- Main Content -->
     <v-main class="bg-background">
-      <v-container fluid class="pa-6">
+      <v-container class="pa-6" fluid>
         <router-view />
       </v-container>
     </v-main>
@@ -207,89 +205,89 @@
       class="align-center justify-center"
     >
       <v-progress-circular
-        size="64"
         color="primary"
         indeterminate
-      ></v-progress-circular>
+        size="64"
+      />
     </v-overlay>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
+  import { computed, ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { useAppStore } from '@/stores/app'
+  import { useAuthStore } from '@/stores/auth'
 
-const router = useRouter()
-const appStore = useAppStore()
-const authStore = useAuthStore()
+  const router = useRouter()
+  const appStore = useAppStore()
+  const authStore = useAuthStore()
 
-// Local state
-const rail = ref(true)
-const searchQuery = ref('')
-const userMenu = ref(false)
-const notificationsCount = ref(3)
+  // Local state
+  const rail = ref(true)
+  const searchQuery = ref('')
+  const userMenu = ref(false)
+  const notificationsCount = ref(3)
 
-// All navigation items
-const allNavigationItems = [
-{
-    title: 'Solicitar Préstamo',
-    subtitle: 'Solicitar un préstamo',
-    icon: 'mdi-file-document-plus',
-    to: '/solicitar',
-    roles: ['user']
-  },
-  {
-    title: 'Solicitudes',
-    subtitle: 'Ver solicitudes de préstamos',
-    icon: 'mdi-file-document',
-    to: '/solicitudes',
-    roles: ['admin']
-  },
-  {
-    title: 'Inventario',
-    subtitle: 'Gestionar el inventario',
-    icon: 'mdi-package-variant',
-    to: '/inventario',
-    roles: ['admin']
-  },
-  {
-    title: 'Préstamos',
-    subtitle: 'Gestionar los préstamos',
-    icon: 'mdi-history',
-    to: '/prestamos',
-    roles: ['admin']
-  },
-  {
-    title: 'Usuarios',
-    subtitle: 'Gestionar los usuarios',
-    icon: 'mdi-account-group',
-    to: '/usuarios',
-    roles: ['admin']
-  },
-]
+  // All navigation items
+  const allNavigationItems = [
+    {
+      title: 'Solicitar Préstamo',
+      subtitle: 'Solicitar un préstamo',
+      icon: 'mdi-file-document-plus',
+      to: '/solicitar',
+      roles: ['user'],
+    },
+    {
+      title: 'Solicitudes',
+      subtitle: 'Ver solicitudes de préstamos',
+      icon: 'mdi-file-document',
+      to: '/solicitudes',
+      roles: ['admin'],
+    },
+    {
+      title: 'Inventario',
+      subtitle: 'Gestionar el inventario',
+      icon: 'mdi-package-variant',
+      to: '/inventario',
+      roles: ['admin'],
+    },
+    {
+      title: 'Préstamos',
+      subtitle: 'Gestionar los préstamos',
+      icon: 'mdi-history',
+      to: '/prestamos',
+      roles: ['admin'],
+    },
+    {
+      title: 'Usuarios',
+      subtitle: 'Gestionar los usuarios',
+      icon: 'mdi-account-group',
+      to: '/usuarios',
+      roles: ['admin'],
+    },
+  ]
 
-// Filtered navigation items based on user role
-const userNavigationItems = computed(() => {
-  return allNavigationItems.filter(item => 
-    item.roles.includes(appStore.user?.role ?? 'user')
-  )
-})
+  // Filtered navigation items based on user role
+  const userNavigationItems = computed(() => {
+    return allNavigationItems.filter(item =>
+      item.roles.includes(appStore.user?.role ?? 'user'),
+    )
+  })
 
-// Current page title
-const currentPageTitle = computed(() => {
-  const currentRoute = router.currentRoute.value
-  const item = userNavigationItems.value.find(item => item.to === currentRoute.path)
-  return item?.title || 'Prestamos CEII'
-})
+  // Current page title
+  const currentPageTitle = computed(() => {
+    const currentRoute = router.currentRoute.value
+    const item = userNavigationItems.value.find(item => item.to === currentRoute.path)
+    return item?.title || 'Prestamos CEII'
+  })
 
-// Handle logout
-const handleLogout = () => {
-  authStore.logout()
-  userMenu.value = false
+  // Handle logout
+  const handleLogout = () => {
+    authStore.logout()
+    userMenu.value = false
   // Router guards will handle redirect to login
-}
+  }
 
 // No need for authentication checks here since router guards handle it
 </script>
@@ -319,4 +317,3 @@ const handleLogout = () => {
   line-height: 1.1;
 }
 </style>
-  
