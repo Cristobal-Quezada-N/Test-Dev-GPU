@@ -5,7 +5,6 @@
 
 # Directorios a ignorar
 .DS_Store
-/dist
 target/
 
 # local env files
