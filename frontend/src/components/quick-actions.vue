@@ -5,50 +5,50 @@
     </v-card-title>
     <v-card-text>
       <v-row>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" md="3" sm="6">
           <v-btn
             block
-            variant="outlined"
+            class="mb-2"
             color="primary"
             prepend-icon="mdi-plus"
-            class="mb-2"
+            variant="outlined"
             @click="$router.push('/items')"
           >
             Buscar en Inventario
           </v-btn>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" md="3" sm="6">
           <v-btn
             block
-            variant="outlined"
+            class="mb-2"
             color="secondary"
             prepend-icon="mdi-file-document-plus"
-            class="mb-2"
+            variant="outlined"
             @click="$router.push('/requests')"
           >
             Buscar Solicitudes
           </v-btn>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" md="3" sm="6">
           <v-btn
             block
-            variant="outlined"
+            class="mb-2"
             color="info"
             prepend-icon="mdi-history"
-            class="mb-2"
+            variant="outlined"
             @click="$router.push('/my-loans')"
           >
             My Loans
           </v-btn>
         </v-col>
-        <v-col cols="12" sm="6" md="3">
+        <v-col cols="12" md="3" sm="6">
           <v-btn
             v-if="appStore.isAdmin"
             block
-            variant="outlined"
+            class="mb-2"
             color="accent"
             prepend-icon="mdi-chart-line"
-            class="mb-2"
+            variant="outlined"
             @click="$router.push('/admin/reports')"
           >
             View Reports
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from '@/stores/app'
+  import { useAppStore } from '@/stores/app'
 
-const appStore = useAppStore()
+  const appStore = useAppStore()
 </script>

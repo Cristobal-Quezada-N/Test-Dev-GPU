@@ -1,8 +1,8 @@
+import type { MockUser } from '@/services/auth/auth.types'
 // Utilities
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useAppStore } from './app'
-import type { MockUser } from '@/services/auth/auth.types'
 
 export interface LoginForm {
   email: string
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
   const loginForm = reactive<LoginForm>({
     email: '',
     password: '',
-    rememberMe: false
+    rememberMe: false,
   })
 
   // Mock users for testing
@@ -48,7 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
       email: 'admin@demo.com',
       password: 'admin123',
       role: 'admin',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
+      avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
     },
     {
       id: '2',
@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('auth', () => {
       email: 'user@demo.com',
       password: 'user123',
       role: 'user',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg'
+      avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
     },
     {
       id: '3',
@@ -64,19 +64,19 @@ export const useAuthStore = defineStore('auth', () => {
       email: 'juan@demo.com',
       password: 'juan123',
       role: 'user',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg'
-    }
+      avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+    },
   ]
 
   // Validation rules
   const emailRules = [
     (v: string) => !!v || 'El correo electrónico es requerido',
-    (v: string) => /.+@.+\..+/.test(v) || 'El correo electrónico debe ser válido'
+    (v: string) => /.+@.+\..+/.test(v) || 'El correo electrónico debe ser válido',
   ]
 
   const passwordRules = [
     (v: string) => !!v || 'La contraseña es requerida',
-    (v: string) => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres'
+    (v: string) => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
   ]
 
   // Token management
@@ -106,8 +106,8 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Mock API methods
-  const mockApiCall = async (delay: number = 1000): Promise<void> => {
-    return new Promise((resolve) => {
+  const mockApiCall = async (delay = 1000): Promise<void> => {
+    return new Promise(resolve => {
       setTimeout(resolve, delay)
     })
   }
@@ -133,10 +133,10 @@ export const useAuthStore = defineStore('auth', () => {
         name: user.name,
         email: user.email,
         role: user.role,
-        avatar: user.avatar
+        avatar: user.avatar,
       },
       token,
-      refreshToken
+      refreshToken,
     }
   }
 
@@ -152,7 +152,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const userId = tokenParts[2]
     const user = mockUsers.find(u => u.id === userId)
-    
+
     if (!user) {
       throw new Error('Usuario no encontrado')
     }
@@ -162,13 +162,15 @@ export const useAuthStore = defineStore('auth', () => {
       name: user.name,
       email: user.email,
       role: user.role,
-      avatar: user.avatar
+      avatar: user.avatar,
     }
   }
 
   // Authentication methods
   const initializeAuth = async (): Promise<void> => {
-    if (isInitialized.value) return
+    if (isInitialized.value) {
+      return
+    }
 
     try {
       const token = getStoredToken()
@@ -195,17 +197,16 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       const response = await mockLogin(loginForm.email, loginForm.password)
-      
+
       // Store tokens and user data
       setStoredToken(response.token)
       setStoredUser(response.user)
-      
+
       // Update app store
       appStore.login(response.user)
 
       // Reset form
       resetForm()
-      
     } catch (error) {
       errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión'
       showError.value = true
@@ -216,7 +217,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const demoLogin = async (role: 'user' | 'admin'): Promise<void> => {
     demoLoading.value = role
-    
+
     try {
       const demoUser = mockUsers.find(u => u.role === role)
       if (!demoUser) {
@@ -224,14 +225,13 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       const response = await mockLogin(demoUser.email, demoUser.password)
-      
+
       // Store tokens and user data
       setStoredToken(response.token)
       setStoredUser(response.user)
-      
+
       // Update app store
       appStore.login(response.user)
-      
     } catch (error) {
       errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión de demostración'
       showError.value = true
@@ -244,13 +244,13 @@ export const useAuthStore = defineStore('auth', () => {
     // Clear stored data
     removeStoredToken()
     removeStoredUser()
-    
+
     // Update app store
     appStore.logout()
-    
+
     // Reset form
     resetForm()
-    
+
     // Clear errors
     clearError()
   }
@@ -285,11 +285,11 @@ export const useAuthStore = defineStore('auth', () => {
     errorMessage,
     loginForm,
     isInitialized,
-    
+
     // Validation
     emailRules,
     passwordRules,
-    
+
     // Methods
     initializeAuth,
     handleLogin,

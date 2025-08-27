@@ -2,11 +2,11 @@
   <div class="loading-screen">
     <div class="loading-content">
       <v-progress-circular
-        size="64"
+        class="mb-4"
         color="primary"
         indeterminate
-        class="mb-4"
-      ></v-progress-circular>
+        size="64"
+      />
       <h2 class="text-h5 font-weight-bold text-primary mb-2">
         Prestamos CEII
       </h2>
