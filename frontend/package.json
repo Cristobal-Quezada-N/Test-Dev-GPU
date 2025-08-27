@@ -9,7 +9,14 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "lint:fix": "eslint . --fix --fix-type=problem,suggestion,layout --cache",
+    "postinstall": "git config core.hooksPath frontend/.husky",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx,js,vue}":
+        ["eslint --fix --fix-type=problem,suggestion,layout"]
   },
   "dependencies": {
     "@fontsource/roboto": "5.2.6",
@@ -28,9 +35,14 @@
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.30.1",
     "eslint-config-vuetify": "^4.0.0",
+    "eslint-plugin-unused-imports": "^4.2.0",
+    "eslint-plugin-vue": "^10.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.5",
     "npm-run-all2": "^7.0.2",
     "sass-embedded": "^1.89.2",
     "typescript": "~5.8.3",
+    "typescript-eslint": "^8.41.0",
     "unplugin-auto-import": "^19.3.0",
     "unplugin-fonts": "^1.3.1",
     "unplugin-vue-components": "^28.8.0",
@@ -38,6 +50,7 @@
     "vite": "^6.3.5",
     "vite-plugin-vue-layouts-next": "^1.0.0",
     "vite-plugin-vuetify": "^2.1.1",
+    "vue-eslint-parser": "^10.2.0",
     "vue-router": "^4.5.1",
     "vue-tsc": "^3.0.1"
   }
