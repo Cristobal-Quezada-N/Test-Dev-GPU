@@ -7,4 +7,4 @@ interface MockUser {
   avatar?: string
 }
 
-export type { MockUser };
+export type { MockUser }

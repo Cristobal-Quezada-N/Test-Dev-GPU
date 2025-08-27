@@ -21,15 +21,17 @@
 
     <!-- Statistics Cards -->
     <v-row class="mb-6">
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="12" md="3" sm="6">
         <v-card class="pa-4" elevation="2">
           <div class="d-flex align-center">
             <v-avatar
-              size="48"
-              color="primary"
               class="mr-4"
+              color="primary"
+              size="48"
             >
-              <v-icon size="24" color="white">mdi-package-variant</v-icon>
+              <v-icon color="white" size="24">
+                mdi-package-variant
+              </v-icon>
             </v-avatar>
             <div>
               <div class="text-h5 font-weight-bold text-primary">
@@ -43,15 +45,17 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="12" md="3" sm="6">
         <v-card class="pa-4" elevation="2">
           <div class="d-flex align-center">
             <v-avatar
-              size="48"
-              color="success"
               class="mr-4"
+              color="success"
+              size="48"
             >
-              <v-icon size="24" color="white">mdi-check-circle</v-icon>
+              <v-icon color="white" size="24">
+                mdi-check-circle
+              </v-icon>
             </v-avatar>
             <div>
               <div class="text-h5 font-weight-bold text-success">
@@ -65,15 +69,17 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="12" md="3" sm="6">
         <v-card class="pa-4" elevation="2">
           <div class="d-flex align-center">
             <v-avatar
-              size="48"
-              color="warning"
               class="mr-4"
+              color="warning"
+              size="48"
             >
-              <v-icon size="24" color="white">mdi-clock</v-icon>
+              <v-icon color="white" size="24">
+                mdi-clock
+              </v-icon>
             </v-avatar>
             <div>
               <div class="text-h5 font-weight-bold text-warning">
@@ -87,15 +93,17 @@
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="6" md="3">
+      <v-col cols="12" md="3" sm="6">
         <v-card class="pa-4" elevation="2">
           <div class="d-flex align-center">
             <v-avatar
-              size="48"
-              color="info"
               class="mr-4"
+              color="info"
+              size="48"
             >
-              <v-icon size="24" color="white">mdi-account-group</v-icon>
+              <v-icon color="white" size="24">
+                mdi-account-group
+              </v-icon>
             </v-avatar>
             <div>
               <div class="text-h5 font-weight-bold text-info">
@@ -119,50 +127,50 @@
           </v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" sm="6" md="3">
+              <v-col cols="12" md="3" sm="6">
                 <v-btn
                   block
-                  variant="outlined"
+                  class="mb-2"
                   color="primary"
                   prepend-icon="mdi-file-document-plus"
+                  variant="outlined"
                   @click="navigateTo('/solicitar')"
-                  class="mb-2"
                 >
                   Solicitar Préstamo
                 </v-btn>
               </v-col>
-              <v-col cols="12" sm="6" md="3">
+              <v-col cols="12" md="3" sm="6">
                 <v-btn
                   block
-                  variant="outlined"
+                  class="mb-2"
                   color="secondary"
                   prepend-icon="mdi-history"
+                  variant="outlined"
                   @click="navigateTo('/my-loans')"
-                  class="mb-2"
                 >
                   Mis Préstamos
                 </v-btn>
               </v-col>
-              <v-col cols="12" sm="6" md="3">
+              <v-col cols="12" md="3" sm="6">
                 <v-btn
                   block
-                  variant="outlined"
+                  class="mb-2"
                   color="info"
                   prepend-icon="mdi-package-variant"
+                  variant="outlined"
                   @click="navigateTo('/items')"
-                  class="mb-2"
                 >
                   Ver Inventario
                 </v-btn>
               </v-col>
-              <v-col cols="12" sm="6" md="3">
+              <v-col cols="12" md="3" sm="6">
                 <v-btn
                   block
-                  variant="outlined"
+                  class="mb-2"
                   color="warning"
                   prepend-icon="mdi-file-document"
+                  variant="outlined"
                   @click="navigateTo('/requests')"
-                  class="mb-2"
                 >
                   Ver Solicitudes
                 </v-btn>
@@ -185,12 +193,12 @@
               <v-list-item
                 v-for="activity in recentActivity"
                 :key="activity.id"
-                :prepend-avatar="activity.avatar"
-                :title="activity.title"
-                :subtitle="activity.description"
                 class="mb-2"
+                :prepend-avatar="activity.avatar"
+                :subtitle="activity.description"
+                :title="activity.title"
               >
-                <template v-slot:append>
+                <template #append>
                   <v-chip
                     :color="activity.status === 'completed' ? 'success' : 'warning'"
                     size="small"
@@ -214,12 +222,12 @@
               <v-list-item
                 v-for="item in popularItems"
                 :key="item.id"
-                :prepend-avatar="item.image"
-                :title="item.name"
-                :subtitle="`${item.loanCount} préstamos`"
                 class="mb-2"
+                :prepend-avatar="item.image"
+                :subtitle="`${item.loanCount} préstamos`"
+                :title="item.name"
               >
-                <template v-slot:append>
+                <template #append>
                   <v-chip
                     :color="item.available ? 'success' : 'error'"
                     size="small"
@@ -237,77 +245,76 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+  import { ref } from 'vue'
+  import { useRouter } from 'vue-router'
 
-const router = useRouter()
+  const router = useRouter()
 
-// Mock data
-const stats = ref({
-  totalItems: 156,
-  activeLoans: 23,
-  pendingRequests: 8,
-  totalUsers: 45
-})
+  // Mock data
+  const stats = ref({
+    totalItems: 156,
+    activeLoans: 23,
+    pendingRequests: 8,
+    totalUsers: 45,
+  })
 
-const recentActivity = ref([
-  {
-    id: 1,
-    title: 'Préstamo de Laptop',
-    description: 'Juan Pérez solicitó una laptop Dell XPS 13',
-    status: 'completed',
-    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
-  },
-  {
-    id: 2,
-    title: 'Devolución de Proyector',
-    description: 'María García devolvió el proyector Epson',
-    status: 'completed',
-    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg'
-  },
-  {
-    id: 3,
-    title: 'Solicitud de Cámara',
-    description: 'Carlos López solicitó una cámara Canon',
-    status: 'pending',
-    avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg'
+  const recentActivity = ref([
+    {
+      id: 1,
+      title: 'Préstamo de Laptop',
+      description: 'Juan Pérez solicitó una laptop Dell XPS 13',
+      status: 'completed',
+      avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+    },
+    {
+      id: 2,
+      title: 'Devolución de Proyector',
+      description: 'María García devolvió el proyector Epson',
+      status: 'completed',
+      avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+    },
+    {
+      id: 3,
+      title: 'Solicitud de Cámara',
+      description: 'Carlos López solicitó una cámara Canon',
+      status: 'pending',
+      avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+    },
+  ])
+
+  const popularItems = ref([
+    {
+      id: 1,
+      name: 'Laptop Dell XPS 13',
+      loanCount: 15,
+      available: true,
+      image: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
+    },
+    {
+      id: 2,
+      name: 'Proyector Epson',
+      loanCount: 12,
+      available: false,
+      image: 'https://cdn.vuetifyjs.com/images/cards/house.jpg',
+    },
+    {
+      id: 3,
+      name: 'Cámara Canon EOS',
+      loanCount: 8,
+      available: true,
+      image: 'https://cdn.vuetifyjs.com/images/cards/road.jpg',
+    },
+  ])
+
+  // Methods
+  const createNewLoan = () => {
+    router.push('/solicitar')
   }
-])
 
-const popularItems = ref([
-  {
-    id: 1,
-    name: 'Laptop Dell XPS 13',
-    loanCount: 15,
-    available: true,
-    image: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg'
-  },
-  {
-    id: 2,
-    name: 'Proyector Epson',
-    loanCount: 12,
-    available: false,
-    image: 'https://cdn.vuetifyjs.com/images/cards/house.jpg'
-  },
-  {
-    id: 3,
-    name: 'Cámara Canon EOS',
-    loanCount: 8,
-    available: true,
-    image: 'https://cdn.vuetifyjs.com/images/cards/road.jpg'
+  const navigateTo = (path: string) => {
+    router.push(path)
   }
-])
-
-// Methods
-const createNewLoan = () => {
-  router.push('/solicitar')
-}
-
-const navigateTo = (path: string) => {
-  router.push(path)
-}
 </script>
-
 
 <style scoped>
 .border-l-4 {
