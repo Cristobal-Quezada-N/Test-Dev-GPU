@@ -150,13 +150,18 @@
           <p class="text-caption text-medium-emphasis">
             ¿No tienes una cuenta?
             <!-- Para #MOCK  plicar en v-btn -->
-            <!-- @click="authStore.register" -->
             <v-btn
               color="primary"
               size="small"
               variant="text"
-              @click="$router.push('/register')"
+              @click="authStore.register"
             >
+              <!-- <v-btn -->
+              <!--   color="primary" -->
+              <!--   size="small" -->
+              <!--   variant="text" -->
+              <!--   @click="$router.push('/register')" -->
+              <!-- > -->
               Regístrate aquí
             </v-btn>
           </p>
