@@ -3,7 +3,7 @@ interface MockUser {
   name: string
   email: string
   password: string
-  role: 'admin' | 'user'
+  role: 'ADMIN' | 'USER'
   avatar?: string
 }
 
