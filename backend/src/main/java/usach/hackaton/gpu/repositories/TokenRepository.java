@@ -2,11 +2,11 @@ package usach.hackaton.gpu.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import usach.hackaton.gpu.entities.Role;
+import usach.hackaton.gpu.entities.ActivationToken;
 
 import java.util.Optional;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
-    Optional<Role> findByName(String name);
+public interface TokenRepository extends JpaRepository<ActivationToken, Long> {
+    Optional<ActivationToken> findByEmailToken(String token);
 }
