@@ -64,12 +64,11 @@ public class AuthService {
             throw new RuntimeException("Email ya registrado");
         }
 
-        Role role = roleService.getByName("USER");
+        Role role = roleService.getByName("Usuario");
 
-        UserStatus userStatus = userStatusService.getByName("PENDING");
+        UserStatus userStatus = userStatusService.getByName("Pendiente");
 
         AppUser newUser = new AppUser();
-        newUser.setId(UUID.randomUUID().toString());
         newUser.setEmail(dto.getEmail());
         newUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         newUser.setRoleId(role.getId());
@@ -78,7 +77,6 @@ public class AuthService {
 
         // Factor de registro
         AuthFactor factor = new AuthFactor();
-        factor.setId(new Random().nextLong());
         factor.setName("Registro inicial");
         factor.setType(AuthFactorType.REGISTER);
         factor.setUsed(true);
@@ -95,7 +93,7 @@ public class AuthService {
                 .build();
         tokenRepository.save(activationToken);
 
-        String link = System.getProperty("APP_URL") + "/activate?token=" + token;
+        String link = System.getProperty("APP_HOST") + "/api/auth/activate?token=" + token;
 
         emailService.send(newUser.getEmail(), "Activa tu cuenta",
                 "Haz click en este enlace para activar tu cuenta: " + link);
@@ -126,7 +124,7 @@ public class AuthService {
                 .orElse(null);
         if (user == null) return false;
 
-        UserStatus activeStatus = userStatusService.getByName("ACTIVE");
+        UserStatus activeStatus = userStatusService.getByName("Activo");
         user.setStatusId(activeStatus.getId());
         userRepository.save(user);
 
