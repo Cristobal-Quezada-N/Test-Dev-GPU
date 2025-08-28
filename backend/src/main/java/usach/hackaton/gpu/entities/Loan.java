@@ -13,9 +13,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Loan {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+
+    @Column(name = "item_id", nullable = false)
+    private Long itemId;
+
+    @Column(name = "status_id", nullable = false)
+    private Long statusId;
 
     @Column(nullable = false)
     private LocalDate date;
