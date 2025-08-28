@@ -19,25 +19,18 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const appStore = useAppStore()
 
-  // Check if route requires authentication
-  const requiresAuth = to.meta.requiresAuth !== false // Default to true if not specified
+  const publicPages = ['/login', '/register']
+  const requiresAuth = !publicPages.includes(to.path)
 
-  // If route doesn't require auth, allow access
   if (!requiresAuth) {
-    // If user is already authenticated and trying to access login, redirect to home
     if (appStore.isAuthenticated && to.path === '/login') {
-      next('/')
-      return
+      return next('/')
     }
-    next()
-    return
+    return next()
   }
 
-  // Check if user is authenticated for protected routes
-  if (!appStore.isAuthenticated // Only redirect if we're not already going to login
-    && to.path !== '/login') {
-    next('/login')
-    return
+  if (!appStore.isAuthenticated) {
+    return next('/login')
   }
 
   next()
