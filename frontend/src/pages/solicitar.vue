@@ -16,34 +16,19 @@
         />
       </v-card-title>
 
-      <!-- Tabla de juegos -->
-      <v-data-table-virtual
-        class="elevation-1"
-        fixed-header
+      <!-- Tabla de Items -->
+      <ItemsTable
         :headers="headers"
         :items="items"
         :search="search"
       >
-        <!-- stock -->
-        <template #item.stock="{ item }">
-          <span>{{ item.stock }}</span>
-        </template>
-
-        <!-- estado disponible -->
-        <template #item.available="{ item }">
-          <v-chip :color="item.available ? 'green' : 'red'" dark>
-            {{ item.available ? "Disponible" : "No disponible" }}
-          </v-chip>
-        </template>
-
-        <!-- acciones -->
         <template #item.actions="{ item }">
           <v-btn color="amber-lighten-2" @click="confirmarLoan(item)">
             Solicitar
           </v-btn>
           <v-divider class="mx-2" vertical />
         </template>
-      </v-data-table-virtual>
+      </ItemsTable>
     </v-card>
 
     <v-dialog v-model="confirmLoan" max-width="400px">
@@ -81,6 +66,8 @@
 <script setup lang="ts">
   import axios from 'axios'
   import { onMounted, ref } from 'vue'
+
+  import ItemsTable from '@/components/ItemsTable.vue'
 
   interface Item {
     id: number
