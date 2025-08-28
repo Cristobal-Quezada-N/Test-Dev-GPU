@@ -149,11 +149,13 @@
         <div class="text-center w-100">
           <p class="text-caption text-medium-emphasis">
             ¿No tienes una cuenta?
+            <!-- Para #MOCK  plicar en v-btn -->
+            <!-- @click="authStore.register" -->
             <v-btn
               color="primary"
               size="small"
               variant="text"
-              @click="authStore.register"
+              @click="$router.push('/register')"
             >
               Regístrate aquí
             </v-btn>
