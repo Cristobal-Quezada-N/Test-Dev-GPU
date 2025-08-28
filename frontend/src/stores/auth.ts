@@ -4,12 +4,19 @@ import type { MockUser } from '@/services/auth/auth.types'
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import { useAppStore } from './app'
+import { authService } from '@/services/auth/auth.services'
+
 
 export interface LoginForm {
   email: string
   password: string
   rememberMe: boolean
 }
+
+const registerForm = reactive({
+  email: '',
+  password: '',
+})
 
 export interface AuthResponse {
   user: {
@@ -271,20 +278,30 @@ export const useAuthStore = defineStore('auth', () => {
     console.log('Register clicked')
   }
 
-  const handleRegister = async () => {
-    loading.value = true
-    clearError()
+const handleRegister = async () => {
+  loading.value = true
+  clearError()
 
-    try {
-      await useRegister().mutateAsync(registerForm)
-      resetRegisterForm()
-    } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Error al registrarse'
-      showError.value = true
-    } finally {
-      loading.value = false
-    }
+  try {
+    const res = await authService.register(registerForm.email, registerForm.password)
+    console.log(res.message)
+
+    resetRegisterForm()
+    router.push('/login')
+  } catch (err: any) {
+  console.error(" Error en register:", err)
+
+  if (err.response) {
+    errorMessage.value = err.response.data.message || 'Error al registrarse'
+  } else {
+    errorMessage.value = err.message || 'Error desconocido'
   }
+
+  showError.value = true
+}finally {
+    loading.value = false
+  }
+}
 
   const clearError = (): void => {
     showError.value = false
@@ -310,6 +327,7 @@ export const useAuthStore = defineStore('auth', () => {
     showError,
     errorMessage,
     loginForm,
+    registerForm,
     isInitialized,
 
     // Validation
@@ -321,6 +339,7 @@ export const useAuthStore = defineStore('auth', () => {
     initializeAuth,
     demoLogin,
     handleLogin,
+    handleRegister,
     logout,
     forgotPassword,
     register,
