@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AuthFactor {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
