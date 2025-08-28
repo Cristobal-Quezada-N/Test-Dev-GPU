@@ -82,6 +82,14 @@
 import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 
+definePage({
+  meta: {
+    layout: 'auth',
+    requiresAuth: false,
+  },
+})
+
+
 const handleRegister = () => {
   authStore.handleRegister()
 }

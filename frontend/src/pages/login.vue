@@ -156,13 +156,14 @@
               variant="text"
               @click="authStore.register"
             >
-              <!-- <v-btn -->
-              <!--   color="primary" -->
-              <!--   size="small" -->
-              <!--   variant="text" -->
-              <!--   @click="$router.push('/register')" -->
-              <!-- > -->
+              <v-btn
+              color="primary"
+              size="small"
+              variant="text"
+              :to="{ path: '/register' }"
+              >
               Regístrate aquí
+            </v-btn>
             </v-btn>
           </p>
         </div>
