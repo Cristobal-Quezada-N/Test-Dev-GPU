@@ -1,50 +1,22 @@
 <template>
-  <v-container>
-    <v-card class="pa-4" elevation="2">
-      <v-card-title>
-        Inventario de Juegos
-        <v-spacer />
-        <v-text-field
-          v-model="search"
-          clearable
-          hide-details
-          label="Buscar"
-          prepend-icon="mdi-magnify"
-        />
-      </v-card-title>
+  <!-- Tabla de Items -->
+  <ItemsTable
+    :headers="headers"
+    :items="items"
+    :search="search"
+    title="Inventario de Juegos"
+  >
+    <template #item.actions="{ item }">
+      <v-btn color="blue" icon @click="openDialog(item)">
+        <v-icon>mdi-pencil</v-icon>
+      </v-btn>
+      <v-divider class="mx-2" vertical />
+      <v-btn color="red" icon @click="confirmDelete(item)">
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </template>
 
-      <!-- Tabla de juegos -->
-      <v-data-table-virtual
-        class="elevation-1"
-        fixed-header
-        :headers="headers"
-        :items="items"
-        :search="search"
-      >
-        <!-- stock -->
-        <template #item.stock="{ item }">
-          <span>{{ item.stock }}</span>
-        </template>
-
-        <!-- estado disponible -->
-        <template #item.available="{ item }">
-          <v-chip :color="item.available ? 'green' : 'red'" dark>
-            {{ item.available ? "Disponible" : "No disponible" }}
-          </v-chip>
-        </template>
-
-        <!-- acciones -->
-        <template #item.actions="{ item }">
-          <v-btn color="blue" icon @click="openDialog(item)">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-divider class="mx-2" vertical />
-          <v-btn color="red" icon @click="confirmDelete(item)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </template>
-      </v-data-table-virtual>
-
+    <template #bottom>
       <!-- boton agregar -->
       <div class="d-flex justify-end mt-4">
         <v-chip
@@ -59,38 +31,41 @@
           Agregar Juego
         </v-chip>
       </div>
-    </v-card>
 
-    <!-- dialogo de edición -->
-    <ItemDialog v-model="dialog" :item="selectedItem" @save="saveItem" />
+      <!-- dialogo de edición -->
+      <ItemDialog v-model="dialog" :item="selectedItem" @save="saveItem" />
 
-    <!-- dialogo confirmación borrado -->
-    <v-dialog v-model="confirmDialog" max-width="400px">
-      <v-card>
-        <v-card-title class="headline">
-          Confirmar eliminación
-        </v-card-title>
-        <v-card-text>
-          ¿Estás seguro que deseas eliminar el juego
-          <strong>{{ itemToDelete?.name }}</strong>?
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="grey" text @click="confirmDialog = false">
-            Cancelar
-          </v-btn>
-          <v-btn color="red" text @click="deleteConfirmed">
-            Eliminar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+      <!-- dialogo confirmación borrado -->
+      <v-dialog v-model="confirmDialog" max-width="400px">
+        <v-card>
+          <v-card-title class="headline">
+            Confirmar eliminación
+          </v-card-title>
+          <v-card-text>
+            ¿Estás seguro que deseas eliminar el juego
+            <strong>{{ itemToDelete?.name }}</strong>?
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="grey" text @click="confirmDialog = false">
+              Cancelar
+            </v-btn>
+            <v-btn color="red" text @click="deleteConfirmed">
+              Eliminar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </template>
+  </ItemsTable>
 </template>
 
 <script setup lang="ts">
   import axios from 'axios'
   import { onMounted, ref } from 'vue'
+
+  import ItemsTable from '@/components/ItemsTable.vue'
+
   import ItemDialog from '../components/ItemDialog.vue'
 
   interface Item {
