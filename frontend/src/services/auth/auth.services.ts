@@ -2,15 +2,16 @@ import { authApi } from './auth.api'
 
 export const authService = {
   login: async (email: string, password: string) => {
-  // Para #MOCK
-    const data = await authApi.mockLogin(email, password)
-    return data
+    // MOCK
+    // const data = await authApi.mockLogin(email, password)
+    // return data
+
+    // REAL
+    return await authApi.login({ email, password })
   },
-  //   const response = await authApi.post('/api/auth/login', { email, password })
-  //   return response.data // { token: "..."}
-  // },
-  // register: async (email: string, password: string) => {
-  //   const response = await authApi.post('/api/auth/register', { email, password })
-  //   return response.data
-  // },
+
+  register: async (email: string, password: string) => {
+    // REAL
+    return await authApi.register({ email, password })
+  },
 }

@@ -6,18 +6,25 @@ export const authApi = {
   login: async (data: any) => {
     return (await client.post(AUTH_API.login, data)).data
   },
+
+  register: async (data: any) => {
+    return (await client.post(AUTH_API.register, data)).data
+  },
+
   mockLogin: async (email: string, password: string) => {
-    // Simulate API delay
+    // Simula delay de API
     await new Promise(resolve => setTimeout(resolve, 1500))
 
-    // Find user in mock data
-    const user = mockUsers.find((u: MockUser) => u.email === email && u.password === password)
+    // Busca usuario en mock
+    const user = mockUsers.find(
+      (u: MockUser) => u.email === email && u.password === password
+    )
 
     if (!user) {
       throw new Error('Credenciales inválidas')
     }
 
-    // Generate mock tokens
+    // Tokens mock
     const token = `mock_token_${user.id}_${Date.now()}`
     const refreshToken = `mock_refresh_${user.id}_${Date.now()}`
 
