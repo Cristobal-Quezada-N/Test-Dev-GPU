@@ -77,7 +77,7 @@
 
   const search = ref('')
   const dialog = ref(false)
-  const selectedItem = ref<Item | undefined>(undefined)
+  const selectedItem = ref<Item | undefined>(undefined) 
 
   const confirmDialog = ref(false)
   const itemToDelete = ref<Item | null>(null)
@@ -92,16 +92,22 @@
 
   const items = ref<Item[]>([])
 
-  const fetchItems = async () => {
-    try {
-      const response = await axios.get<Item[]>(
-        'http://localhost:8090/api/items/getItems',
-      )
-      items.value = response.data
-    } catch (error) {
-      console.error('Error al obtener el inventario:', error)
-    }
+const fetchItems = async () => {
+  try {
+    const token = localStorage.getItem('auth_token')
+    const response = await axios.get<Item[]>(
+      'http://localhost:8090/api/items/getItems',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    items.value = response.data
+  } catch (error) {
+    console.error('Error al obtener el inventario:', error)
   }
+}
 
   const openDialog = (item?: Item) => {
     selectedItem.value = item ? { ...item } : undefined
@@ -114,40 +120,59 @@
   }
 
   const deleteConfirmed = async () => {
-    if (!itemToDelete.value) return
-    try {
-      await axios.delete(
-        `http://localhost:8090/api/items/${itemToDelete.value.id}`,
-      )
-      items.value = items.value.filter(item => item.id !== itemToDelete.value?.id)
-    } catch (error) {
-      console.error('Error al eliminar el juego:', error)
-    } finally {
-      confirmDialog.value = false
-      itemToDelete.value = null
-    }
+  if (!itemToDelete.value) return
+  try {
+    const token = localStorage.getItem('auth_token')
+    await axios.delete(
+      `http://localhost:8090/api/items/deleteItem/${itemToDelete.value.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    items.value = items.value.filter(item => item.id !== itemToDelete.value?.id)
+  } catch (error) {
+    console.error('Error al eliminar el juego:', error)
+  } finally {
+    confirmDialog.value = false
+    itemToDelete.value = null
   }
+}
 
-  const saveItem = async (item: Item) => {
-    try {
-      if (item.id) {
-        const response = await axios.put(
-          `http://localhost:8090/api/items/updateItem/${item.id}`,
-          item,
-        )
-        const index = items.value.findIndex(i => i.id === item.id)
-        if (index !== -1) items.value[index] = response.data
-      } else {
-        const response = await axios.post(
-          'http://localhost:8090/api/items/createItem',
-          item,
-        )
-        items.value.push(response.data)
-      }
-    } catch (error) {
-      console.error('Error al guardar el juego:', error)
+
+const saveItem = async (item: Item) => {
+  try {
+    const token = localStorage.getItem('auth_token')
+
+    if (item.id) {
+      const response = await axios.put(
+        `http://localhost:8090/api/items/updateItem/${item.id}`,
+        item,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      const index = items.value.findIndex(i => i.id === item.id)
+      if (index !== -1) items.value[index] = response.data
+    } else {
+      const response = await axios.post(
+        'http://localhost:8090/api/items/createItem',
+        item,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      items.value.push(response.data)
     }
+  } catch (error) {
+    console.error('Error al guardar el juego:', error)
   }
+}
 
   onMounted(fetchItems)
 </script>

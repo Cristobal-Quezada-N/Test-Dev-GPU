@@ -48,6 +48,13 @@
         <template #item.actions="{ item }">
           <slot :item="item" name="item.actions" />
         </template>
+
+        <!-- Slot genérico para TODAS las demás columnas -->
+        <template v-for="header in headers" #[`item.${header.key}`]="{ item }">
+          <slot :item="item" :name="`item.${header.key}`">
+            {{ item[header.key] }}
+          </slot>
+        </template>
       </v-data-table-virtual>
 
       <!-- Elementos en Bottom -->
@@ -57,41 +64,42 @@
 </template>
 
 <script setup lang="ts">
-  const searchModel = defineModel<string>('search', { default: '' })
-  type Header = {
-    title: string
-    key: string
-    align?: 'start' | 'end' | 'center'
-    sortable?: boolean
-    width?: string | number
-  }
+const searchModel = defineModel<string>('search', { default: '' })
 
-  const props = withDefaults(defineProps<{
-    // Contenedor
-    fluid?: boolean
-    containerClass?: string
-    elevation?: number
+type Header = {
+  title: string
+  key: string
+  align?: 'start' | 'end' | 'center'
+  sortable?: boolean
+  width?: string | number
+}
 
-    // Titulo
-    title?: string
+const props = withDefaults(defineProps<{
+  // Contenedor
+  fluid?: boolean
+  containerClass?: string
+  elevation?: number
 
-    // Tabla
-    headers: Header[]
-    items: Record<string, any>[]
+  // Titulo
+  title?: string
 
-    // Available
-    availableTrueText?: string
-    availableFalseText?: string
-    availableTrueColor?: string
-    availableFalseColor?: string
-  }>(), {
-    fluid: true,
-    containerClass: '',
-    elevation: 2,
-    title: '',
-    availableTrueText: 'Disponible',
-    availableFalseText: 'No disponible',
-    availableTrueColor: 'success',
-    availableFalseColor: 'error',
-  })
+  // Tabla
+  headers: Header[]
+  items: Record<string, any>[]
+
+  // Available
+  availableTrueText?: string
+  availableFalseText?: string
+  availableTrueColor?: string
+  availableFalseColor?: string
+}>(), {
+  fluid: true,
+  containerClass: '',
+  elevation: 2,
+  title: '',
+  availableTrueText: 'Disponible',
+  availableFalseText: 'No disponible',
+  availableTrueColor: 'success',
+  availableFalseColor: 'error',
+})
 </script>
