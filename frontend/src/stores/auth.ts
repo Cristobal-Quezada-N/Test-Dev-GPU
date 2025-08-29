@@ -1,10 +1,11 @@
 // #MOCK
-import type { MockUser } from '@/services/auth/auth.types'
+// import type { MockUser } from '@/services/auth/auth.types'
 // Utilities
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import { useAppStore } from './app'
 import { authService } from '@/services/auth/auth.services'
+import router from '@/router'
 
 
 export interface LoginForm {
@@ -28,7 +29,7 @@ export interface AuthResponse {
   }
   token: string
   // #MOCK
-  refreshToken: string
+  // refreshToken: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -50,32 +51,32 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   // #MOCK
-  const mockUsers: MockUser[] = [
-    {
-      id: '1',
-      name: 'Administrador',
-      email: 'admin@demo.com',
-      password: 'admin123',
-      role: 'admin',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-    },
-    {
-      id: '2',
-      name: 'Usuario Demo',
-      email: 'user@demo.com',
-      password: 'user123',
-      role: 'user',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-    },
-    {
-      id: '3',
-      name: 'Juan Pérez',
-      email: 'juan@demo.com',
-      password: 'juan123',
-      role: 'user',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-    },
-  ]
+  // const mockUsers: MockUser[] = [
+  //   {
+  //     id: '1',
+  //     name: 'Administrador',
+  //     email: 'admin@demo.com',
+  //     password: 'admin123',
+  //     role: 'admin',
+  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+  //   },
+  //   {
+  //     id: '2',
+  //     name: 'Usuario Demo',
+  //     email: 'user@demo.com',
+  //     password: 'user123',
+  //     role: 'user',
+  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+  //   },
+  //   {
+  //     id: '3',
+  //     name: 'Juan Pérez',
+  //     email: 'juan@demo.com',
+  //     password: 'juan123',
+  //     role: 'user',
+  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+  //   },
+  // ]
 
   // Validation rules
   const emailRules = [
@@ -115,65 +116,65 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // #MOCK
-  const mockApiCall = async (delay = 1000): Promise<void> => {
-    return new Promise(resolve => {
-      setTimeout(resolve, delay)
-    })
-  }
+  // const mockApiCall = async (delay = 1000): Promise<void> => {
+  //   return new Promise(resolve => {
+  //     setTimeout(resolve, delay)
+  //   })
+  // }
 
-  const mockLogin = async (email: string, password: string): Promise<AuthResponse> => {
-    // Simulate API delay
-    await mockApiCall(1500)
+  // const mockLogin = async (email: string, password: string): Promise<AuthResponse> => {
+  //   // Simulate API delay
+  //   await mockApiCall(1500)
 
-    // Find user in mock data
-    const user = mockUsers.find(u => u.email === email && u.password === password)
+  //   // Find user in mock data
+  //   const user = mockUsers.find(u => u.email === email && u.password === password)
 
-    if (!user) {
-      throw new Error('Credenciales inválidas')
-    }
+  //   if (!user) {
+  //     throw new Error('Credenciales inválidas')
+  //   }
 
-    // Generate mock tokens
-    const token = `mock_token_${user.id}_${Date.now()}`
-    const refreshToken = `mock_refresh_${user.id}_${Date.now()}`
+  //   // Generate mock tokens
+  //   const token = `mock_token_${user.id}_${Date.now()}`
+  //   const refreshToken = `mock_refresh_${user.id}_${Date.now()}`
 
-    return {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      },
-      token,
-      refreshToken,
-    }
-  }
+  //   return {
+  //     user: {
+  //       id: user.id,
+  //       name: user.name,
+  //       email: user.email,
+  //       role: user.role,
+  //       avatar: user.avatar,
+  //     },
+  //     token,
+  //     refreshToken,
+  //   }
+  // }
 
-  const mockValidateToken = async (token: string): Promise<any> => {
-    // Simulate API delay
-    await mockApiCall(500)
+  // const mockValidateToken = async (token: string): Promise<any> => {
+  //   // Simulate API delay
+  //   await mockApiCall(500)
 
-    // Extract user ID from mock token
-    const tokenParts = token.split('_')
-    if (tokenParts.length < 3) {
-      throw new Error('Token inválido')
-    }
+  //   // Extract user ID from mock token
+  //   const tokenParts = token.split('_')
+  //   if (tokenParts.length < 3) {
+  //     throw new Error('Token inválido')
+  //   }
 
-    const userId = tokenParts[2]
-    const user = mockUsers.find(u => u.id === userId)
+  //   const userId = tokenParts[2]
+  //   const user = mockUsers.find(u => u.id === userId)
 
-    if (!user) {
-      throw new Error('Usuario no encontrado')
-    }
+  //   if (!user) {
+  //     throw new Error('Usuario no encontrado')
+  //   }
 
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      avatar: user.avatar,
-    }
-  }
+  //   return {
+  //     id: user.id,
+  //     name: user.name,
+  //     email: user.email,
+  //     role: user.role,
+  //     avatar: user.avatar,
+  //   }
+  // }
 
   // Authentication methods
   const initializeAuth = async (): Promise<void> => {
@@ -187,8 +188,7 @@ export const useAuthStore = defineStore('auth', () => {
       const storedUser = getStoredUser()
       if (token && storedUser) {
       // Validate stored token
-        const user = await mockValidateToken(token)
-        appStore.login(user)
+        appStore.login(storedUser)
       }
     } catch (error) {
       console.warn('Auth initialization failed, clearing stored data:', error)
@@ -206,16 +206,19 @@ export const useAuthStore = defineStore('auth', () => {
     errorMessage.value = ''
 
     try {
-      // #MOCK
-      const response = await mockLogin(loginForm.email, loginForm.password)
-      // const response = await authService.login(loginForm.email, loginForm.password)
+      
+      const response = await authService.login(loginForm.email, loginForm.password)
 
+
+      
+      const token = response.auth_token
+      const user = JSON.parse(response.auth_user)
       // Store tokens and user data
-      setStoredToken(response.token)
-      setStoredUser(response.user)
+      setStoredToken(token)
+      setStoredUser(user)
 
       // Update app store
-      appStore.login(response.user)
+      appStore.login(user)
 
       // Reset form
       resetForm()
@@ -228,30 +231,30 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // #MOCK
-  const demoLogin = async (role: 'user' | 'admin'): Promise<void> => {
-    demoLoading.value = role
+  // const demoLogin = async (role: 'user' | 'admin'): Promise<void> => {
+  //   demoLoading.value = role
 
-    try {
-      const demoUser = mockUsers.find(u => u.role === role)
-      if (!demoUser) {
-        throw new Error('Usuario de demostración no encontrado')
-      }
+  //   try {
+  //     const demoUser = mockUsers.find(u => u.role === role)
+  //     if (!demoUser) {
+  //       throw new Error('Usuario de demostración no encontrado')
+  //     }
 
-      const response = await mockLogin(demoUser.email, demoUser.password)
+  //     const response = await mockLogin(demoUser.email, demoUser.password)
 
-      // Store tokens and user data
-      setStoredToken(response.token)
-      setStoredUser(response.user)
+  //     // Store tokens and user data
+  //     setStoredToken(response.token)
+  //     setStoredUser(response.user)
 
-      // Update app store
-      appStore.login(response.user)
-    } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión de demostración'
-      showError.value = true
-    } finally {
-      demoLoading.value = null
-    }
-  }
+  //     // Update app store
+  //     appStore.login(response.user)
+  //   } catch (error) {
+  //     errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión de demostración'
+  //     showError.value = true
+  //   } finally {
+  //     demoLoading.value = null
+  //   }
+  // }
 
   const logout = (): void => {
     // Clear stored data
@@ -283,7 +286,7 @@ const handleRegister = async () => {
   clearError()
 
   try {
-    const res = await authService.register(registerForm.email, registerForm.password)
+    const res = await authService.register(registerForm.email, registerForm.password, 2)
     console.log(res.message)
 
     resetRegisterForm()
@@ -322,7 +325,7 @@ const handleRegister = async () => {
   return {
     // State
     loading,
-    demoLoading,
+    // demoLoading,
     showPassword,
     showError,
     errorMessage,
@@ -337,7 +340,7 @@ const handleRegister = async () => {
     // Methods
     // #MOCK
     initializeAuth,
-    demoLogin,
+    // demoLogin,
     handleLogin,
     handleRegister,
     logout,
