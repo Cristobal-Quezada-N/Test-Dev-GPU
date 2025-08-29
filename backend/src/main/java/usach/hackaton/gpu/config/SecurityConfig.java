@@ -42,6 +42,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/me").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/api/users/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/loans/createLoan").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/users/createUser").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/users/deleteUser/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/users/getUserByID/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/users/updateStatus/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/users/status").hasAnyRole("ADMIN", "USER")
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
