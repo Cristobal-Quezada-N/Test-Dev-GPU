@@ -11,7 +11,7 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix",
     "lint:fix": "eslint . --fix --fix-type=problem,suggestion,layout --cache",
-    "postinstall": "git config core.hooksPath frontend/.husky",
+    "postinstall": "if [ -d .git ]; then git config core.hooksPath frontend/.husky; else echo 'Skipping husky install (no .git)'; fi",
     "prepare": "husky"
   },
   "lint-staged": {
