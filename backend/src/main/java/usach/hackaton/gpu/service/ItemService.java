@@ -15,6 +15,13 @@ public class ItemService {
     private ItemRepository itemRepository;
 
     public Item saveItem(Item item) {
+        if(item.getStock() <= 0){
+            item.setAvailable(false);
+        }
+        else {
+            item.setAvailable(item.getAvailable());
+        }
+
         return itemRepository.save(item);
     }
 
@@ -35,6 +42,14 @@ public class ItemService {
             item.setName(updatedItem.getName());
             item.setStock(updatedItem.getStock());
             item.setAvailable(updatedItem.getAvailable());
+
+            if(updatedItem.getStock() <= 0){
+                item.setAvailable(false);
+            }
+            else {
+                item.setAvailable(updatedItem.getAvailable());
+            }
+
             return itemRepository.save(item);
         });
     }
