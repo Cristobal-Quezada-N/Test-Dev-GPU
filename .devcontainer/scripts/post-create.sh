@@ -13,5 +13,5 @@ echo "[2/4] Configurar permisos de Directorios de Postgres y PgAdmin"
 sudo chown $PGA_PERM:$PGA_PERM -R $DATA_DIR/pgadmin
 echo "[3/4] Configurar permisos de Directorios de Postgres y PgAdmin"
 
-sudo chown $(id -u):$(id -g) $DATA_DIR/postgres/.gitkeep $DATA_DIR/pgadmin/.gitkeep
+sudo chown $(id -u):$(id -g) $DATA_DIR/postgres/.gitkeep $DATA_DIR/postgres/pgdata/.gitkeep $DATA_DIR/pgadmin/.gitkeep
 echo "[4/4] Configurar permisos de Directorios de Postgres y PgAdmin"
