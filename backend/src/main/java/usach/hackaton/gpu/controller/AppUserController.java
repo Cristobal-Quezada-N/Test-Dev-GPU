@@ -1,6 +1,7 @@
 package usach.hackaton.gpu.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -49,4 +50,22 @@ public class AppUserController {
         AppUser user = appUserService.getByEmail(email); // usas tu método
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AppUser> getUserById(@PathVariable String id) {
+        return appUserService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @DeleteMapping("/deleteUser/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+        if (appUserService.getUserById(id).isPresent()) {
+            appUserService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 }
