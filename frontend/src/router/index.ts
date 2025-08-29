@@ -4,9 +4,9 @@
  * Automatic routes for `./src/pages/*.vue`
  */
 
+import { setupLayouts } from 'virtual:generated-layouts'
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupLayouts } from 'virtual:generated-layouts'
 import { routes } from 'vue-router/auto-routes'
 import { useAppStore } from '@/stores/app'
 
@@ -18,30 +18,21 @@ const router = createRouter({
 // Authentication guard
 router.beforeEach((to, from, next) => {
   const appStore = useAppStore()
-  
-  // Check if route requires authentication
-  const requiresAuth = to.meta.requiresAuth !== false // Default to true if not specified
-  
-  // If route doesn't require auth, allow access
+
+  const publicPages = ['/login', '/register']
+  const requiresAuth = !publicPages.includes(to.path)
+
   if (!requiresAuth) {
-    // If user is already authenticated and trying to access login, redirect to home
     if (appStore.isAuthenticated && to.path === '/login') {
-      next('/')
-      return
+      return next('/')
     }
-    next()
-    return
+    return next()
   }
-  
-  // Check if user is authenticated for protected routes
+
   if (!appStore.isAuthenticated) {
-    // Only redirect if we're not already going to login
-    if (to.path !== '/login') {
-      next('/login')
-      return
-    }
+    return next('/login')
   }
-  
+
   next()
 })
 

@@ -1,10 +1,10 @@
-interface MockUser {
-  id: string
-  name: string
-  email: string
-  password: string
-  role: 'admin' | 'user'
-  avatar?: string
-}
+// interface MockUser {
+//   id: string
+//   name: string
+//   email: string
+//   password: string
+//   role: 'ADMIN' | 'USER'
+//   avatar?: string
+// }
 
-export type { MockUser };
+// export type { MockUser }

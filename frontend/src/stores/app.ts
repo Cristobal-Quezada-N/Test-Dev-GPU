@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
 export interface User {
   id: string
@@ -21,7 +21,9 @@ export const useAppStore = defineStore('app', () => {
   const isAdmin = computed(() => user.value?.role === 'admin')
   const isUser = computed(() => user.value?.role === 'user')
   const userInitials = computed(() => {
-    if (!user.value?.name) return ''
+    if (!user.value?.name) {
+      return ''
+    }
     return user.value.name
       .split(' ')
       .map(n => n[0])

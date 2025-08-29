@@ -1,14 +1,23 @@
+// #MOCK
+// import type { MockUser } from '@/services/auth/auth.types'
 // Utilities
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useAppStore } from './app'
-import type { MockUser } from '@/services/auth/auth.types'
+import { authService } from '@/services/auth/auth.services'
+import router from '@/router'
+
 
 export interface LoginForm {
   email: string
   password: string
   rememberMe: boolean
 }
+
+const registerForm = reactive({
+  email: '',
+  password: '',
+})
 
 export interface AuthResponse {
   user: {
@@ -19,7 +28,8 @@ export interface AuthResponse {
     avatar?: string
   }
   token: string
-  refreshToken: string
+  // #MOCK
+  // refreshToken: string
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -37,46 +47,46 @@ export const useAuthStore = defineStore('auth', () => {
   const loginForm = reactive<LoginForm>({
     email: '',
     password: '',
-    rememberMe: false
+    rememberMe: false,
   })
 
-  // Mock users for testing
-  const mockUsers: MockUser[] = [
-    {
-      id: '1',
-      name: 'Administrador',
-      email: 'admin@demo.com',
-      password: 'admin123',
-      role: 'admin',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
-    },
-    {
-      id: '2',
-      name: 'Usuario Demo',
-      email: 'user@demo.com',
-      password: 'user123',
-      role: 'user',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg'
-    },
-    {
-      id: '3',
-      name: 'Juan Pérez',
-      email: 'juan@demo.com',
-      password: 'juan123',
-      role: 'user',
-      avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg'
-    }
-  ]
+  // #MOCK
+  // const mockUsers: MockUser[] = [
+  //   {
+  //     id: '1',
+  //     name: 'Administrador',
+  //     email: 'admin@demo.com',
+  //     password: 'admin123',
+  //     role: 'admin',
+  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+  //   },
+  //   {
+  //     id: '2',
+  //     name: 'Usuario Demo',
+  //     email: 'user@demo.com',
+  //     password: 'user123',
+  //     role: 'user',
+  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+  //   },
+  //   {
+  //     id: '3',
+  //     name: 'Juan Pérez',
+  //     email: 'juan@demo.com',
+  //     password: 'juan123',
+  //     role: 'user',
+  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+  //   },
+  // ]
 
   // Validation rules
   const emailRules = [
     (v: string) => !!v || 'El correo electrónico es requerido',
-    (v: string) => /.+@.+\..+/.test(v) || 'El correo electrónico debe ser válido'
+    (v: string) => /.+@.+\..+/.test(v) || 'El correo electrónico debe ser válido',
   ]
 
   const passwordRules = [
     (v: string) => !!v || 'La contraseña es requerida',
-    (v: string) => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres'
+    (v: string) => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
   ]
 
   // Token management
@@ -105,79 +115,80 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_user')
   }
 
-  // Mock API methods
-  const mockApiCall = async (delay: number = 1000): Promise<void> => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, delay)
-    })
-  }
+  // #MOCK
+  // const mockApiCall = async (delay = 1000): Promise<void> => {
+  //   return new Promise(resolve => {
+  //     setTimeout(resolve, delay)
+  //   })
+  // }
 
-  const mockLogin = async (email: string, password: string): Promise<AuthResponse> => {
-    // Simulate API delay
-    await mockApiCall(1500)
+  // const mockLogin = async (email: string, password: string): Promise<AuthResponse> => {
+  //   // Simulate API delay
+  //   await mockApiCall(1500)
 
-    // Find user in mock data
-    const user = mockUsers.find(u => u.email === email && u.password === password)
+  //   // Find user in mock data
+  //   const user = mockUsers.find(u => u.email === email && u.password === password)
 
-    if (!user) {
-      throw new Error('Credenciales inválidas')
-    }
+  //   if (!user) {
+  //     throw new Error('Credenciales inválidas')
+  //   }
 
-    // Generate mock tokens
-    const token = `mock_token_${user.id}_${Date.now()}`
-    const refreshToken = `mock_refresh_${user.id}_${Date.now()}`
+  //   // Generate mock tokens
+  //   const token = `mock_token_${user.id}_${Date.now()}`
+  //   const refreshToken = `mock_refresh_${user.id}_${Date.now()}`
 
-    return {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar
-      },
-      token,
-      refreshToken
-    }
-  }
+  //   return {
+  //     user: {
+  //       id: user.id,
+  //       name: user.name,
+  //       email: user.email,
+  //       role: user.role,
+  //       avatar: user.avatar,
+  //     },
+  //     token,
+  //     refreshToken,
+  //   }
+  // }
 
-  const mockValidateToken = async (token: string): Promise<any> => {
-    // Simulate API delay
-    await mockApiCall(500)
+  // const mockValidateToken = async (token: string): Promise<any> => {
+  //   // Simulate API delay
+  //   await mockApiCall(500)
 
-    // Extract user ID from mock token
-    const tokenParts = token.split('_')
-    if (tokenParts.length < 3) {
-      throw new Error('Token inválido')
-    }
+  //   // Extract user ID from mock token
+  //   const tokenParts = token.split('_')
+  //   if (tokenParts.length < 3) {
+  //     throw new Error('Token inválido')
+  //   }
 
-    const userId = tokenParts[2]
-    const user = mockUsers.find(u => u.id === userId)
-    
-    if (!user) {
-      throw new Error('Usuario no encontrado')
-    }
+  //   const userId = tokenParts[2]
+  //   const user = mockUsers.find(u => u.id === userId)
 
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      avatar: user.avatar
-    }
-  }
+  //   if (!user) {
+  //     throw new Error('Usuario no encontrado')
+  //   }
+
+  //   return {
+  //     id: user.id,
+  //     name: user.name,
+  //     email: user.email,
+  //     role: user.role,
+  //     avatar: user.avatar,
+  //   }
+  // }
 
   // Authentication methods
   const initializeAuth = async (): Promise<void> => {
-    if (isInitialized.value) return
+    if (isInitialized.value) {
+      return
+    }
 
+    // #MOCK
     try {
       const token = getStoredToken()
       const storedUser = getStoredUser()
-
       if (token && storedUser) {
-        // Validate stored token
-        const user = await mockValidateToken(token)
-        appStore.login(user)
+      // Validate stored token
+        appStore.login(storedUser)
       }
     } catch (error) {
       console.warn('Auth initialization failed, clearing stored data:', error)
@@ -187,6 +198,7 @@ export const useAuthStore = defineStore('auth', () => {
     } finally {
       isInitialized.value = true
     }
+    isInitialized.value = true
   }
 
   const handleLogin = async (): Promise<void> => {
@@ -194,18 +206,22 @@ export const useAuthStore = defineStore('auth', () => {
     errorMessage.value = ''
 
     try {
-      const response = await mockLogin(loginForm.email, loginForm.password)
       
+      const response = await authService.login(loginForm.email, loginForm.password)
+
+
+      
+      const token = response.auth_token
+      const user = JSON.parse(response.auth_user)
       // Store tokens and user data
-      setStoredToken(response.token)
-      setStoredUser(response.user)
-      
+      setStoredToken(token)
+      setStoredUser(user)
+
       // Update app store
-      appStore.login(response.user)
+      appStore.login(user)
 
       // Reset form
       resetForm()
-      
     } catch (error) {
       errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión'
       showError.value = true
@@ -214,43 +230,43 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const demoLogin = async (role: 'user' | 'admin'): Promise<void> => {
-    demoLoading.value = role
-    
-    try {
-      const demoUser = mockUsers.find(u => u.role === role)
-      if (!demoUser) {
-        throw new Error('Usuario de demostración no encontrado')
-      }
+  // #MOCK
+  // const demoLogin = async (role: 'user' | 'admin'): Promise<void> => {
+  //   demoLoading.value = role
 
-      const response = await mockLogin(demoUser.email, demoUser.password)
-      
-      // Store tokens and user data
-      setStoredToken(response.token)
-      setStoredUser(response.user)
-      
-      // Update app store
-      appStore.login(response.user)
-      
-    } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión de demostración'
-      showError.value = true
-    } finally {
-      demoLoading.value = null
-    }
-  }
+  //   try {
+  //     const demoUser = mockUsers.find(u => u.role === role)
+  //     if (!demoUser) {
+  //       throw new Error('Usuario de demostración no encontrado')
+  //     }
+
+  //     const response = await mockLogin(demoUser.email, demoUser.password)
+
+  //     // Store tokens and user data
+  //     setStoredToken(response.token)
+  //     setStoredUser(response.user)
+
+  //     // Update app store
+  //     appStore.login(response.user)
+  //   } catch (error) {
+  //     errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión de demostración'
+  //     showError.value = true
+  //   } finally {
+  //     demoLoading.value = null
+  //   }
+  // }
 
   const logout = (): void => {
     // Clear stored data
     removeStoredToken()
     removeStoredUser()
-    
+
     // Update app store
     appStore.logout()
-    
+
     // Reset form
     resetForm()
-    
+
     // Clear errors
     clearError()
   }
@@ -265,6 +281,31 @@ export const useAuthStore = defineStore('auth', () => {
     console.log('Register clicked')
   }
 
+const handleRegister = async () => {
+  loading.value = true
+  clearError()
+
+  try {
+    const res = await authService.register(registerForm.email, registerForm.password, 2)
+    console.log(res.message)
+
+    resetRegisterForm()
+    router.push('/login')
+  } catch (err: any) {
+  console.error(" Error en register:", err)
+
+  if (err.response) {
+    errorMessage.value = err.response.data.message || 'Error al registrarse'
+  } else {
+    errorMessage.value = err.message || 'Error desconocido'
+  }
+
+  showError.value = true
+}finally {
+    loading.value = false
+  }
+}
+
   const clearError = (): void => {
     showError.value = false
     errorMessage.value = ''
@@ -276,24 +317,32 @@ export const useAuthStore = defineStore('auth', () => {
     loginForm.rememberMe = false
   }
 
+  const resetRegisterForm = () => {
+    registerForm.email = ''
+    registerForm.password = ''
+  }
+
   return {
     // State
     loading,
-    demoLoading,
+    // demoLoading,
     showPassword,
     showError,
     errorMessage,
     loginForm,
+    registerForm,
     isInitialized,
-    
+
     // Validation
     emailRules,
     passwordRules,
-    
+
     // Methods
+    // #MOCK
     initializeAuth,
+    // demoLogin,
     handleLogin,
-    demoLogin,
+    handleRegister,
     logout,
     forgotPassword,
     register,
