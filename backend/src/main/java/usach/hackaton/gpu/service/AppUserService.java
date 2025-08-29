@@ -12,10 +12,12 @@ import java.util.Optional;
 
 @Service
 public class AppUserService {
+    private final AuthFactorRepository authFactorRepository;
     private final AppUserRepository appUserRepository;
 
-    public AppUserService(AppUserRepository appUserRepository) {
+    public AppUserService(AppUserRepository appUserRepository, AuthFactorRepository authFactorRepository) {
         this.appUserRepository = appUserRepository;
+        this.authFactorRepository = authFactorRepository;
     }
 
     public AppUser getByEmail (String email){
@@ -32,11 +34,34 @@ public class AppUserService {
         return appUserRepository.findAll();
     }
 
+    public void deleteUserAndAuthFactors(String id) {
+        // 1. Buscar factores de autenticación por userId (conversión Long → String)
+        List<AuthFactor> factors = authFactorRepository.findByUserId(String.valueOf(id));
+
+        // 2. Borrar todos los factores asociados
+        if (!factors.isEmpty()) {
+            authFactorRepository.deleteAll(factors);
+        }
+
+        // 3. Finalmente borrar el usuario
+        appUserRepository.deleteById(id);
+    }
+
+
     public Optional<AppUser> getUserById(String id) {
         return appUserRepository.findById(id);
     }
 
-    public void deleteUser(String id){
-        appUserRepository.deleteById(id);
+    public AppUser updateStatus(String id, Long statusId) {
+        Optional<AppUser> optionalUser = appUserRepository.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            throw new EntityNotFoundException("Usuario no encontrado con ID: " + id);
+        }
+
+        AppUser user = optionalUser.get();
+        user.setStatusId(statusId); // 👈 asegúrate de que AppUser tenga este campo y su setter
+        return appUserRepository.save(user);
     }
+
 }
