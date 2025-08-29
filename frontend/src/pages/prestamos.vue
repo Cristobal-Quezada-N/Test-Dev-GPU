@@ -1,4 +1,5 @@
 <template>
+  <v-container v-if="accesoPermitido" />
   <!-- Tabla de Préstamos -->
   <ItemsTable
     :headers="headers"
@@ -55,6 +56,19 @@ const search = ref('')
 const loans = ref<any[]>([])
 const users = ref<User[]>([])
 const items = ref<Item[]>([])
+
+const accesoPermitido = ref(false);
+
+onMounted(() => {
+  const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}');
+  if (userRole.roleId === 1) {
+    accesoPermitido.value = true;
+    fetchLoans();
+  } else {
+    accesoPermitido.value = false;
+    alert("No tienes permiso para acceder a esta página.");
+  }
+});
 
 const fetchLoans = async () => {
   try {

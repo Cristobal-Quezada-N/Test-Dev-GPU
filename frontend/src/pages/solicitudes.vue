@@ -1,4 +1,5 @@
 <template>
+  <v-container v-if ="accesoPermitido">
   <!-- Tabla de Solicitudes -->
   <ItemsTable
     :headers="headers"
@@ -23,6 +24,7 @@
       <v-btn color="red" @click="rejectLoan(item.id)">Rechazar</v-btn>
     </template>
   </ItemsTable>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -48,13 +50,24 @@ const headers = [
   { title: 'Usuario', key: 'userEmail', align: 'start' },
   { title: 'Fecha del Pedido', key: 'date', align: 'center' },
   { title: 'Fecha de Entrega', key: 'deadline', align: 'center' },
-  { title: 'Estado', key: 'statusId', align: 'center' },
   { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
 ]
 
 const loans = ref<any[]>([])
 const users = ref<User[]>([])
 const search = ref('')
+const accesoPermitido = ref(false);
+
+onMounted(() => {
+  const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}');
+  if (userRole.roleId === 1) {
+    accesoPermitido.value = true;
+    fetchLoans();
+  } else {
+    accesoPermitido.value = false;
+    alert("No tienes permiso para acceder a esta página.");
+  }
+});
 
 const fetchLoans = async () => {
   try {

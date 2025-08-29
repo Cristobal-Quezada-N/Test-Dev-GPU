@@ -1,4 +1,5 @@
 <template>
+  <v-container v-if="accesoPermitido" />
   <!-- Tabla de Items -->
   <ItemsTable
     :headers="headers"
@@ -6,6 +7,13 @@
     :search="search"
     title="Inventario de Juegos"
   >
+    <!-- Slot para personalizar la columna Estado -->
+    <template #item.available="{ item }">
+      <v-chip :color="getAvailableColor(item.available)" dark>
+        {{ item.available ? 'Disponible' : 'No disponible' }}
+      </v-chip>
+    </template>
+
     <template #item.actions="{ item }">
       <v-btn color="blue" icon @click="openDialog(item)">
         <v-icon>mdi-pencil</v-icon>
@@ -61,36 +69,52 @@
 </template>
 
 <script setup lang="ts">
-  import axios from 'axios'
-  import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import ItemsTable from '@/components/ItemsTable.vue'
+import ItemDialog from '../components/ItemDialog.vue'
+import router from '@/router'
 
-  import ItemsTable from '@/components/ItemsTable.vue'
+interface Item {
+  id: number
+  name: string
+  stock: number
+  available: boolean
+}
 
-  import ItemDialog from '../components/ItemDialog.vue'
+const search = ref('')
+const dialog = ref(false)
+const selectedItem = ref<Item | undefined>(undefined)
 
-  interface Item {
-    id: number
-    name: string
-    stock: number
-    available: boolean
+const confirmDialog = ref(false)
+const itemToDelete = ref<Item | null>(null)
+
+const accesoPermitido = ref(false);
+
+onMounted(() => {
+  const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}');
+  if (userRole.roleId === 1) {
+    accesoPermitido.value = true;
+    fetchItems();
+  } else {
+    accesoPermitido.value = false;
+    router.push('/');
+    alert("No tienes permiso para acceder a esta página.");
   }
+});
 
-  const search = ref('')
-  const dialog = ref(false)
-  const selectedItem = ref<Item | undefined>(undefined) 
+const headers = [
+  { title: 'ID', key: 'id', align: 'start' },
+  { title: 'Nombre', key: 'name', align: 'start' },
+  { title: 'Stock', key: 'stock', align: 'end' },
+  { title: 'Estado', key: 'available', align: 'center' },
+  { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
+]
 
-  const confirmDialog = ref(false)
-  const itemToDelete = ref<Item | null>(null)
+const items = ref<Item[]>([])
 
-  const headers = [
-    { title: 'ID', key: 'id', align: 'start' },
-    { title: 'Nombre', key: 'name', align: 'start' },
-    { title: 'Stock', key: 'stock', align: 'end' },
-    { title: 'Estado', key: 'available', align: 'center' },
-    { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
-  ]
-
-  const items = ref<Item[]>([])
+const getAvailableColor = (available: boolean) =>
+  available ? 'green' : 'red'
 
 const fetchItems = async () => {
   try {
@@ -109,17 +133,17 @@ const fetchItems = async () => {
   }
 }
 
-  const openDialog = (item?: Item) => {
-    selectedItem.value = item ? { ...item } : undefined
-    dialog.value = true
-  }
+const openDialog = (item?: Item) => {
+  selectedItem.value = item ? { ...item } : undefined
+  dialog.value = true
+}
 
-  const confirmDelete = (item: Item) => {
-    itemToDelete.value = item
-    confirmDialog.value = true
-  }
+const confirmDelete = (item: Item) => {
+  itemToDelete.value = item
+  confirmDialog.value = true
+}
 
-  const deleteConfirmed = async () => {
+const deleteConfirmed = async () => {
   if (!itemToDelete.value) return
   try {
     const token = localStorage.getItem('auth_token')
@@ -139,7 +163,6 @@ const fetchItems = async () => {
     itemToDelete.value = null
   }
 }
-
 
 const saveItem = async (item: Item) => {
   try {
@@ -174,5 +197,5 @@ const saveItem = async (item: Item) => {
   }
 }
 
-  onMounted(fetchItems)
+onMounted(fetchItems)
 </script>

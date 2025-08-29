@@ -13,14 +13,14 @@
       <v-list>
         <v-list-item>
           <template #prepend>
-            <v-icon color="primary" size="32">
-              mdi-handshake
-            </v-icon>
-          </template>
-          <template #title>
-            <div class="text-h6 font-weight-bold text-primary">
-              Prestamos CEII
-            </div>
+            <v-btn variant="text" class="d-flex align-center" @click="router.push('/')">
+              <v-icon color="primary" size="32">
+                mdi-handshake
+              </v-icon>
+              <span class="text-h6 font-weight-bold text-primary ml-2">
+                Prestamos CEII
+              </span>
+            </v-btn>
           </template>
         </v-list-item>
       </v-list>
@@ -91,33 +91,6 @@
 
       <v-spacer />
 
-      <!-- Search Bar -->
-      <v-text-field
-        v-model="searchQuery"
-        class="max-width-300 mr-4"
-        density="compact"
-        hide-details
-        placeholder="Search items..."
-        prepend-inner-icon="mdi-magnify"
-        style="max-width: 300px"
-        variant="outlined"
-      />
-
-      <!-- Notifications -->
-      <v-btn
-        class="mr-2"
-        icon
-        variant="text"
-      >
-        <v-badge
-          color="error"
-          :content="notificationsCount"
-          :model-value="notificationsCount > 0"
-        >
-          <v-icon>mdi-bell</v-icon>
-        </v-badge>
-      </v-btn>
-
       <!-- User Menu -->
       <v-menu
         v-model="userMenu"
@@ -171,16 +144,6 @@
           <v-divider />
 
           <v-list>
-            <v-list-item
-              prepend-icon="mdi-account"
-              title="Profile"
-              @click="userMenu = false"
-            />
-            <v-list-item
-              prepend-icon="mdi-cog"
-              title="Settings"
-              @click="userMenu = false"
-            />
             <v-divider />
             <v-list-item
               prepend-icon="mdi-logout"
@@ -283,11 +246,11 @@
   })
 
   // Handle logout
-  const handleLogout = () => {
-    authStore.logout()
-    userMenu.value = false
-  // Router guards will handle redirect to login
-  }
+const handleLogout = () => {
+  authStore.logout()
+  userMenu.value = false
+  router.push("/login") // 🚀 Ir directo al login
+}
 
 // No need for authentication checks here since router guards handle it
 </script>

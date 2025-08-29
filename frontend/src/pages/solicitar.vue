@@ -22,6 +22,13 @@
         :items="items"
         :search="search"
       >
+        <!-- Chip de colores para la columna Estado -->
+        <template #item.available="{ item }">
+          <v-chip :color="getAvailableColor(item.available)" dark>
+            {{ item.available ? 'Disponible' : 'No disponible' }}
+          </v-chip>
+        </template>
+
         <template #item.actions="{ item }">
           <v-btn color="amber-lighten-2" @click="confirmarLoan(item)">
             Solicitar
@@ -64,72 +71,108 @@
 </template>
 
 <script setup lang="ts">
-  import axios from 'axios'
-  import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import ItemsTable from '@/components/ItemsTable.vue'
 
-  import ItemsTable from '@/components/ItemsTable.vue'
+interface Item {
+  id: number
+  name: string
+  stock: number
+  available: boolean
+}
 
-  interface Item {
-    id: number
-    name: string
-    stock: number
-    available: boolean
+const fechaLocal = ref(new Date().toLocaleString())
+const search = ref('')
+const selectedItem = ref<Item | undefined>(undefined)
+const confirmLoan = ref(false)
+
+const headers = [
+  { title: 'ID', key: 'id', align: 'start' },
+  { title: 'Nombre', key: 'name', align: 'start' },
+  { title: 'Stock', key: 'stock', align: 'end' },
+  { title: 'Estado', key: 'available', align: 'center' },
+  { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
+]
+
+const items = ref<Item[]>([])
+const tiempoEstimado = ref<number | null>(null)
+
+const getAvailableColor = (available: boolean) =>
+  available ? 'green' : 'red'
+
+const solicitarLoan = async () => {
+  if (!selectedItem.value || !tiempoEstimado.value) {
+    alert('Por favor ingresa el tiempo estimado.')
+    return
   }
 
-  const fechaLocal = ref(new Date().toLocaleString())
-  const search = ref('')
-  const selectedItem = ref<Item | undefined>(undefined)
-  const confirmLoan = ref(false)
+  // Calcular hora de devolución
+  const ahora = new Date()
+  const horaActual = ahora.getHours()
+  const minutosActual = ahora.getMinutes()
+  const horaDevolucion = horaActual + Number(tiempoEstimado.value)
 
-  const headers = [
-    { title: 'ID', key: 'id', align: 'start' },
-    { title: 'Nombre', key: 'name', align: 'start' },
-    { title: 'Stock', key: 'stock', align: 'end' },
-    { title: 'Estado', key: 'available', align: 'center' },
-    { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
-  ]
+  if (horaDevolucion > 21 || (horaDevolucion === 21 && minutosActual > 0)) {
+    alert('No puedes solicitar el juego por ese tiempo, la devolución debe ser antes de las 21:00.')
+    return
+  }
 
-  const items = ref<Item[]>([])
+  try {
+    const token = localStorage.getItem('auth_token')
+    const userId = JSON.parse(localStorage.getItem('auth_user') || '{}')
 
-  const tiempoEstimado = ref<number | null>(null)
-
-  const solicitarLoan = async () => {
-    if (!selectedItem.value || !tiempoEstimado.value) {
-      alert('Por favor ingresa el tiempo estimado.')
-      return
+    const loan = {
+      itemId: selectedItem.value.id,
+      userId: userId.id,
+      date: ahora.toISOString(),
+      deadline: new Date(ahora.getTime() + tiempoEstimado.value * 60 * 60 * 1000).toISOString(),
+      statusId: 1
     }
-    try {
-      // Aquí iría la lógica para solicitar el préstamo con el tiempo estimado
-      // await axios.post("http://localhost:8090/api/loans/request", { itemId: selectedItem.value.id, tiempo: tiempoEstimado.value });
-      alert(`Solicitud enviada para "${selectedItem.value.name}" por ${tiempoEstimado.value} horas.`)
-      confirmLoan.value = false
-      tiempoEstimado.value = null
-    } catch (error) {
-      console.error('Error al solicitar el préstamo:', error)
-      alert('Error al solicitar el préstamo. Inténtalo de nuevo.')
-    }
+
+    await axios.post(
+      'http://localhost:8090/api/loans/createLoan',
+      loan,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+
+    alert(`Solicitud enviada para "${selectedItem.value.name}" por ${tiempoEstimado.value} horas.`)
+    confirmLoan.value = false
+    tiempoEstimado.value = null
+  } catch (error) {
+    console.error('Error al solicitar el préstamo:', error)
+    alert('Error al solicitar el préstamo. Inténtalo de nuevo.')
   }
+}
 
-  const confirmarLoan = (item: Item) => {
-    selectedItem.value = item
-    confirmLoan.value = true
+const confirmarLoan = (item: Item) => {
+  selectedItem.value = item
+  confirmLoan.value = true
+}
+
+const fetchItems = async () => {
+  try {
+    const token = localStorage.getItem('auth_token')
+    const response = await axios.get<Item[]>(
+      'http://localhost:8090/api/items/getItems',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    items.value = response.data
+  } catch (error) {
+    console.error('Error al obtener el inventario:', error)
   }
+}
 
-  const fetchItems = async () => {
-    try {
-      const response = await axios.get<Item[]>(
-        'http://localhost:8090/api/items/getItems',
-      )
-      items.value = response.data
-
-      console.log('Items fetched:', items.value)
-    } catch (error) {
-      console.error('Error al obtener el inventario:', error)
-    }
-  }
-
-  onMounted(() => {
-    fetchItems()
-    fechaLocal.value = new Date().toLocaleString()
-  })
+onMounted(() => {
+  fetchItems()
+  fechaLocal.value = new Date().toLocaleString()
+})
 </script>

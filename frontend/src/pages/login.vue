@@ -22,21 +22,6 @@
 
       <v-divider />
 
-      <!-- Demo Credentials Info -->
-      <v-alert
-        class="ma-4"
-        icon="mdi-information"
-        type="info"
-        variant="tonal"
-      >
-        <div class="text-body-2">
-          <strong>Credenciales de Demostración:</strong><br>
-          <strong>Admin:</strong> admin@demo.com / admin123<br>
-          <strong>Usuario:</strong> user@demo.com / user123<br>
-          <strong>Juan:</strong> juan@demo.com / juan123
-        </div>
-      </v-alert>
-
       <!-- Login Form -->
       <v-card-text class="pa-6">
         <v-form @submit.prevent="handleSubmit">
@@ -101,46 +86,6 @@
             </v-icon>
             Iniciar Sesión
           </v-btn>
-
-          <!-- Demo Login Buttons -->
-          <div class="demo-login-section">
-            <v-divider class="mb-4">
-              <span class="text-caption text-medium-emphasis">O usar cuenta de demostración</span>
-            </v-divider>
-
-            <v-row>
-              <v-col cols="6">
-                <v-btn
-                  block
-                  color="primary"
-                  :loading="authStore.demoLoading === 'user'"
-                  size="small"
-                  variant="outlined"
-                  @click="authStore.demoLogin('user')"
-                >
-                  <v-icon left size="small">
-                    mdi-account
-                  </v-icon>
-                  Usuario
-                </v-btn>
-              </v-col>
-              <v-col cols="6">
-                <v-btn
-                  block
-                  color="secondary"
-                  :loading="authStore.demoLoading === 'admin'"
-                  size="small"
-                  variant="outlined"
-                  @click="authStore.demoLogin('admin')"
-                >
-                  <v-icon left size="small">
-                    mdi-shield-account
-                  </v-icon>
-                  Admin
-                </v-btn>
-              </v-col>
-            </v-row>
-          </div>
         </v-form>
       </v-card-text>
 
@@ -214,36 +159,46 @@ const handleSubmit = async () => {
   try {
     login(loginForm, {
       onSuccess: async (data: any) => {
-        // 1. Guardar el token en localStorage
+        // 1. Guardar el token provisional
         localStorage.setItem("auth_token", data.token)
 
-        // 2. Obtener datos del usuario con /me
-        const response = await fetch("http://localhost:8090/api/users/me", {
-          headers: {
-            Authorization: `Bearer ${data.token}`,
-          },
-        })
+        try {
+          // 2. Intentar obtener el perfil con /me
+          const response = await fetch("http://localhost:8090/api/users/me", {
+            headers: {
+              Authorization: `Bearer ${data.token}`,
+            },
+          })
 
-        if (!response.ok) {
-          throw new Error("No se pudo obtener el usuario")
+          if (!response.ok) {
+            throw new Error("Tu cuenta no está verificada, por favor, verificala")
+          }
+
+          const user = await response.json()
+
+          // 3. Guardar datos del usuario
+          localStorage.setItem("user_id", user.id)
+          localStorage.setItem("user_email", user.email)
+          localStorage.setItem("user_role", user.role?.name)
+
+          // 4. Redirigir al home
+          router.push("/")
+        } catch (err: any) {
+          // Si hubo error con /me → limpiar token y mostrar notificación
+          localStorage.removeItem("auth_token")
+          notificationStore.notify(err.message, "error")
         }
-
-        const user = await response.json()
-
-        // 3. Guardar el usuario en tu store o en localStorage
-        localStorage.setItem("user_id", user.id)
-
-        // 4. Redirigir al home
-        router.push("/")
       },
       onError: error => {
-          notificationStore.notify(error.message, 'error')
+        notificationStore.notify(error.message, "error")
       },
     })
   } catch (error) {
-      console.error('Error submitting form:', error)
+    console.error("Error submitting form:", error)
   }
 }
+
+
 
 </script>
 
