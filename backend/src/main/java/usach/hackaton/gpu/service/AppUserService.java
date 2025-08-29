@@ -32,5 +32,11 @@ public class AppUserService {
         return appUserRepository.findAll();
     }
 
+    public Optional<AppUser> getUserById(String id) {
+        return appUserRepository.findById(id);
+    }
 
+    public void deleteUser(String id){
+        appUserRepository.deleteById(id);
+    }
 }
