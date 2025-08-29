@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "loan")
@@ -28,8 +29,8 @@ public class Loan {
     private Long statusId;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDateTime date;
 
     @Column(nullable = false)
-    private LocalDate deadline;
+    private LocalDateTime deadline;
 }

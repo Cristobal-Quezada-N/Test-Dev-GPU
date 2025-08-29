@@ -34,7 +34,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/items/updateItem/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/items/deleteItem/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/items/**").hasAnyRole("ADMIN", "USER")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/loans/getLoans").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/users/getUsers").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/loans/rejectLoans/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/loans/acceptLoans/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/users/me").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/loans/createLoan").hasAnyRole("ADMIN", "USER")
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
