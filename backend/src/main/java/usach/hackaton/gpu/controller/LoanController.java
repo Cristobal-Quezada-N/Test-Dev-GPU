@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/loans")
+@CrossOrigin(origins = "http://localhost:3000")
 public class LoanController {
 
     @Autowired
@@ -44,5 +45,18 @@ public class LoanController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+    // Aceptar préstamo
+    @PatchMapping("/acceptLoans/{id}")
+    public ResponseEntity<Loan> aceptarLoan(@PathVariable Long id) {
+        Loan updatedLoan = loanService.acceptLoan(id);
+        return ResponseEntity.ok(updatedLoan);
+    }
+
+    // Rechazar préstamo
+    @PatchMapping("/rejectLoans/{id}")
+    public ResponseEntity<Loan> rechazarLoan(@PathVariable Long id) {
+        Loan updatedLoan = loanService.rejectLoan(id);
+        return ResponseEntity.ok(updatedLoan);
     }
 }
