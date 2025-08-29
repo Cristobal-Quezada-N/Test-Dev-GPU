@@ -22,13 +22,13 @@ CREATE TYPE auth_factor_type as ENUM (
 
 CREATE TABLE User_status (
     id SERIAL PRIMARY KEY,
-    code VARCHAR(50) NOT NULL,
+    code VARCHAR(50) NOT NULL UNIQUE,
     name VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE Role (
     id SERIAL PRIMARY KEY,
-    code VARCHAR(50) NOT NULL,
+    code VARCHAR(50) NOT NULL UNIQUE,
     name VARCHAR(20) NOT NULL
 );
 
@@ -41,7 +41,7 @@ CREATE TABLE App_user (
     id                      VARCHAR(50) PRIMARY KEY,
     role_id                 INTEGER     NOT NULL REFERENCES Role(id)        ON UPDATE RESTRICT ON DELETE RESTRICT,
     status_id               INTEGER     NOT NULL REFERENCES User_status(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
-    email                   VARCHAR(50) NOT NULL,
+    email                   VARCHAR(50) NOT NULL UNIQUE,
     password                VARCHAR(50) NOT NULL
 );
 
@@ -65,6 +65,6 @@ CREATE TABLE Loan (
 
 CREATE TABLE Loan_Status (
     id                      SERIAL PRIMARY KEY,
-    code                    VARCHAR(50) NOT NULL,
+    code                    VARCHAR(50) NOT NULL UNIQUE,
     name                    VARCHAR(20) NOT NULL
 );
