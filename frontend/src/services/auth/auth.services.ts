@@ -2,16 +2,29 @@ import { authApi } from './auth.api'
 
 export const authService = {
   login: async (email: string, password: string) => {
-    // MOCK
-    // const data = await authApi.mockLogin(email, password)
-    // return data
 
     // REAL
-    return await authApi.login({ email, password })
+    const response = await authApi.login({ email, password })
+
+    const user = {
+      ...response.user,
+      role: response.user.roleId === 1 ? 'admin' : 'user',
+    }
+
+    return {
+      ...response,
+      user,
+    }
   },
 
-  register: async (email: string, password: string) => {
+  register: async (email: string, password: string, roleId: number) => {
     // REAL
-    return await authApi.register({ email, password })
+    const response = await authApi.register({ email, password, roleId })
+    
+
+
+    return {
+      ...response,
+    }
   },
 }
