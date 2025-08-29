@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.*;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,5 +27,10 @@ public class AppUserService {
     public void save (AppUser user) {
         appUserRepository.save(user);
     }
+
+    public List<AppUser> getAllUsers() {
+        return appUserRepository.findAll();
+    }
+
 
 }
