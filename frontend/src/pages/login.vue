@@ -210,21 +210,41 @@
   const notificationStore = useNotificationStore()
 
   // Handle form submission with validation
-  const handleSubmit = async () => {
-    console.log('handleSubmit', loginForm)
-    try {
-      login(loginForm, {
-        onSuccess: () => {
-          router.push('/')
-        },
-        onError: error => {
+const handleSubmit = async () => {
+  try {
+    login(loginForm, {
+      onSuccess: async (data: any) => {
+        // 1. Guardar el token en localStorage
+        localStorage.setItem("auth_token", data.token)
+
+        // 2. Obtener datos del usuario con /me
+        const response = await fetch("http://localhost:8090/api/users/me", {
+          headers: {
+            Authorization: `Bearer ${data.token}`,
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error("No se pudo obtener el usuario")
+        }
+
+        const user = await response.json()
+
+        // 3. Guardar el usuario en tu store o en localStorage
+        localStorage.setItem("user_id", user.id)
+
+        // 4. Redirigir al home
+        router.push("/")
+      },
+      onError: error => {
           notificationStore.notify(error.message, 'error')
-        },
-      })
-    } catch (error) {
+      },
+    })
+  } catch (error) {
       console.error('Error submitting form:', error)
-    }
   }
+}
+
 </script>
 
 <style scoped>
