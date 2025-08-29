@@ -1,19 +1,28 @@
 package usach.hackaton.gpu.service;
 
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import usach.hackaton.gpu.config.JwtUtil;
-import usach.hackaton.gpu.dtos.RegisterRequestDTO;
-import usach.hackaton.gpu.entities.*;
-import usach.hackaton.gpu.repositories.AppUserRepository;
-import usach.hackaton.gpu.repositories.AuthFactorRepository;
-import usach.hackaton.gpu.repositories.TokenRepository;
-
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import usach.hackaton.gpu.config.JwtUtil;
+import usach.hackaton.gpu.dtos.RegisterRequestDTO;
+import usach.hackaton.gpu.entities.ActivationToken;
+import usach.hackaton.gpu.entities.AppUser;
+import usach.hackaton.gpu.entities.AuthFactor;
+import usach.hackaton.gpu.entities.AuthFactorType;
+import usach.hackaton.gpu.entities.Role;
+import usach.hackaton.gpu.entities.UserStatus;
+import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
+import usach.hackaton.gpu.repositories.AppUserRepository;
+import usach.hackaton.gpu.repositories.AuthFactorRepository;
+import usach.hackaton.gpu.repositories.TokenRepository;
 
 @Service
 public class AuthService {
@@ -61,7 +70,7 @@ public class AuthService {
 
     public void register(RegisterRequestDTO dto){
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("Email ya registrado");
+            throw new EmailAlreadyRegisteredException();
         }
 
         Role role = roleService.getByName("Usuario");
