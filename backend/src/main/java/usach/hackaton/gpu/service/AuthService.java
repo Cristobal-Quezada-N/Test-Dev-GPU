@@ -134,4 +134,8 @@ public class AuthService {
         return true;
     }
 
+    public void delete(Long id) {
+        authFactorRepository.deleteById(id);
+    }
+
 }

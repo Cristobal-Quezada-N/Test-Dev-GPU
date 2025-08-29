@@ -22,7 +22,7 @@ public class AuthFactor {
     @Enumerated(EnumType.STRING)
     private AuthFactorType type;
 
-    private boolean isUsed;
+    private boolean Used;
 
     private LocalDate creationDate;
 
