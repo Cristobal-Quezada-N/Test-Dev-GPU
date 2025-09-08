@@ -42,7 +42,7 @@ CREATE TABLE App_user (
     role_id                 INTEGER     NOT NULL REFERENCES Role(id)        ON UPDATE RESTRICT ON DELETE RESTRICT,
     status_id               INTEGER     NOT NULL REFERENCES User_status(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     email                   VARCHAR(50) NOT NULL UNIQUE,
-    password                VARCHAR(50) NOT NULL
+    password                CHAR(255)   NOT NULL
 );
 
 CREATE TABLE Auth_factor (
