@@ -17,7 +17,9 @@ public class AuthFactor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    // Many To One
+    @Column(nullable = false, name = "user_id")
+    private String userId;
 
     @Enumerated(EnumType.STRING)
     private AuthFactorType type;
@@ -27,8 +29,4 @@ public class AuthFactor {
     private LocalDate creationDate;
 
     private LocalDate expirationDate;
-
-    // Many To One
-    @Column(nullable = false, name = "user_id")
-    private String userId;
 }
