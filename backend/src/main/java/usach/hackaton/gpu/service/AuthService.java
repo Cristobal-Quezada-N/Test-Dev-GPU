@@ -86,7 +86,6 @@ public class AuthService {
 
         // Factor de registro
         AuthFactor factor = new AuthFactor();
-        factor.setName("Registro inicial");
         factor.setType(AuthFactorType.REGISTER);
         factor.setUsed(true);
         factor.setCreationDate(LocalDate.now());
