@@ -1,6 +1,10 @@
 package usach.hackaton.gpu.entities;
 
 import jakarta.persistence.*;
+
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +26,8 @@ public class AuthFactor {
     private String userId;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "type", nullable = false, columnDefinition = "auth_factor_type")
     private AuthFactorType type;
 
     private boolean Used;
