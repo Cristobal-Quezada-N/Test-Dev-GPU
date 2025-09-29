@@ -13,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import lombok.extern.slf4j.Slf4j;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.Role;
@@ -22,11 +24,11 @@ import usach.hackaton.gpu.repositories.AuthFactorRepository;
 import usach.hackaton.gpu.repositories.RoleRepository;
 import usach.hackaton.gpu.repositories.UserStatusRepository;
 
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
@@ -62,6 +64,10 @@ public class JwtFilter extends OncePerRequestFilter {
         // Header
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.debug("[JWT] Missing/invalid Authorization header: {} {}", 
+                request.getMethod(),
+                request.getRequestURI()
+            );
             filterChain.doFilter(request, response);
             return;
         }
@@ -69,6 +75,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         if (!jwtUtil.isValid(token)) {
+            log.debug("[JWT] Invalid token (signature/expiry): {} {}",
+                request.getMethod(),
+                request.getRequestURI()
+            );
             filterChain.doFilter(request, response);
             return;
         }
@@ -79,6 +89,7 @@ public class JwtFilter extends OncePerRequestFilter {
         AppUser user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
             filterChain.doFilter(request, response);
+            log.debug("[JWT] No user for email: {}", email);
             return;
         }
 
@@ -86,6 +97,7 @@ public class JwtFilter extends OncePerRequestFilter {
         UserStatus status = statusRepository.findById(user.getStatusId()).orElse(null);
         if (status == null || !"ACTIVE".equalsIgnoreCase(status.getCode())) {
             filterChain.doFilter(request, response);
+            log.debug("[JWT] Inactive/missing status for email: ", email);
             return;
         }
 
@@ -93,6 +105,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Role role = roleRepository.findById(user.getRoleId()).orElse(null);
         if (role == null) {
             filterChain.doFilter(request, response);
+            log.debug("[JWT] Missing role for email: {}", email);
             return;
         }
 
@@ -101,6 +114,7 @@ public class JwtFilter extends OncePerRequestFilter {
         boolean hasValidFactor = factors.stream().anyMatch(f -> f.getExpirationDate().isAfter(LocalDate.now()));
         if (!hasValidFactor) {
             filterChain.doFilter(request, response);
+            log.debug("[JWT] No valid AuthFactor for email: {}", email);
             return;
         }
 

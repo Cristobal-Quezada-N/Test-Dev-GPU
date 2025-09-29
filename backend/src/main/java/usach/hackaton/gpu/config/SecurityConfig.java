@@ -51,7 +51,19 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint((req, res, e)-> {
+                        res.setStatus(401);
+                        res.setContentType("application/json");
+                        res.getWriter().write("{\"error\":\"unauthenticated\",\"reason\":\"" + e.getMessage() + "\"}");
+                    })
+                    .accessDeniedHandler((req, res, e) -> {
+                        res.setStatus(403);
+                        res.setContentType("application/json");
+                        res.getWriter().write("{\"error\":\"forbidden\",\"reason\":\"" + e.getMessage() + "\"}");
+                    })
+                );
         return http.build();
     }
 
