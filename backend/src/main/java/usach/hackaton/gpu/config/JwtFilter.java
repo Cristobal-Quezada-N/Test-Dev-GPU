@@ -61,6 +61,12 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Omitir preflights
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Header
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
