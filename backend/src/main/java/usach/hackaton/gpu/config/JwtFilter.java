@@ -56,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // Omitir rutas públicas
-        if (isPublicRoute(request.getRequestURI())) {
+        if (isPublicRoute(request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -135,7 +135,8 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isPublicRoute(String uri) {
-        return uri.startsWith("/auth/");
+    private boolean isPublicRoute(HttpServletRequest request) {
+        String uri = request.getServletPath();
+        return uri.equals("/api/auth") || uri.startsWith("/api/auth/");
     }
 }
