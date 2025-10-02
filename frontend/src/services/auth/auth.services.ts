@@ -8,7 +8,6 @@ export const authService = {
 
     const user = {
       ...response.user,
-      role: response.user.roleId === 1 ? 'admin' : 'user',
     }
 
     return {
@@ -19,8 +18,8 @@ export const authService = {
 
   register: async (email: string, password: string, roleId: number) => {
     // REAL
-    const response = await authApi.register({ email, password, roleId })
-    
+    const response = await authApi.register({ email, password })
+
 
 
     return {
