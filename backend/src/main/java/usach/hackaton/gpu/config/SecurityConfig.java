@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,28 +32,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/items/createItem").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/items/getItems").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/items/updateItem/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/items/deleteItem/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/items/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/loans/getLoans").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/users/getUsers").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/users/deleteUsers/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/loans/rejectLoans/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/loans/acceptLoans/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/users/me").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/users/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/loans/createLoan").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/users/createUser").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/users/deleteUser/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/users/getUserByID/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/users/updateStatus/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/users/status").hasAnyRole("ADMIN", "USER")
-                )
+                .authorizeHttpRequests(auth -> {
+                    configurePublicEndpoints(auth);
+                    configureItemEndpoints(auth);
+                    configureLoanEndpoints(auth);
+                    configureUserEndpoints(auth);
+                })
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -70,6 +55,42 @@ public class SecurityConfig {
                     })
                 );
         return http.build();
+    }
+
+    private void configurePublicEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+        auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/api/auth/**").permitAll();
+    }
+
+    private void configureItemEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+        auth
+            .requestMatchers("/api/items/getItems").hasAnyRole("ADMIN", "USER")
+            .requestMatchers("/api/items/createItem").hasRole("ADMIN")
+            .requestMatchers("/api/items/updateItem/**").hasRole("ADMIN")
+            .requestMatchers("/api/items/deleteItem/**").hasRole("ADMIN")
+            .requestMatchers("/api/items/**").hasAnyRole("ADMIN", "USER");
+    }
+
+    private void configureLoanEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+        auth
+            .requestMatchers("/api/loans/createLoan").hasAnyRole("ADMIN", "USER")
+            .requestMatchers("/api/loans/getLoans").hasAnyRole("ADMIN", "USER")
+            .requestMatchers("/api/loans/rejectLoans/**").hasRole("ADMIN")
+            .requestMatchers("/api/loans/acceptLoans/**").hasRole("ADMIN");
+    }
+
+    private void configureUserEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+        auth
+            .requestMatchers("/api/users/me").hasAnyRole("ADMIN", "USER")
+            .requestMatchers("/api/users/createUser").hasAnyRole("ADMIN", "USER")
+            .requestMatchers("/api/users/status").hasAnyRole("ADMIN", "USER")
+            .requestMatchers("/api/users/updateStatus/**").hasRole("ADMIN")
+            .requestMatchers("/api/users/deleteUsers/**").hasRole("ADMIN")
+            .requestMatchers("/api/users/deleteUser/**").hasRole("ADMIN")
+            .requestMatchers("/api/users/getUsers").hasRole("ADMIN")
+            .requestMatchers("/api/users/getUserByID/**").hasRole("ADMIN")
+            .requestMatchers("/api/users/**").hasRole("ADMIN");
     }
 
     @Bean
