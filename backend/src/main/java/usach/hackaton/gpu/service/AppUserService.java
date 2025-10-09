@@ -1,14 +1,12 @@
 package usach.hackaton.gpu.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.*;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AppUserService {
@@ -20,13 +18,15 @@ public class AppUserService {
         this.authFactorRepository = authFactorRepository;
     }
 
-    public AppUser getByEmail (String email){
+    public AppUser getByEmail(String email) {
         Optional<AppUser> optionalAppUser = appUserRepository.findByEmail(email);
-        if (optionalAppUser.isPresent()) return optionalAppUser.get();
-        else throw new EntityNotFoundException("No se encuentra el usuario con el email: " + email);
+        if (optionalAppUser.isPresent())
+            return optionalAppUser.get();
+        else
+            throw new EntityNotFoundException("No se encuentra el usuario con el email: " + email);
     }
 
-    public void save (AppUser user) {
+    public void save(AppUser user) {
         appUserRepository.save(user);
     }
 
@@ -46,7 +46,6 @@ public class AppUserService {
         // 3. Finalmente borrar el usuario
         appUserRepository.deleteById(id);
     }
-
 
     public Optional<AppUser> getUserById(String id) {
         return appUserRepository.findById(id);

@@ -1,12 +1,11 @@
 package usach.hackaton.gpu.service;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.Item;
 import usach.hackaton.gpu.repositories.ItemRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItemService {
@@ -15,10 +14,9 @@ public class ItemService {
     private ItemRepository itemRepository;
 
     public Item saveItem(Item item) {
-        if(item.getStock() <= 0){
+        if (item.getStock() <= 0) {
             item.setAvailable(false);
-        }
-        else {
+        } else {
             item.setAvailable(item.getAvailable());
         }
 
@@ -43,10 +41,9 @@ public class ItemService {
             item.setStock(updatedItem.getStock());
             item.setAvailable(updatedItem.getAvailable());
 
-            if(updatedItem.getStock() <= 0){
+            if (updatedItem.getStock() <= 0) {
                 item.setAvailable(false);
-            }
-            else {
+            } else {
                 item.setAvailable(updatedItem.getAvailable());
             }
 

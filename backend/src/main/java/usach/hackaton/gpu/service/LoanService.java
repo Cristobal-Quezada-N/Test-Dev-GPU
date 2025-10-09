@@ -1,14 +1,13 @@
 package usach.hackaton.gpu.service;
 
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.Item;
 import usach.hackaton.gpu.entities.Loan;
 import usach.hackaton.gpu.repositories.ItemRepository;
 import usach.hackaton.gpu.repositories.LoanRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LoanService {
@@ -23,7 +22,7 @@ public class LoanService {
     public Loan saveLoan(Loan loan) {
         // Buscar el ítem relacionado
         Item item = itemRepository.findById(loan.getItemId())
-                .orElseThrow(() -> new IllegalArgumentException("Ítem no encontrado con ID: " + loan.getItemId()));
+            .orElseThrow(() -> new IllegalArgumentException("Ítem no encontrado con ID: " + loan.getItemId()));
 
         // Validar stock disponible
         if (item.getStock() <= 0) {
@@ -46,7 +45,6 @@ public class LoanService {
         // Guardar el préstamo
         return loanRepository.save(loan);
     }
-
 
     // Listar todos los préstamos
     public List<Loan> getAllLoans() {
@@ -71,7 +69,7 @@ public class LoanService {
     // Cambiar de "Recibido" (1) a "Aceptado" (2)
     public Loan acceptLoan(Long id) {
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado con ID: " + id));
+            .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado con ID: " + id));
 
         if (loan.getStatusId() != 1) {
             throw new IllegalStateException("El préstamo no está en estado 'Recibido'");
@@ -84,13 +82,13 @@ public class LoanService {
     // Cambiar de "Recibido" (1) a "Rechazado" (3)
     public Loan rejectLoan(Long id) {
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado con ID: " + id));
+            .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado con ID: " + id));
 
         if (loan.getStatusId() != 1) {
             throw new IllegalStateException("El préstamo no está en estado 'Recibido'");
         }
 
-        loan.setStatusId(3L ); // Rechazado
+        loan.setStatusId(3L); // Rechazado
         return loanRepository.save(loan);
     }
 

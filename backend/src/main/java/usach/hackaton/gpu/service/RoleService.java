@@ -1,11 +1,10 @@
 package usach.hackaton.gpu.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.repositories.RoleRepository;
-
-import java.util.Optional;
 
 @Service
 public class RoleService {
@@ -15,9 +14,11 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    Role getByName(String name){
+    Role getByName(String name) {
         Optional<Role> optionalRole = roleRepository.findByName(name);
-        if (optionalRole.isPresent()) return optionalRole.get();
-        else throw new EntityNotFoundException("No se encuentra ese rol");
+        if (optionalRole.isPresent())
+            return optionalRole.get();
+        else
+            throw new EntityNotFoundException("No se encuentra ese rol");
     }
 }

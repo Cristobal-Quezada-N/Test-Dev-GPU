@@ -14,10 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class AppUser {
     @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(updatable = false, nullable = false)
     private String id;
 
@@ -27,11 +24,11 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
-    //Many To One
+    // Many To One
     @Column(nullable = false)
     private Long roleId;
 
-    //Many To One
+    // Many To One
     @Column(nullable = false, name = "status_id")
     private Long statusId;
 }

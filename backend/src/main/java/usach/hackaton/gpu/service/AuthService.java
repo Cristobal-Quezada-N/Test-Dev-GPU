@@ -6,11 +6,9 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import usach.hackaton.gpu.config.JwtUtil;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
@@ -36,7 +34,9 @@ public class AuthService {
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
 
-    public AuthService(AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, RoleService roleService, UserStatusService userStatusService, AuthFactorRepository authFactorRepository, EmailService emailService, TokenRepository tokenRepository) {
+    public AuthService(AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
+        RoleService roleService, UserStatusService userStatusService, AuthFactorRepository authFactorRepository,
+        EmailService emailService, TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -49,7 +49,7 @@ public class AuthService {
 
     public Map<String, Object> login(String email, String password) {
         AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
+            .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Contraseña inválida");
@@ -59,16 +59,11 @@ public class AuthService {
 
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
-        response.put("user", Map.of(
-                "id", user.getId(),
-                "email", user.getEmail(),
-                "roleId", user.getRoleId()
-        ));
+        response.put("user", Map.of("id", user.getId(), "email", user.getEmail(), "roleId", user.getRoleId()));
         return response;
     }
 
-
-    public void register(RegisterRequestDTO dto){
+    public void register(RegisterRequestDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new EmailAlreadyRegisteredException();
         }
@@ -94,17 +89,14 @@ public class AuthService {
         authFactorRepository.save(factor);
 
         String token = generateToken();
-        ActivationToken activationToken = ActivationToken.builder()
-                .emailToken(token)
-                .userId(newUser.getId())
-                .expiryDate(LocalDateTime.now().plusHours(24))
-                .build();
+        ActivationToken activationToken = ActivationToken.builder().emailToken(token).userId(newUser.getId())
+            .expiryDate(LocalDateTime.now().plusHours(24)).build();
         tokenRepository.save(activationToken);
 
         String link = System.getProperty("APP_HOST") + "/api/auth/activate?token=" + token;
 
         emailService.send(newUser.getEmail(), "Activa tu cuenta",
-                "Haz click en este enlace para activar tu cuenta: " + link);
+            "Haz click en este enlace para activar tu cuenta: " + link);
     }
 
     private String generateToken() {
@@ -114,8 +106,7 @@ public class AuthService {
     }
 
     public boolean activateUser(String token) {
-        ActivationToken activationToken = tokenRepository.findByEmailToken(token)
-                .orElse(null);
+        ActivationToken activationToken = tokenRepository.findByEmailToken(token).orElse(null);
 
         if (activationToken == null) {
             return false;
@@ -128,9 +119,9 @@ public class AuthService {
         }
 
         // Activar usuario
-        AppUser user = userRepository.findById(activationToken.getUserId())
-                .orElse(null);
-        if (user == null) return false;
+        AppUser user = userRepository.findById(activationToken.getUserId()).orElse(null);
+        if (user == null)
+            return false;
 
         UserStatus activeStatus = userStatusService.getByName("Activo");
         user.setStatusId(activeStatus.getId());

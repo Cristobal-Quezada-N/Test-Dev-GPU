@@ -12,5 +12,7 @@ public class AuthFactorService {
         this.authFactorRepository = authFactorRepository;
     }
 
-    public void save (AuthFactor authFactor){ authFactorRepository.save(authFactor); }
+    public void save(AuthFactor authFactor) {
+        authFactorRepository.save(authFactor);
+    }
 }
