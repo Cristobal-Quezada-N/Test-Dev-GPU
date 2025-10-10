@@ -53,3 +53,14 @@ services:
       - db-net
     ports:
       - 5050:80
+
+# Tester de Email
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit-devcontainer
+    restart: unless-stopped
+    networks:
+      - db-net
+    ports:
+      - "1025:1025"
+      - "8025:8025"

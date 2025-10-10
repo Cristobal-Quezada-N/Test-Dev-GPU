@@ -11,4 +11,4 @@ RUN uname    -a
 RUN psql    --version
 RUN npm     --version
 RUN node    --version
-RUN java     -version
+RUN java    --version

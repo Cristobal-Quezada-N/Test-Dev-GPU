@@ -1,0 +1,7 @@
+/target/
+.settings/*
+!.settings/eclipse-java-formatter.xml
+!.settings/org.eclipse.wst.xml.core.prefs
+.classpath
+.factorypath
+.project
