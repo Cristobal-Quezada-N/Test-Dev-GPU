@@ -5,14 +5,19 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JwtUtil {
 
-    private static final String SECRET = System.getProperty("SECRET");
-    private static final Algorithm ALGORITHM = Algorithm.HMAC256(SECRET);
-    private static final String dbName = System.getProperty("DB_NAME");
+    private final Algorithm ALGORITHM;
+    private final String dbName;
+
+    public JwtUtil(@Value("${security.jwt.secret}") String secret, @Value("${DB_NAME}") String dbName) {
+        this.ALGORITHM = Algorithm.HMAC256(secret);
+        this.dbName = dbName;
+    }
 
     // Este metodo crea un JWT con el nombre de usuario
     public String create(String email) {
