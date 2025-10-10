@@ -1,4 +1,11 @@
 # Directorios a ignorar
+.DS_Store
+.idea/
 .vscode/
 .env*
 !.env.dev*
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
