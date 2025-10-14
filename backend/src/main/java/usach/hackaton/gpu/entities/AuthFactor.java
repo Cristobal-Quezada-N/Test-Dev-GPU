@@ -9,7 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcType;
@@ -18,8 +20,9 @@ import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 @Entity
 @Table(name = "auth_factor")
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@Builder
 public class AuthFactor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
