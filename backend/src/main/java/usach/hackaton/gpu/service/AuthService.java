@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,11 @@ public class AuthService {
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
 
+    private final String baseUrl;
+
     public AuthService(AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
         RoleService roleService, UserStatusService userStatusService, AuthFactorRepository authFactorRepository,
-        EmailService emailService, TokenRepository tokenRepository) {
+        EmailService emailService, TokenRepository tokenRepository, @Value("${app.url}") String baseUrl) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
@@ -45,6 +48,7 @@ public class AuthService {
         this.authFactorRepository = authFactorRepository;
         this.emailService = emailService;
         this.tokenRepository = tokenRepository;
+        this.baseUrl = baseUrl;
     }
 
     public Map<String, Object> login(String email, String password) {
@@ -93,7 +97,7 @@ public class AuthService {
             .expiryDate(LocalDateTime.now().plusHours(24)).build();
         tokenRepository.save(activationToken);
 
-        String link = System.getProperty("APP_HOST") + "/api/auth/activate?token=" + token;
+        String link = baseUrl + "/api/auth/activate?token=" + token;
 
         emailService.send(newUser.getEmail(), "Activa tu cuenta",
             "Haz click en este enlace para activar tu cuenta: " + link);

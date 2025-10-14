@@ -1,2 +1,4 @@
 # Directorios a ignorar
 .vscode/
+.env*
+!.env.dev*
