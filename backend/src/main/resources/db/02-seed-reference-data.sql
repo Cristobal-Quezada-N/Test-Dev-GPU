@@ -6,9 +6,11 @@ INSERT INTO user_status (id, code, name) VALUES
 
 -- ========== Loan Status ==========
 INSERT INTO loan_status (id, code, name) VALUES
-(1, 'RECEIVED', 'Recibido'),
-(2, 'ACCEPTED', 'Aceptado'),
-(3, 'DENIED',   'Denegado');
+(1, 'ACCEPTED', 'Aceptado'),
+(2, 'DENIED',   'Denegado'),
+(3, 'RECEIVED', 'Recibido'),
+(4, 'RETURNED', 'Retornado'),
+(5, 'OVERDUE',  'Atrasado');
 
 -- ========== Roles ==========
 INSERT INTO role (id, code, name) VALUES
