@@ -14,3 +14,9 @@ INSERT INTO Loan_Status (id, code, name) VALUES
 INSERT INTO Role (id, code, name) VALUES
 (1, 'ADMIN', 'Administrador'),
 (2, 'USER', 'Usuario');
+
+-- ========== Auth Factor Type ==========
+INSERT INTO auth_factor_type (id, code, name) VALUES
+(1, 'TOTP', 'TOTP'),
+(2, 'REGISTER', 'Registro'),
+(3, 'LOAN', 'Prestamo');

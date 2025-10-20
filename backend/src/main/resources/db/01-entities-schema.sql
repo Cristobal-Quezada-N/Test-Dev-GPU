@@ -27,7 +27,7 @@ CREATE TABLE App_user (
 CREATE TABLE Auth_factor (
     id                      SERIAL PRIMARY KEY,
     user_id                 VARCHAR(50) NOT NULL REFERENCES App_user(id)    ON UPDATE RESTRICT ON DELETE RESTRICT,
-    type auth_factor_type   NOT NULL,
+    type_id                 INTEGER NOT NULL  REFERENCES auth_factor_type(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     used                    BOOLEAN NOT NULL,
     creation_date           DATE    NOT NULL,
     expiration_date         DATE    NOT NULL
