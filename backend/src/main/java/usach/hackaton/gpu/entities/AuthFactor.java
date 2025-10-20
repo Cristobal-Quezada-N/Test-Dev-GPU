@@ -14,8 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 @Entity
 @Table(name = "auth_factor")
@@ -33,13 +31,15 @@ public class AuthFactor {
     private String userId;
 
     @Enumerated(EnumType.STRING)
-    @JdbcType(PostgreSQLEnumJdbcType.class)
-    @Column(name = "type", nullable = false, columnDefinition = "auth_factor_type")
+    @Column(nullable = false)
     private AuthFactorType type;
 
-    private boolean Used;
+    @Column(nullable = false)
+    private boolean used;
 
+    @Column(name = "creation_date", nullable = false)
     private LocalDate creationDate;
 
+    @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
 }
