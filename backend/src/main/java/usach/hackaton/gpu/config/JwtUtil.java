@@ -14,7 +14,7 @@ public class JwtUtil {
     private final Algorithm ALGORITHM;
     private final String dbName;
 
-    public JwtUtil(@Value("${security.jwt.secret}") String secret, @Value("${DB_NAME}") String dbName) {
+    public JwtUtil(@Value("${security.jwt.secret}") String secret, @Value("${DB_NAME:no-database}") String dbName) {
         this.ALGORITHM = Algorithm.HMAC256(secret);
         this.dbName = dbName;
     }
