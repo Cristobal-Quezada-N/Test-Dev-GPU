@@ -1,7 +1,6 @@
 package usach.hackaton.gpu.service;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
@@ -87,14 +86,17 @@ public class AuthService {
         AuthFactor factor = new AuthFactor();
         factor.setType(AuthFactorType.REGISTER);
         factor.setUsed(true);
-        factor.setCreationDate(LocalDate.now());
-        factor.setExpirationDate(LocalDate.now().plusYears(1));
+        factor.setCreationDate(LocalDateTime.now());
+        factor.setExpirationDate(LocalDateTime.now().plusYears(1));
         factor.setUserId(newUser.getId());
         authFactorRepository.save(factor);
 
         String token = generateToken();
-        ActivationToken activationToken = ActivationToken.builder().emailToken(token).userId(newUser.getId())
-            .expiryDate(LocalDateTime.now().plusHours(24)).build();
+        ActivationToken activationToken = ActivationToken.builder()
+            .email(token)
+            .userId(newUser.getId())
+            .expirationDate(LocalDateTime.now().plusHours(24))
+            .build();
         tokenRepository.save(activationToken);
 
         String link = baseUrl + "/api/auth/activate?token=" + token;
@@ -110,14 +112,14 @@ public class AuthService {
     }
 
     public boolean activateUser(String token) {
-        ActivationToken activationToken = tokenRepository.findByEmailToken(token).orElse(null);
+        ActivationToken activationToken = tokenRepository.findByEmail(token).orElse(null);
 
         if (activationToken == null) {
             return false;
         }
 
         // Validar expiración
-        if (activationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        if (activationToken.getExpirationDate().isBefore(LocalDateTime.now())) {
             tokenRepository.delete(activationToken);
             return false;
         }

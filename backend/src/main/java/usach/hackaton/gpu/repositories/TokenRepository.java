@@ -7,5 +7,5 @@ import usach.hackaton.gpu.entities.ActivationToken;
 
 @Repository
 public interface TokenRepository extends JpaRepository<ActivationToken, Long> {
-    Optional<ActivationToken> findByEmailToken(String token);
+    Optional<ActivationToken> findByEmail(String token);
 }

@@ -24,12 +24,12 @@ public class ActivationToken {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String emailToken;
+    private String email;
 
     // Many To One
     @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(nullable = false)
-    private LocalDateTime expiryDate;
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDateTime expirationDate;
 }
