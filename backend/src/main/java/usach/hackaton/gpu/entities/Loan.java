@@ -33,9 +33,9 @@ public class Loan {
     @Column(name = "status_id", nullable = false)
     private Long statusId;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
+    @Column(name = "creation_date", nullable = false)
+    private LocalDateTime creationDate;
 
-    @Column(nullable = false)
-    private LocalDateTime deadline;
+    @Column(name = "expiration_date", nullable = false)
+    private LocalDateTime expirationDate;
 }
