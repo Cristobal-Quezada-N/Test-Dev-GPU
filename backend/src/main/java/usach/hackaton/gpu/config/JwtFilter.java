@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +106,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Validar AuthFactor vigente (opcional)
         List<AuthFactor> factors = authFactorRepository.findByUserId(user.getId());
-        boolean hasValidFactor = factors.stream().anyMatch(f -> f.getExpirationDate().isAfter(LocalDate.now()));
+        boolean hasValidFactor = factors.stream().anyMatch(f -> f.getExpirationDate().isAfter(LocalDateTime.now()));
         if (!hasValidFactor) {
             filterChain.doFilter(request, response);
             log.debug("[JWT] No valid AuthFactor for email: {}", email);

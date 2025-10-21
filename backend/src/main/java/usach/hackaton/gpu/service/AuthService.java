@@ -15,6 +15,7 @@ import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.AuthFactorType;
+import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
@@ -31,6 +32,7 @@ public class AuthService {
     private final RoleService roleService;
     private final UserStatusService userStatusService;
     private final AuthFactorRepository authFactorRepository;
+    private final AuthFactorTypeService authFactorTypeService;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
 
@@ -38,13 +40,15 @@ public class AuthService {
 
     public AuthService(AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
         RoleService roleService, UserStatusService userStatusService, AuthFactorRepository authFactorRepository,
-        EmailService emailService, TokenRepository tokenRepository, @Value("${app.url}") String baseUrl) {
+        AuthFactorTypeService authFactorTypeService, EmailService emailService, TokenRepository tokenRepository,
+        @Value("${app.url}") String baseUrl) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.roleService = roleService;
         this.userStatusService = userStatusService;
         this.authFactorRepository = authFactorRepository;
+        this.authFactorTypeService = authFactorTypeService;
         this.emailService = emailService;
         this.tokenRepository = tokenRepository;
         this.baseUrl = baseUrl;
@@ -83,12 +87,14 @@ public class AuthService {
         userRepository.save(newUser);
 
         // Factor de registro
-        AuthFactor factor = new AuthFactor();
-        factor.setType(AuthFactorType.REGISTER);
-        factor.setUsed(true);
-        factor.setCreationDate(LocalDateTime.now());
-        factor.setExpirationDate(LocalDateTime.now().plusYears(1));
-        factor.setUserId(newUser.getId());
+        AuthFactorTypeLookup registerType = authFactorTypeService.getByEnum(AuthFactorType.REGISTER);
+        AuthFactor factor = AuthFactor.builder()
+            .userId(newUser.getId())
+            .typeId(registerType)
+            .used(true)
+            .creationDate(LocalDateTime.now())
+            .expirationDate(LocalDateTime.now().plusYears(1))
+            .build();
         authFactorRepository.save(factor);
 
         String token = generateToken();
