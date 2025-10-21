@@ -25,8 +25,8 @@ CREATE TABLE auth_factor (
     user_id         VARCHAR(50) NOT NULL REFERENCES app_user(id)         ON UPDATE RESTRICT ON DELETE RESTRICT,
     type_id         INTEGER     NOT NULL REFERENCES auth_factor_type(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     used            BOOLEAN     NOT NULL,
-    creation_date   DATE        NOT NULL,
-    expiration_date DATE        NOT NULL
+    creation_date   TIMESTAMP   WITH TIME ZONE NOT NULL,
+    expiration_date TIMESTAMP   WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE loan (
@@ -34,6 +34,6 @@ CREATE TABLE loan (
     user_id   VARCHAR(50) NOT NULL REFERENCES app_user(id)    ON UPDATE RESTRICT ON DELETE RESTRICT,
     item_id   INTEGER     NOT NULL REFERENCES item(id)        ON UPDATE RESTRICT ON DELETE RESTRICT,
     status_id INTEGER     NOT NULL REFERENCES user_status(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
-    date      DATE        NOT NULL,
-    deadline  DATE        NOT NULL
+    date      TIMESTAMP   WITH TIME ZONE NOT NULL,
+    deadline  TIMESTAMP   WITH TIME ZONE NOT NULL
 );
