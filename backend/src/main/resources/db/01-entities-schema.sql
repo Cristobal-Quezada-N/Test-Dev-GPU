@@ -37,3 +37,10 @@ CREATE TABLE loan (
     creation_date     TIMESTAMP   WITH TIME ZONE NOT NULL,
     expiration_date   TIMESTAMP   WITH TIME ZONE NOT NULL
 );
+
+CREATE TABLE activation_token (
+    id                SERIAL PRIMARY KEY,
+    email             VARCHAR(50) NOT NULL UNIQUE,
+    user_id           VARCHAR(50) NOT NULL REFERENCES app_user(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    expiration_date   TIMESTAMP   WITH TIME ZONE NOT NULL
+);
