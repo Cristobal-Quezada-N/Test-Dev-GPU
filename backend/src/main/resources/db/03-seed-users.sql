@@ -1,4 +1,4 @@
-INSERT INTO App_user (id, role_id, status_id, email, password) VALUES
+INSERT INTO app_user (id, role_id, status_id, email, password) VALUES
 
   -- ========== Admin User ==========
   --     email: admin@demo.test
