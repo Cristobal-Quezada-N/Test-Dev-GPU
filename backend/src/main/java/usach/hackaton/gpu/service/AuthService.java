@@ -79,11 +79,12 @@ public class AuthService {
 
         UserStatus userStatus = userStatusService.getByCode("PENDING");
 
-        AppUser newUser = new AppUser();
-        newUser.setEmail(dto.getEmail());
-        newUser.setPassword(passwordEncoder.encode(dto.getPassword()));
-        newUser.setRoleId(role.getId());
-        newUser.setStatusId(userStatus.getId());
+        AppUser newUser = AppUser.builder()
+            .email(dto.getEmail())
+            .password(passwordEncoder.encode(dto.getPassword()))
+            .roleId(role.getId())
+            .statusId(userStatus.getId())
+            .build();
         userRepository.save(newUser);
 
         // Factor de registro
