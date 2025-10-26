@@ -2,15 +2,15 @@ package usach.hackaton.gpu.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @Table(name = "app_user")
@@ -20,10 +20,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Builder
 public class AppUser {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @UuidGenerator
     @Column(updatable = false, nullable = false)
-    private String id;
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String email;

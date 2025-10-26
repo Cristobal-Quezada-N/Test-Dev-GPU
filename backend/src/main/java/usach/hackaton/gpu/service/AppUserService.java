@@ -3,6 +3,7 @@ package usach.hackaton.gpu.service;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.*;
 import usach.hackaton.gpu.repositories.AppUserRepository;
@@ -34,9 +35,9 @@ public class AppUserService {
         return appUserRepository.findAll();
     }
 
-    public void deleteUserAndAuthFactors(String id) {
-        // 1. Buscar factores de autenticación por userId (conversión Long → String)
-        List<AuthFactor> factors = authFactorRepository.findByUserId(String.valueOf(id));
+    public void deleteUserAndAuthFactors(UUID id) {
+        // 1. Buscar factores de autenticación por userId
+        List<AuthFactor> factors = authFactorRepository.findByUserId(id);
 
         // 2. Borrar todos los factores asociados
         if (!factors.isEmpty()) {
@@ -47,11 +48,11 @@ public class AppUserService {
         appUserRepository.deleteById(id);
     }
 
-    public Optional<AppUser> getUserById(String id) {
+    public Optional<AppUser> getUserById(UUID id) {
         return appUserRepository.findById(id);
     }
 
-    public AppUser updateStatus(String id, Long statusId) {
+    public AppUser updateStatus(UUID id, Long statusId) {
         Optional<AppUser> optionalUser = appUserRepository.findById(id);
 
         if (optionalUser.isEmpty()) {

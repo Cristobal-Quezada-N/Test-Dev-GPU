@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -56,19 +57,19 @@ public class AppUserController {
     }
 
     @GetMapping("/getUserById/{id}")
-    public ResponseEntity<AppUser> getUserById(@PathVariable String id) {
+    public ResponseEntity<AppUser> getUserById(@PathVariable UUID id) {
         return appUserService.getUserById(id).map(ResponseEntity::ok)
             .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @DeleteMapping("/deleteUser/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         appUserService.deleteUserAndAuthFactors(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/updateStatus/{id}")
-    public ResponseEntity<AppUser> updateUserStatus(@PathVariable String id, @RequestBody Map<String, Long> body) {
+    public ResponseEntity<AppUser> updateUserStatus(@PathVariable UUID id, @RequestBody Map<String, Long> body) {
 
         Long statusId = body.get("statusId");
         AppUser updatedUser = appUserService.updateStatus(id, statusId);
