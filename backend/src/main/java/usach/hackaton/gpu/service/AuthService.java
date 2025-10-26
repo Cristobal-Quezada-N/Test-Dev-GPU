@@ -25,7 +25,6 @@ import usach.hackaton.gpu.repositories.TokenRepository;
 
 @Service
 public class AuthService {
-
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -149,5 +148,4 @@ public class AuthService {
     public void delete(Long id) {
         authFactorRepository.deleteById(id);
     }
-
 }

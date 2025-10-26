@@ -24,7 +24,6 @@ public class JwtUtil {
         return JWT.create().withSubject(email).withIssuer(dbName).withIssuedAt(new Date())
             // Modifica este valor para cambiar la duración del token
             .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(60))).sign(ALGORITHM);
-
     }
 
     // Este metodo verifica si un JWT es válido

@@ -28,5 +28,4 @@ public class AuthFactorTypeLookup {
 
     @Column(nullable = false)
     private String name;
-
 }

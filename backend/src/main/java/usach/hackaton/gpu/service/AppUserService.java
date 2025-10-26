@@ -63,5 +63,4 @@ public class AppUserService {
         user.setStatusId(statusId); // 👈 asegúrate de que AppUser tenga este campo y su setter
         return appUserRepository.save(user);
     }
-
 }

@@ -91,5 +91,4 @@ public class LoanService {
         loan.setStatusId(3L); // Rechazado
         return loanRepository.save(loan);
     }
-
 }
