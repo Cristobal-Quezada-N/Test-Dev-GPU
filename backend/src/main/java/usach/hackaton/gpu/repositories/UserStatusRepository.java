@@ -7,5 +7,5 @@ import usach.hackaton.gpu.entities.UserStatus;
 
 @Repository
 public interface UserStatusRepository extends JpaRepository<UserStatus, Long> {
-    Optional<UserStatus> getByName(String name);
+    Optional<UserStatus> getByCode(String code);
 }

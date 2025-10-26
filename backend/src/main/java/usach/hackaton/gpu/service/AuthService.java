@@ -75,9 +75,9 @@ public class AuthService {
             throw new EmailAlreadyRegisteredException();
         }
 
-        Role role = roleService.getByName("Usuario");
+        Role role = roleService.getByCode("USER");
 
-        UserStatus userStatus = userStatusService.getByName("Pendiente");
+        UserStatus userStatus = userStatusService.getByCode("PENDING");
 
         AppUser newUser = new AppUser();
         newUser.setEmail(dto.getEmail());
@@ -135,7 +135,7 @@ public class AuthService {
         if (user == null)
             return false;
 
-        UserStatus activeStatus = userStatusService.getByName("Activo");
+        UserStatus activeStatus = userStatusService.getByCode("ACTIVE");
         user.setStatusId(activeStatus.getId());
         userRepository.save(user);
 

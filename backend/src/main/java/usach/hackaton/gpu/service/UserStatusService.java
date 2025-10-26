@@ -14,11 +14,11 @@ public class UserStatusService {
         this.userStatusRepository = userStatusRepository;
     }
 
-    public UserStatus getByName(String name) {
-        Optional<UserStatus> optionalUserStatus = userStatusRepository.getByName(name);
+    public UserStatus getByCode(String code) {
+        Optional<UserStatus> optionalUserStatus = userStatusRepository.getByCode(code);
         if (optionalUserStatus.isPresent())
             return optionalUserStatus.get();
         else
-            throw new EntityNotFoundException("No existe ese estado con ese nombre: " + name);
+            throw new EntityNotFoundException("No existe ese estado de usuario tipo: " + code);
     }
 }

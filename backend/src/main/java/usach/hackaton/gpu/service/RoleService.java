@@ -14,8 +14,8 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    Role getByName(String name) {
-        Optional<Role> optionalRole = roleRepository.findByName(name);
+    Role getByCode(String code) {
+        Optional<Role> optionalRole = roleRepository.findByCode(code);
         if (optionalRole.isPresent())
             return optionalRole.get();
         else
