@@ -14,6 +14,11 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
+    public Role getById(Long id) {
+        return roleRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("No se encontro `Role` con id: " + id));
+    }
+
     Role getByCode(String code) {
         Optional<Role> optionalRole = roleRepository.findByCode(code);
         if (optionalRole.isPresent())
