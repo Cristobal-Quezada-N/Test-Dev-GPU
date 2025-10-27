@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ import usach.hackaton.gpu.repositories.AuthFactorRepository;
 import usach.hackaton.gpu.repositories.TokenRepository;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -35,23 +37,8 @@ public class AuthService {
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
 
-    private final String baseUrl;
-
-    public AuthService(AppUserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil,
-        RoleService roleService, UserStatusService userStatusService, AuthFactorRepository authFactorRepository,
-        AuthFactorTypeService authFactorTypeService, EmailService emailService, TokenRepository tokenRepository,
-        @Value("${app.url}") String baseUrl) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;
-        this.roleService = roleService;
-        this.userStatusService = userStatusService;
-        this.authFactorRepository = authFactorRepository;
-        this.authFactorTypeService = authFactorTypeService;
-        this.emailService = emailService;
-        this.tokenRepository = tokenRepository;
-        this.baseUrl = baseUrl;
-    }
+    @Value("${app.url}")
+    private String baseUrl;
 
     public Map<String, Object> login(String email, String password) {
         AppUser user = userRepository.findByEmail(email)
