@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import usach.hackaton.gpu.config.JwtUtil;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
@@ -26,6 +27,7 @@ import usach.hackaton.gpu.repositories.TokenRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -56,6 +58,7 @@ public class AuthService {
         return response;
     }
 
+    @Transactional
     public void register(RegisterRequestDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new EmailAlreadyRegisteredException();
@@ -104,6 +107,7 @@ public class AuthService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
+    @Transactional
     public boolean activateUser(String token) {
         ActivationToken activationToken = tokenRepository.findByEmail(token).orElse(null);
 
@@ -132,6 +136,7 @@ public class AuthService {
         return true;
     }
 
+    @Transactional
     public void delete(Long id) {
         authFactorRepository.deleteById(id);
     }
