@@ -14,6 +14,11 @@ public class UserStatusService {
         this.userStatusRepository = userStatusRepository;
     }
 
+    public UserStatus getById(Long id) {
+        return userStatusRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("No se encontro `UserStatus` con id: " + id));
+    }
+
     public UserStatus getByCode(String code) {
         Optional<UserStatus> optionalUserStatus = userStatusRepository.getByCode(code);
         if (optionalUserStatus.isPresent())
