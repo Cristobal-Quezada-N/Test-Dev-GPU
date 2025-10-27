@@ -1,9 +1,10 @@
 package usach.hackaton.gpu.dtos;
 
-import lombok.Data;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@Data
-public class LoginDTO {
-    private String email;
-    private String password;
+public record LoginRequest(
+    @NotBlank(message = "El correo electrónico es requerido") @Email(message = "El correo electrónico debe ser una dirección válida") String email,
+    @NotBlank(message = "La contraseña es requerida") @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres") String password) {
 }
