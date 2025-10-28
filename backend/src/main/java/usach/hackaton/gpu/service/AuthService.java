@@ -50,8 +50,20 @@ public class AuthService {
             throw new BadCredentialsException("Usuario o contraseña incorrectos");
         }
 
-        final String token = jwtUtil.create(user.getEmail());
         final UserStatus userStatus = userStatusService.getById(user.getStatusId());
+
+        if (!"ACTIVE".equals(userStatus.getCode())) {
+            if ("PENDING".equals(userStatus.getCode())) {
+                throw new BadCredentialsException("Tu cuenta no está verificada, por favor, verificala");
+            }
+
+            if ("BANNED".equals(userStatus.getCode())) {
+                throw new BadCredentialsException("Tu cuenta esta bloqueada. Contacta al administrador");
+            }
+            throw new BadCredentialsException("Estado de cuenta inválido. Contacta al administrador");
+        }
+
+        final String token = jwtUtil.create(user.getEmail());
         final Role role = roleService.getById(user.getRoleId());
         return new LoginResponse(user.getId().toString(), user.getEmail(), userStatus.getCode(), role.getCode(), token);
     }
