@@ -47,7 +47,7 @@ public class AuthController {
             return ResponseEntity.ok("Cuenta activada correctamente. Ya puedes iniciar sesión.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Token inválido o expirado. No se pudo activar la cuenta.");
+                .body("Token inválido o expirado. No se pudo activar la cuenta.");
         }
     }
 }
