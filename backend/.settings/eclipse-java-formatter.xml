@@ -65,7 +65,29 @@
         <setting
             id="org.eclipse.jdt.core.formatter.insert_new_line_before_finally_in_try_statement"
             value="do not insert" />
+        <setting
+            id="org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_lambda"
+            value="insert" />
+        <setting
+            id="org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_switch"
+            value="true" />
+        <setting
+            id="org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_cases"
+            value="true" />
+        <!-- Keep empty block braces on the same line -->
+        <setting
+            id="org.eclipse.jdt.core.formatter.keep_empty_lambda_body_on_one_line"
+            value="true" />
+        <setting
+            id="org.eclipse.jdt.core.formatter.keep_empty_block_on_one_line"
+            value="true" />
+        <setting
+            id="org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_block"
+            value="insert" />
 
+        <setting
+            id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_invocation"
+            value="separate_lines_if_wrapped" />
         <!-- Spaces around operators and commas -->
         <setting
             id="org.eclipse.jdt.core.formatter.insert_space_around_assignment_operator"
