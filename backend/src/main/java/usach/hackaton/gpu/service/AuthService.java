@@ -16,10 +16,10 @@ import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
-import usach.hackaton.gpu.entities.AuthFactorType;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
+import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
 import usach.hackaton.gpu.repositories.AppUserRepository;
@@ -88,7 +88,7 @@ public class AuthService {
         userRepository.save(newUser);
 
         // Factor de registro
-        AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorType.REGISTER);
+        AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorCode.REGISTER);
         AuthFactor factor = AuthFactor.builder()
             .userId(newUser.getId())
             .typeId(registerType)

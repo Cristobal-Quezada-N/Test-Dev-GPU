@@ -2,8 +2,8 @@ package usach.hackaton.gpu.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import usach.hackaton.gpu.entities.AuthFactorType;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
+import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.repositories.AuthFactorTypeLookupRepository;
 
 @Service
@@ -12,7 +12,7 @@ public class AuthFactorTypeLookupService {
 
     private final AuthFactorTypeLookupRepository repository;
 
-    public AuthFactorTypeLookup getByCode(AuthFactorType code) {
+    public AuthFactorTypeLookup getByCode(AuthFactorCode code) {
         final String codeString = code.name();
         return repository.findByCode(codeString)
             .orElseThrow(() -> new IllegalStateException(
