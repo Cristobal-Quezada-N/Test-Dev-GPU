@@ -3,14 +3,12 @@ package usach.hackaton.gpu.service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import usach.hackaton.gpu.config.JwtUtil;
 import usach.hackaton.gpu.dtos.LoginRequest;
 import usach.hackaton.gpu.dtos.LoginResponse;
@@ -56,16 +54,14 @@ public class AuthService {
         }
 
         final UserStatus userStatus = userStatusService.getById(user.getStatusId());
+        final UserStatusCode statusCode = UserStatusCode.valueOf(userStatus.getCode());
 
-        if (!UserStatusCode.ACTIVE.name().equals(userStatus.getCode())) {
-            if (UserStatusCode.PENDING.name().equals(userStatus.getCode())) {
-                throw new AccountNotVerificatedException();
+        switch (statusCode) {
+            case ACTIVE -> {
             }
-
-            if (UserStatusCode.BANNED.name().equals(userStatus.getCode())) {
-                throw new AccountBannedException();
-            }
-            throw new BadCredentialsException("Estado de cuenta inválido. Contacta al administrador");
+            case PENDING -> throw new AccountNotVerificatedException();
+            case BANNED -> throw new AccountBannedException();
+            default -> throw new BadCredentialsException("Estado de cuenta inválido. Contacta al administrador");
         }
 
         final String token = jwtUtil.create(user.getEmail());
@@ -73,7 +69,7 @@ public class AuthService {
         return new LoginResponse(
             user.getId().toString(),
             user.getEmail(),
-            userStatus.getCode(),
+            statusCode.name(),
             role.getCode(),
             token
         );
