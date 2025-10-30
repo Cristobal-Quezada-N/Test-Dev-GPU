@@ -23,4 +23,22 @@ public class ApiExceptionHandler {
         body.put("code", "EMAIL_TAKEN");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
+
+    // Account Banned: 403
+    @ExceptionHandler(AccountBannedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccountBanned(AccountBannedException exception) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", exception.getMessage());
+        body.put("code", "ACCOUNT_BANNED");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+
+    // Account Banned: 403
+    @ExceptionHandler(AccountNotVerificatedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccountNotVerificated(AccountNotVerificatedException exception) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", exception.getMessage());
+        body.put("code", "ACCOUNT_NOT_VERIFICATED");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
 }

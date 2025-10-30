@@ -3,12 +3,14 @@ package usach.hackaton.gpu.service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import usach.hackaton.gpu.config.JwtUtil;
 import usach.hackaton.gpu.dtos.LoginRequest;
 import usach.hackaton.gpu.dtos.LoginResponse;
@@ -21,6 +23,8 @@ import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.enums.UserStatusCode;
+import usach.hackaton.gpu.exception.AccountBannedException;
+import usach.hackaton.gpu.exception.AccountNotVerificatedException;
 import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
@@ -55,11 +59,11 @@ public class AuthService {
 
         if (!UserStatusCode.ACTIVE.name().equals(userStatus.getCode())) {
             if (UserStatusCode.PENDING.name().equals(userStatus.getCode())) {
-                throw new BadCredentialsException("Tu cuenta no está verificada, por favor, verificala");
+                throw new AccountNotVerificatedException();
             }
 
             if (UserStatusCode.BANNED.name().equals(userStatus.getCode())) {
-                throw new BadCredentialsException("Tu cuenta esta bloqueada. Contacta al administrador");
+                throw new AccountBannedException();
             }
             throw new BadCredentialsException("Estado de cuenta inválido. Contacta al administrador");
         }
