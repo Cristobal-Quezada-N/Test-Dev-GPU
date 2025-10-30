@@ -1,6 +1,9 @@
 package usach.hackaton.gpu.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -8,10 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.service.AppUserService;
 import usach.hackaton.gpu.service.AuthService;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -58,9 +57,8 @@ public class AppUserController {
 
     @GetMapping("/getUserById/{id}")
     public ResponseEntity<AppUser> getUserById(@PathVariable String id) {
-        return appUserService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return appUserService.getUserById(id).map(ResponseEntity::ok)
+            .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @DeleteMapping("/deleteUser/{id}")
@@ -70,9 +68,7 @@ public class AppUserController {
     }
 
     @PutMapping("/updateStatus/{id}")
-    public ResponseEntity<AppUser> updateUserStatus(
-            @PathVariable String id,
-            @RequestBody Map<String, Long> body) {
+    public ResponseEntity<AppUser> updateUserStatus(@PathVariable String id, @RequestBody Map<String, Long> body) {
 
         Long statusId = body.get("statusId");
         AppUser updatedUser = appUserService.updateStatus(id, statusId);

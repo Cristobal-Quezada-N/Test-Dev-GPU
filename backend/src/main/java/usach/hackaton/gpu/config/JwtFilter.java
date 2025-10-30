@@ -4,6 +4,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
@@ -13,8 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import lombok.extern.slf4j.Slf4j;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.Role;
@@ -23,10 +25,6 @@ import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 import usach.hackaton.gpu.repositories.RoleRepository;
 import usach.hackaton.gpu.repositories.UserStatusRepository;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -38,11 +36,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final AuthFactorRepository authFactorRepository;
 
     @Autowired
-    public JwtFilter(JwtUtil jwtUtil,
-                     AppUserRepository userRepository,
-                     RoleRepository roleRepository,
-                     UserStatusRepository statusRepository,
-                     AuthFactorRepository authFactorRepository) {
+    public JwtFilter(JwtUtil jwtUtil, AppUserRepository userRepository, RoleRepository roleRepository,
+        UserStatusRepository statusRepository, AuthFactorRepository authFactorRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -51,9 +46,8 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // Omitir rutas públicas
         if (isPublicRoute(request)) {
@@ -70,10 +64,8 @@ public class JwtFilter extends OncePerRequestFilter {
         // Header
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.debug("[JWT] Missing/invalid Authorization header: {} {}", 
-                request.getMethod(),
-                request.getRequestURI()
-            );
+            log.debug("[JWT] Missing/invalid Authorization header: {} {}", request.getMethod(),
+                request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -81,10 +73,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         if (!jwtUtil.isValid(token)) {
-            log.debug("[JWT] Invalid token (signature/expiry): {} {}",
-                request.getMethod(),
-                request.getRequestURI()
-            );
+            log.debug("[JWT] Invalid token (signature/expiry): {} {}", request.getMethod(), request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -127,8 +116,8 @@ public class JwtFilter extends OncePerRequestFilter {
         // Construir authorities
         var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(user.getEmail(), null, authorities);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            user.getEmail(), null, authorities);
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

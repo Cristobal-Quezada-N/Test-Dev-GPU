@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import usach.hackaton.gpu.entities.Item;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
 }

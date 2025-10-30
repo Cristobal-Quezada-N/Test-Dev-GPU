@@ -1,12 +1,11 @@
 package usach.hackaton.gpu.controller;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usach.hackaton.gpu.entities.Loan;
 import usach.hackaton.gpu.service.LoanService;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/loans")
@@ -32,9 +31,7 @@ public class LoanController {
     // Buscar préstamo por ID
     @GetMapping("/getById/{id}")
     public ResponseEntity<Loan> getLoanById(@PathVariable Long id) {
-        return loanService.getLoanById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return loanService.getLoanById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     // Eliminar préstamo por ID

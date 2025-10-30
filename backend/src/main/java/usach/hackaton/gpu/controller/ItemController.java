@@ -1,13 +1,12 @@
 package usach.hackaton.gpu.controller;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import usach.hackaton.gpu.entities.Item;
 import usach.hackaton.gpu.service.ItemService;
-
-import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -30,9 +29,7 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Item> getItemById(@PathVariable Long id) {
-        return itemService.getItemById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return itemService.getItemById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/deleteItem/{id}")
@@ -43,8 +40,7 @@ public class ItemController {
 
     @PutMapping("/updateItem/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem) {
-        return itemService.updateItem(id, updatedItem)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return itemService.updateItem(id, updatedItem).map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 }
