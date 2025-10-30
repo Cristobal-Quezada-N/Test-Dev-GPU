@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import usach.hackaton.gpu.dtos.LoginRequest;
+import usach.hackaton.gpu.dtos.LoginResponse;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.service.AuthService;
 
@@ -34,8 +35,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
-        Map<String, Object> response = authService.login(loginRequest);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        LoginResponse response = authService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
 

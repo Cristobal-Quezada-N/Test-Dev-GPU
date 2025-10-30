@@ -3,8 +3,6 @@ package usach.hackaton.gpu.service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usach.hackaton.gpu.config.JwtUtil;
 import usach.hackaton.gpu.dtos.LoginRequest;
+import usach.hackaton.gpu.dtos.LoginResponse;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.AppUser;
@@ -43,7 +42,7 @@ public class AuthService {
     @Value("${app.url}")
     private String baseUrl;
 
-    public Map<String, Object> login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
         AppUser user = userRepository.findByEmail(loginRequest.email())
             .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
 
@@ -51,12 +50,10 @@ public class AuthService {
             throw new BadCredentialsException("Contraseña inválida");
         }
 
-        String token = jwtUtil.create(user.getEmail());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", Map.of("id", user.getId(), "email", user.getEmail(), "roleId", user.getRoleId()));
-        return response;
+        final String token = jwtUtil.create(user.getEmail());
+        final UserStatus userStatus = userStatusService.getById(user.getStatusId());
+        final Role role = roleService.getById(user.getRoleId());
+        return new LoginResponse(user.getId().toString(), user.getEmail(), userStatus.getCode(), role.getCode(), token);
     }
 
     @Transactional
