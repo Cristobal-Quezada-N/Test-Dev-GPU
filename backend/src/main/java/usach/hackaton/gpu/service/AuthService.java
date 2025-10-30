@@ -47,7 +47,7 @@ public class AuthService {
             .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
 
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new BadCredentialsException("Contraseña inválida");
+            throw new BadCredentialsException("Usuario o contraseña incorrectos");
         }
 
         final String token = jwtUtil.create(user.getEmail());
