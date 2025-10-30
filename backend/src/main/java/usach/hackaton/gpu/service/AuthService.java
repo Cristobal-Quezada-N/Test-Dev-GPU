@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usach.hackaton.gpu.config.JwtUtil;
+import usach.hackaton.gpu.dtos.LoginRequest;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.AppUser;
@@ -42,11 +43,11 @@ public class AuthService {
     @Value("${app.url}")
     private String baseUrl;
 
-    public Map<String, Object> login(String email, String password) {
-        AppUser user = userRepository.findByEmail(email)
+    public Map<String, Object> login(LoginRequest loginRequest) {
+        AppUser user = userRepository.findByEmail(loginRequest.email())
             .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new BadCredentialsException("Contraseña inválida");
         }
 
