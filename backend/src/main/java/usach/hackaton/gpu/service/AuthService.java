@@ -36,7 +36,7 @@ public class AuthService {
     private final RoleService roleService;
     private final UserStatusService userStatusService;
     private final AuthFactorRepository authFactorRepository;
-    private final AuthFactorTypeService authFactorTypeService;
+    private final AuthFactorTypeLookupService authFactorTypeLookupService;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
 
@@ -88,7 +88,7 @@ public class AuthService {
         userRepository.save(newUser);
 
         // Factor de registro
-        AuthFactorTypeLookup registerType = authFactorTypeService.getByEnum(AuthFactorType.REGISTER);
+        AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorType.REGISTER);
         AuthFactor factor = AuthFactor.builder()
             .userId(newUser.getId())
             .typeId(registerType)

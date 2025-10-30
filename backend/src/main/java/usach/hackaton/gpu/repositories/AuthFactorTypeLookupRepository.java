@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 
 @Repository
-public interface AuthFactorTypeRepository extends JpaRepository<AuthFactorTypeLookup, Integer> {
+public interface AuthFactorTypeLookupRepository extends JpaRepository<AuthFactorTypeLookup, Integer> {
     Optional<AuthFactorTypeLookup> findByCode(String code);
 }
