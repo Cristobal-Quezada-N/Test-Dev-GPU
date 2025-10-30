@@ -70,7 +70,13 @@ public class AuthService {
 
         final String token = jwtUtil.create(user.getEmail());
         final Role role = roleService.getById(user.getRoleId());
-        return new LoginResponse(user.getId().toString(), user.getEmail(), userStatus.getCode(), role.getCode(), token);
+        return new LoginResponse(
+            user.getId().toString(),
+            user.getEmail(),
+            userStatus.getCode(),
+            role.getCode(),
+            token
+        );
     }
 
     @Transactional
@@ -112,8 +118,11 @@ public class AuthService {
 
         String link = baseUrl + "/api/auth/activate?token=" + token;
 
-        emailService.send(newUser.getEmail(), "Activa tu cuenta",
-            "Haz click en este enlace para activar tu cuenta: " + link);
+        emailService.send(
+            newUser.getEmail(),
+            "Activa tu cuenta",
+            "Haz click en este enlace para activar tu cuenta: " + link
+        );
     }
 
     private String generateToken() {

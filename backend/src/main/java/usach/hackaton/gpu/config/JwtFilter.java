@@ -65,8 +65,11 @@ public class JwtFilter extends OncePerRequestFilter {
         // Header
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.debug("[JWT] Missing/invalid Authorization header: {} {}", request.getMethod(),
-                request.getRequestURI());
+            log.debug(
+                "[JWT] Missing/invalid Authorization header: {} {}",
+                request.getMethod(),
+                request.getRequestURI()
+            );
             filterChain.doFilter(request, response);
             return;
         }
@@ -118,7 +121,8 @@ public class JwtFilter extends OncePerRequestFilter {
         var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            user.getEmail(), null, authorities);
+            user.getEmail(), null, authorities
+        );
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

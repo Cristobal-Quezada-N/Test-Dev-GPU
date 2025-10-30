@@ -51,21 +51,38 @@ public class SecurityConfig {
                 configureUserEndpoints(auth);
             }).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(exeception -> exeception.authenticationEntryPoint(
-                (request, response, exception) -> handleAuthenticationException(request, response, exception))
-                .accessDeniedHandler((request, response, exception) -> handleAccessDeniedException(request,
-                    response, exception)));
+            .exceptionHandling(
+                exeception -> exeception
+                    .authenticationEntryPoint(
+                        (request, response, exception) -> handleAuthenticationException(request, response, exception)
+                    )
+                    .accessDeniedHandler(
+                        (request, response, exception) -> handleAccessDeniedException(request, response, exception)
+                    )
+            );
         return http.build();
     }
 
     private void handleAuthenticationException(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException exception) throws IOException {
-        writeErrorResponse(request, response, HttpStatus.UNAUTHORIZED, "Unathenticated", exception.getMessage());
+        writeErrorResponse(
+            request,
+            response,
+            HttpStatus.UNAUTHORIZED,
+            "Unathenticated",
+            exception.getMessage()
+        );
     }
 
     private void handleAccessDeniedException(HttpServletRequest request, HttpServletResponse response,
         AccessDeniedException exception) throws IOException {
-        writeErrorResponse(request, response, HttpStatus.FORBIDDEN, "Forbidden", exception.getMessage());
+        writeErrorResponse(
+            request,
+            response,
+            HttpStatus.FORBIDDEN,
+            "Forbidden",
+            exception.getMessage()
+        );
     }
 
     private void writeErrorResponse(HttpServletRequest request, HttpServletResponse response, HttpStatus httpStatus,

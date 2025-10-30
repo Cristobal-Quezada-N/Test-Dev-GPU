@@ -15,7 +15,6 @@ public class AuthFactorTypeLookupService {
     public AuthFactorTypeLookup getByCode(AuthFactorCode code) {
         final String codeString = code.name();
         return repository.findByCode(codeString)
-            .orElseThrow(() -> new IllegalStateException(
-                "Auth factor type not found: " + codeString));
+            .orElseThrow(() -> new IllegalStateException("Auth factor type not found: " + codeString));
     }
 }

@@ -49,6 +49,6 @@ public class ItemController {
     @PutMapping("/updateItem/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem) {
         return itemService.updateItem(id, updatedItem).map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+            .orElse(ResponseEntity.notFound().build());
     }
 }
