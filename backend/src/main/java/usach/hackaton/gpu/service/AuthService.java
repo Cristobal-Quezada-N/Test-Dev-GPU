@@ -45,9 +45,9 @@ public class AuthService {
 
     public LoginResponse login(LoginRequest loginRequest) {
         AppUser user = userRepository.findByEmail(loginRequest.email())
-            .orElseThrow(() -> new BadCredentialsException("Usuario no encontrado"));
+            .orElse(null);
 
-        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
+        if (user == null || !passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             throw new BadCredentialsException("Usuario o contraseña incorrectos");
         }
 
