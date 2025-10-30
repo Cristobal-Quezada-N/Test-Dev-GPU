@@ -22,7 +22,7 @@ public class UserStatusService {
 
     public UserStatus getByCode(UserStatusCode code) {
         final String codeString = code.name();
-        Optional<UserStatus> optionalUserStatus = userStatusRepository.getByCode(codeString);
+        Optional<UserStatus> optionalUserStatus = userStatusRepository.findByCode(codeString);
         if (optionalUserStatus.isPresent())
             return optionalUserStatus.get();
         else
