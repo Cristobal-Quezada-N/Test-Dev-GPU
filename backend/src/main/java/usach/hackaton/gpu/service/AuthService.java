@@ -20,6 +20,7 @@ import usach.hackaton.gpu.entities.AuthFactorType;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
+import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
@@ -52,12 +53,12 @@ public class AuthService {
 
         final UserStatus userStatus = userStatusService.getById(user.getStatusId());
 
-        if (!"ACTIVE".equals(userStatus.getCode())) {
-            if ("PENDING".equals(userStatus.getCode())) {
+        if (!UserStatusCode.ACTIVE.name().equals(userStatus.getCode())) {
+            if (UserStatusCode.PENDING.name().equals(userStatus.getCode())) {
                 throw new BadCredentialsException("Tu cuenta no está verificada, por favor, verificala");
             }
 
-            if ("BANNED".equals(userStatus.getCode())) {
+            if (UserStatusCode.BANNED.name().equals(userStatus.getCode())) {
                 throw new BadCredentialsException("Tu cuenta esta bloqueada. Contacta al administrador");
             }
             throw new BadCredentialsException("Estado de cuenta inválido. Contacta al administrador");
@@ -76,7 +77,7 @@ public class AuthService {
 
         Role role = roleService.getByCode("USER");
 
-        UserStatus userStatus = userStatusService.getByCode("PENDING");
+        UserStatus userStatus = userStatusService.getByCode(UserStatusCode.PENDING);
 
         AppUser newUser = AppUser.builder()
             .email(dto.getEmail())
@@ -136,7 +137,7 @@ public class AuthService {
         if (user == null)
             return false;
 
-        UserStatus activeStatus = userStatusService.getByCode("ACTIVE");
+        UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
         user.setStatusId(activeStatus.getId());
         userRepository.save(user);
 

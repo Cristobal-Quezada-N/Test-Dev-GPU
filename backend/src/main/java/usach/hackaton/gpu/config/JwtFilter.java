@@ -21,6 +21,7 @@ import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
+import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 import usach.hackaton.gpu.repositories.RoleRepository;
@@ -90,9 +91,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Validar estado del usuario
         UserStatus status = statusRepository.findById(user.getStatusId()).orElse(null);
-        if (status == null || !"ACTIVE".equalsIgnoreCase(status.getCode())) {
+        if (!UserStatusCode.ACTIVE.name().equals(status.getCode())) {
             filterChain.doFilter(request, response);
-            log.debug("[JWT] Inactive/missing status for email: ", email);
+            log.debug("[JWT] Not active status for email: ", email);
             return;
         }
 
