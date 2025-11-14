@@ -19,9 +19,13 @@ public class AppUserService {
     private final AppUserRepository appUserRepository;
 
     public void checkEmailNotRegistered(String email) {
-        if (appUserRepository.findByEmail(email).isPresent()) {
+        if (findByEmail(email).isPresent()) {
             throw new EmailAlreadyRegisteredException();
         }
+    }
+
+    public Optional<AppUser> findByEmail(String email) {
+        return appUserRepository.findByEmail(email);
     }
 
     public AppUser getByEmail(String email) {

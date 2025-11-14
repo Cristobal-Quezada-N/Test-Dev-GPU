@@ -3,6 +3,7 @@ package usach.hackaton.gpu.service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,7 +24,6 @@ import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
-import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 import usach.hackaton.gpu.repositories.TokenRepository;
@@ -47,12 +47,14 @@ public class AuthService {
     private String baseUrl;
 
     public LoginResponse login(LoginRequest loginRequest) {
-        AppUser user = userRepository.findByEmail(loginRequest.email())
-            .orElse(null);
+        Optional<AppUser> OptionalUser = userService.findByEmail(loginRequest.email());
 
-        if (user == null || !passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
+        if (OptionalUser.isEmpty()
+            || !passwordEncoder.matches(loginRequest.password(), OptionalUser.get().getPassword())) {
             throw new BadCredentialsException("Usuario o contraseña incorrectos");
         }
+
+        AppUser user = OptionalUser.get();
 
         final UserStatus userStatus = userStatusService.getById(user.getStatusId());
         final UserStatusCode statusCode = UserStatusCode.valueOf(userStatus.getCode());
