@@ -42,11 +42,10 @@ public class AppUserController {
         }
     }
 
-    // Guardar usuario
     @PostMapping("/createUser")
     public ResponseEntity<AppUser> save(@RequestBody AppUser user) {
-        appUserService.save(user);
-        return ResponseEntity.ok(user);
+        AppUser savedUser = appUserService.save(user);
+        return ResponseEntity.ok(savedUser);
     }
 
     @GetMapping("/me")
