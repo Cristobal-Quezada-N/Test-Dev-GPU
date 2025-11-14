@@ -78,9 +78,7 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequestDTO dto) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new EmailAlreadyRegisteredException();
-        }
+        userService.checkEmailNotRegistered(dto.getEmail());
 
         Role role = roleService.getByCode("USER");
 

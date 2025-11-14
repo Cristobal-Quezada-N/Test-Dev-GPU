@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
+import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 
@@ -16,6 +17,12 @@ import usach.hackaton.gpu.repositories.AuthFactorRepository;
 public class AppUserService {
     private final AuthFactorRepository authFactorRepository;
     private final AppUserRepository appUserRepository;
+
+    public void checkEmailNotRegistered(String email) {
+        if (appUserRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyRegisteredException();
+        }
+    }
 
     public AppUser getByEmail(String email) {
         Optional<AppUser> optionalAppUser = appUserRepository.findByEmail(email);
