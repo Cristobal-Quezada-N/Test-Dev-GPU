@@ -25,8 +25,8 @@ public class AppUserService {
             throw new EntityNotFoundException("No se encuentra el usuario con el email: " + email);
     }
 
-    public void save(AppUser user) {
-        appUserRepository.save(user);
+    public AppUser save(AppUser user) {
+        return appUserRepository.save(user);
     }
 
     public List<AppUser> getAllUsers() {
@@ -59,6 +59,6 @@ public class AppUserService {
 
         AppUser user = optionalUser.get();
         user.setStatusId(statusId); // 👈 asegúrate de que AppUser tenga este campo y su setter
-        return appUserRepository.save(user);
+        return save(user);
     }
 }

@@ -33,6 +33,7 @@ import usach.hackaton.gpu.repositories.TokenRepository;
 @Transactional(readOnly = true)
 public class AuthService {
     private final AppUserRepository userRepository;
+    private final AppUserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RoleService roleService;
@@ -91,7 +92,7 @@ public class AuthService {
             .roleId(role.getId())
             .statusId(userStatus.getId())
             .build();
-        userRepository.save(newUser);
+        userService.save(newUser);
 
         // Factor de registro
         AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorCode.REGISTER);
@@ -148,7 +149,7 @@ public class AuthService {
 
         UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
         user.setStatusId(activeStatus.getId());
-        userRepository.save(user);
+        userService.save(user);
 
         // Borrar token para que no se pueda reutilizar
         tokenRepository.delete(activationToken);
