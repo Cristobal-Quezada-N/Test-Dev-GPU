@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
+import usach.hackaton.gpu.entities.Role;
+import usach.hackaton.gpu.entities.UserStatus;
+import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.EmailAlreadyRegisteredException;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
@@ -17,6 +22,9 @@ import usach.hackaton.gpu.repositories.AuthFactorRepository;
 public class AppUserService {
     private final AuthFactorRepository authFactorRepository;
     private final AppUserRepository appUserRepository;
+    private final RoleService roleService;
+    private final UserStatusService userStatusService;
+    private final PasswordEncoder passwordEncoder;
 
     public void checkEmailNotRegistered(String email) {
         if (findByEmail(email).isPresent()) {
@@ -75,5 +83,20 @@ public class AppUserService {
         AppUser user = optionalUser.get();
         user.setStatusId(statusId); // 👈 asegúrate de que AppUser tenga este campo y su setter
         return save(user);
+    }
+
+    public AppUser createPendingUser(RegisterRequestDTO dto) {
+        Role role = roleService.getByCode("USER");
+
+        UserStatus userStatus = userStatusService.getByCode(UserStatusCode.PENDING);
+
+        AppUser newUser = AppUser.builder()
+            .email(dto.getEmail())
+            .password(passwordEncoder.encode(dto.getPassword()))
+            .roleId(role.getId())
+            .statusId(userStatus.getId())
+            .build();
+        return save(newUser);
+
     }
 }

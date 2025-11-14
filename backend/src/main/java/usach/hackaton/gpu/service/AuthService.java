@@ -80,17 +80,7 @@ public class AuthService {
     public void register(RegisterRequestDTO dto) {
         userService.checkEmailNotRegistered(dto.getEmail());
 
-        Role role = roleService.getByCode("USER");
-
-        UserStatus userStatus = userStatusService.getByCode(UserStatusCode.PENDING);
-
-        AppUser newUser = AppUser.builder()
-            .email(dto.getEmail())
-            .password(passwordEncoder.encode(dto.getPassword()))
-            .roleId(role.getId())
-            .statusId(userStatus.getId())
-            .build();
-        userService.save(newUser);
+        AppUser newUser = userService.createPendingUser(dto);
 
         // Factor de registro
         AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorCode.REGISTER);
