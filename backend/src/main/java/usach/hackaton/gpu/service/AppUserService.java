@@ -28,6 +28,10 @@ public class AppUserService {
         return appUserRepository.findByEmail(email);
     }
 
+    public Optional<AppUser> findById(UUID userId) {
+        return appUserRepository.findById(userId);
+    }
+
     public AppUser getByEmail(String email) {
         Optional<AppUser> optionalAppUser = appUserRepository.findByEmail(email);
         if (optionalAppUser.isPresent())

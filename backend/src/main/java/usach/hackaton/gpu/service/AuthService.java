@@ -24,7 +24,6 @@ import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
-import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 import usach.hackaton.gpu.repositories.TokenRepository;
 
@@ -32,7 +31,6 @@ import usach.hackaton.gpu.repositories.TokenRepository;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthService {
-    private final AppUserRepository userRepository;
     private final AppUserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -143,10 +141,11 @@ public class AuthService {
         }
 
         // Activar usuario
-        AppUser user = userRepository.findById(activationToken.getUserId()).orElse(null);
-        if (user == null)
+        Optional<AppUser> OptionalUser = userService.findById(activationToken.getUserId());
+        if (OptionalUser.isEmpty())
             return false;
 
+        AppUser user = OptionalUser.get();
         UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
         user.setStatusId(activeStatus.getId());
         userService.save(user);
