@@ -10,7 +10,7 @@ import usach.hackaton.gpu.repositories.AuthFactorRepository;
 public class AuthFactorService {
     private final AuthFactorRepository authFactorRepository;
 
-    public void save(AuthFactor authFactor) {
-        authFactorRepository.save(authFactor);
+    public AuthFactor save(AuthFactor authFactor) {
+        return authFactorRepository.save(authFactor);
     }
 }

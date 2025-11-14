@@ -37,6 +37,7 @@ public class AuthService {
     private final RoleService roleService;
     private final UserStatusService userStatusService;
     private final AuthFactorRepository authFactorRepository;
+    private final AuthFactorService authFactorService;
     private final AuthFactorTypeLookupService authFactorTypeLookupService;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
@@ -91,7 +92,7 @@ public class AuthService {
             .creationDate(LocalDateTime.now())
             .expirationDate(LocalDateTime.now().plusYears(1))
             .build();
-        authFactorRepository.save(factor);
+        authFactorService.save(factor);
 
         String token = generateToken();
         ActivationToken activationToken = ActivationToken.builder()
