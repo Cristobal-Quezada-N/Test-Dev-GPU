@@ -15,14 +15,16 @@ import usach.hackaton.gpu.dtos.LoginRequest;
 import usach.hackaton.gpu.dtos.LoginResponse;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
+import usach.hackaton.gpu.entities.ActivationTokenStatus;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
+import usach.hackaton.gpu.repositories.ActivationTokenRepository;
+import usach.hackaton.gpu.repositories.ActivationTokenStatusRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
-import usach.hackaton.gpu.repositories.TokenRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,8 @@ public class AuthService {
     private final AuthFactorRepository authFactorRepository;
     private final AuthFactorService authFactorService;
     private final EmailService emailService;
-    private final TokenRepository tokenRepository;
+    private final ActivationTokenRepository activationTokenRepository;
+    private final ActivationTokenStatusRepository activationTokenStatusRepository;
 
     @Value("${app.url}")
     private String baseUrl;
@@ -81,13 +84,18 @@ public class AuthService {
 
         authFactorService.createRegisterFactor(newUser.getId());
 
+        ActivationTokenStatus pendingStatus = activationTokenStatusRepository.findByCode("PENDING")
+            .orElseThrow(() -> new IllegalStateException("PENDING status not found"));
+
         String token = generateToken();
         ActivationToken activationToken = ActivationToken.builder()
-            .email(token)
-            .userId(newUser.getId())
+            .user(newUser)
+            .token(token)
+            .status(pendingStatus)
+            .creationDate(LocalDateTime.now())
             .expirationDate(LocalDateTime.now().plusHours(24))
             .build();
-        tokenRepository.save(activationToken);
+        activationTokenRepository.save(activationToken);
 
         String link = baseUrl + "/api/auth/activate?token=" + token;
 
@@ -106,30 +114,32 @@ public class AuthService {
 
     @Transactional
     public boolean activateUser(String token) {
-        ActivationToken activationToken = tokenRepository.findByEmail(token).orElse(null);
+        Optional<ActivationToken> optionalActivationToken = activationTokenRepository.findByToken(token);
 
-        if (activationToken == null) {
+        if (optionalActivationToken.isEmpty()) {
             return false;
         }
 
+        ActivationToken activationToken = optionalActivationToken.get();
+        boolean isTokenExpired = activationToken.getExpirationDate().isBefore(LocalDateTime.now());
+
         // Validar expiración
-        if (activationToken.getExpirationDate().isBefore(LocalDateTime.now())) {
-            tokenRepository.delete(activationToken);
+        if (isTokenExpired) {
+            activationTokenRepository.delete(activationToken);
             return false;
         }
 
         // Activar usuario
-        Optional<AppUser> OptionalUser = userService.findById(activationToken.getUserId());
-        if (OptionalUser.isEmpty())
+        AppUser activatiedUser = activationToken.getUser();
+        if (activatiedUser == null)
             return false;
 
-        AppUser user = OptionalUser.get();
         UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
-        user.setStatusId(activeStatus.getId());
-        userService.save(user);
+        activatiedUser.setStatusId(activeStatus.getId());
+        userService.save(activatiedUser);
 
         // Borrar token para que no se pueda reutilizar
-        tokenRepository.delete(activationToken);
+        activationTokenRepository.delete(activationToken);
 
         return true;
     }

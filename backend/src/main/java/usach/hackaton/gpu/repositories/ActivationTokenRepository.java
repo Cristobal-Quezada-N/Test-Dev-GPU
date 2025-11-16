@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import usach.hackaton.gpu.entities.ActivationToken;
 
 @Repository
-public interface TokenRepository extends JpaRepository<ActivationToken, Long> {
-    Optional<ActivationToken> findByEmail(String token);
+public interface ActivationTokenRepository extends JpaRepository<ActivationToken, Long> {
+    Optional<ActivationToken> findByToken(String token);
 }
