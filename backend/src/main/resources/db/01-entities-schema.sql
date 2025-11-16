@@ -2,10 +2,11 @@
 -- Entities
 -- ==========
 
-DROP TABLE IF EXISTS item         CASCADE;
-DROP TABLE IF EXISTS app_user     CASCADE;
-DROP TABLE IF EXISTS auth_factor  CASCADE;
-DROP TABLE IF EXISTS loan         CASCADE;
+DROP TABLE IF EXISTS item             CASCADE;
+DROP TABLE IF EXISTS app_user         CASCADE;
+DROP TABLE IF EXISTS auth_factor      CASCADE;
+DROP TABLE IF EXISTS loan             CASCADE;
+DROP TABLE IF EXISTS activation_token CASCADE;
 
 CREATE TABLE item (
     id    SERIAL PRIMARY KEY,
@@ -40,7 +41,10 @@ CREATE TABLE loan (
 
 CREATE TABLE activation_token (
     id                SERIAL PRIMARY KEY,
-    email             VARCHAR(50) NOT NULL UNIQUE,
     user_id           VARCHAR(50) NOT NULL REFERENCES app_user(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    token             VARCHAR(64) NOT NULL UNIQUE,
+    status_id         INTEGER     NOT NULL REFERENCES activation_token_status(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    used_at           TIMESTAMP   WITH TIME ZONE,
+    creation_date     TIMESTAMP   WITH TIME ZONE NOT NULL,
     expiration_date   TIMESTAMP   WITH TIME ZONE NOT NULL
 );
