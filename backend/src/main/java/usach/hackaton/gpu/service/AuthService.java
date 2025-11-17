@@ -1,6 +1,5 @@
 package usach.hackaton.gpu.service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -93,11 +92,8 @@ public class AuthService {
         }
 
         ActivationToken activationToken = optionalActivationToken.get();
-        boolean isTokenExpired = activationToken.getExpirationDate().isBefore(LocalDateTime.now());
 
-        // Validar expiración
-        if (isTokenExpired) {
-            activationTokenRepository.delete(activationToken);
+        if (!activationTokenService.validateAndUse(activationToken.getToken())) {
             return false;
         }
 

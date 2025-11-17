@@ -23,4 +23,16 @@ public class ActivationTokenStatusService {
     public ActivationTokenStatus getPending() {
         return getByCode(ActivationTokenStatusCode.PENDING);
     }
+
+    public ActivationTokenStatus getExpired() {
+        return getByCode(ActivationTokenStatusCode.EXPIRED);
+    }
+
+    public ActivationTokenStatus getRevoked() {
+        return getByCode(ActivationTokenStatusCode.REVOKED);
+    }
+
+    public ActivationTokenStatus getUsed() {
+        return getByCode(ActivationTokenStatusCode.USED);
+    }
 }
