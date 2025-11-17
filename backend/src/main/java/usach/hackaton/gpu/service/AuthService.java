@@ -84,10 +84,9 @@ public class AuthService {
 
         String link = baseUrl + "/api/auth/activate?token=" + newRegisterActivationToken.getToken();
 
-        emailService.send(
+        emailService.sendActivationEmail(
             newUser.getEmail(),
-            "Activa tu cuenta",
-            "Haz click en este enlace para activar tu cuenta: " + link
+            link
         );
     }
 

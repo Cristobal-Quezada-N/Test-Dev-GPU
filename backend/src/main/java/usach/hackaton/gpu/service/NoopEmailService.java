@@ -13,10 +13,16 @@ public class NoopEmailService implements EmailService {
     private String from;
 
     @Override
-    public void send(String to, String subject, String body) {
-        log.info("[NOOP EMAIL] Subject: {}", subject);
-        log.info("\tFrom: {}", from);
-        log.info("\tTo: {}", to);
-        log.info("\tBody: {}", body);
+    public void sendActivationEmail(String to, String activationLink) {
+        sendEmail(to, "Activacion de Cuenta", activationLink);
+    }
+
+    @Override
+    public void sendEmail(String to, String subject, String body) {
+        log.info("""
+            [NOOP EMAIL] Subject: %s
+                From: %s
+                To: %s
+                Body: %s""".formatted(subject, from, to, body));
     }
 }

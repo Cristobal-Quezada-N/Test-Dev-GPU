@@ -1,5 +1,7 @@
 package usach.hackaton.gpu.service;
 
 public interface EmailService {
-    void send(String to, String subject, String body);
+    public void sendActivationEmail(String to, String activationLink);
+
+    public void sendEmail(String to, String subject, String body);
 }
