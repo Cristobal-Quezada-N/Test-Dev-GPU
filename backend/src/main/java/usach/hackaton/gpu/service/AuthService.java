@@ -1,8 +1,6 @@
 package usach.hackaton.gpu.service;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +13,6 @@ import usach.hackaton.gpu.dtos.LoginRequest;
 import usach.hackaton.gpu.dtos.LoginResponse;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
-import usach.hackaton.gpu.entities.ActivationTokenStatus;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
@@ -38,7 +35,7 @@ public class AuthService {
     private final AuthFactorService authFactorService;
     private final EmailService emailService;
     private final ActivationTokenRepository activationTokenRepository;
-    private final ActivationTokenStatusService activationTokenStatusService;
+    private final ActivationTokenService activationTokenService;
 
     @Value("${app.url}")
     private String baseUrl;
@@ -83,31 +80,15 @@ public class AuthService {
 
         authFactorService.createRegisterFactor(newUser.getId());
 
-        ActivationTokenStatus pendingStatus = activationTokenStatusService.getPending();
+        ActivationToken newRegisterActivationToken = activationTokenService.createActivationToken(newUser);
 
-        String token = generateToken();
-        ActivationToken activationToken = ActivationToken.builder()
-            .user(newUser)
-            .token(token)
-            .status(pendingStatus)
-            .creationDate(LocalDateTime.now())
-            .expirationDate(LocalDateTime.now().plusHours(24))
-            .build();
-        activationTokenRepository.save(activationToken);
-
-        String link = baseUrl + "/api/auth/activate?token=" + token;
+        String link = baseUrl + "/api/auth/activate?token=" + newRegisterActivationToken.getToken();
 
         emailService.send(
             newUser.getEmail(),
             "Activa tu cuenta",
             "Haz click en este enlace para activar tu cuenta: " + link
         );
-    }
-
-    private String generateToken() {
-        byte[] randomBytes = new byte[32];
-        new SecureRandom().nextBytes(randomBytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
     @Transactional
