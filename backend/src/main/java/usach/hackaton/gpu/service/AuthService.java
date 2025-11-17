@@ -101,14 +101,8 @@ public class AuthService {
             return false;
         }
 
-        // Activar usuario
-        AppUser activatiedUser = activationToken.getUser();
-        if (activatiedUser == null)
-            return false;
-
-        UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
-        activatiedUser.setStatusId(activeStatus.getId());
-        userService.save(activatiedUser);
+        AppUser activateUser = activationToken.getUser();
+        userService.activateUser(activateUser);
 
         activationTokenService.delete(activationToken);
 

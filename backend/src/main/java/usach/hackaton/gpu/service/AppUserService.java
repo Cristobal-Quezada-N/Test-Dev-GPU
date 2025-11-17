@@ -26,6 +26,12 @@ public class AppUserService {
     private final UserStatusService userStatusService;
     private final PasswordEncoder passwordEncoder;
 
+    public void activateUser(AppUser user) {
+        UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
+        user.setStatusId(activeStatus.getId());
+        save(user);
+    }
+
     public void checkEmailNotRegistered(String email) {
         if (findByEmail(email).isPresent()) {
             throw new EmailAlreadyRegisteredException();
