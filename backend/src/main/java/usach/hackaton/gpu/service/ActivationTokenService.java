@@ -18,6 +18,11 @@ public class ActivationTokenService {
     private final ActivationTokenRepository activationTokenRepository;
     private final ActivationTokenStatusService activationTokenStatusService;
 
+    @Transactional
+    public void delete(ActivationToken activationToken) {
+        activationTokenRepository.delete(activationToken);
+    }
+
     public Optional<ActivationToken> findByToken(String token) {
         return activationTokenRepository.findByToken(token);
     }
@@ -41,4 +46,10 @@ public class ActivationTokenService {
         new SecureRandom().nextBytes(randomBytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
+
+    @Transactional
+    private ActivationToken save(ActivationToken activationToken) {
+        return activationTokenRepository.save(activationToken);
+    }
+
 }

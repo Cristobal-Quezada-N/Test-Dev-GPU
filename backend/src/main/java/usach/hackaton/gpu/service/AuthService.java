@@ -110,8 +110,7 @@ public class AuthService {
         activatiedUser.setStatusId(activeStatus.getId());
         userService.save(activatiedUser);
 
-        // Borrar token para que no se pueda reutilizar
-        activationTokenRepository.delete(activationToken);
+        activationTokenService.delete(activationToken);
 
         return true;
     }
