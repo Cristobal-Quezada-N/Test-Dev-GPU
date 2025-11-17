@@ -11,14 +11,18 @@ import org.springframework.stereotype.Service;
 public class SmtpEmailService implements EmailService {
     private final JavaMailSender mailSender;
     private final String from;
+    private final String baseUrl;
 
-    public SmtpEmailService(JavaMailSender mailSender, @Value("${spring.mail.properties.mail.from}") String from) {
+    public SmtpEmailService(JavaMailSender mailSender, @Value("${spring.mail.properties.mail.from}") String from,
+        @Value("${app.url}") String baseUrl) {
         this.mailSender = mailSender;
         this.from = from;
+        this.baseUrl = baseUrl;
     }
 
     @Override
-    public void sendActivationEmail(String to, String activationLink) {
+    public void sendActivationEmail(String to, String token) {
+        String activationLink = baseUrl + "/api/auth/activate?token=%s".formatted(token);
         final String bodyMessage = templateActivationEmail(activationLink);
         sendEmail(to, "Activacion de Cuenta", bodyMessage);
     }

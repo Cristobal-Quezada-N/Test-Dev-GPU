@@ -12,8 +12,12 @@ public class NoopEmailService implements EmailService {
     @Value("${spring.mail.properties.mail.from}")
     private String from;
 
+    @Value("${app.url}")
+    private String baseUrl;
+
     @Override
-    public void sendActivationEmail(String to, String activationLink) {
+    public void sendActivationEmail(String to, String token) {
+        String activationLink = baseUrl + "/api/auth/activate?token=%s".formatted(token);
         sendEmail(to, "Activacion de Cuenta", activationLink);
     }
 

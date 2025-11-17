@@ -3,7 +3,6 @@ package usach.hackaton.gpu.service;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,9 +35,6 @@ public class AuthService {
     private final EmailService emailService;
     private final ActivationTokenRepository activationTokenRepository;
     private final ActivationTokenService activationTokenService;
-
-    @Value("${app.url}")
-    private String baseUrl;
 
     public LoginResponse login(LoginRequest loginRequest) {
         Optional<AppUser> OptionalUser = userService.findByEmail(loginRequest.email());
@@ -82,11 +78,9 @@ public class AuthService {
 
         ActivationToken newRegisterActivationToken = activationTokenService.createActivationToken(newUser);
 
-        String link = baseUrl + "/api/auth/activate?token=" + newRegisterActivationToken.getToken();
-
         emailService.sendActivationEmail(
             newUser.getEmail(),
-            link
+            newRegisterActivationToken.getToken()
         );
     }
 
