@@ -23,7 +23,6 @@ import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
 import usach.hackaton.gpu.repositories.ActivationTokenRepository;
-import usach.hackaton.gpu.repositories.ActivationTokenStatusRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 
 @Service
@@ -39,7 +38,7 @@ public class AuthService {
     private final AuthFactorService authFactorService;
     private final EmailService emailService;
     private final ActivationTokenRepository activationTokenRepository;
-    private final ActivationTokenStatusRepository activationTokenStatusRepository;
+    private final ActivationTokenStatusService activationTokenStatusService;
 
     @Value("${app.url}")
     private String baseUrl;
@@ -84,8 +83,7 @@ public class AuthService {
 
         authFactorService.createRegisterFactor(newUser.getId());
 
-        ActivationTokenStatus pendingStatus = activationTokenStatusRepository.findByCode("PENDING")
-            .orElseThrow(() -> new IllegalStateException("PENDING status not found"));
+        ActivationTokenStatus pendingStatus = activationTokenStatusService.getPending();
 
         String token = generateToken();
         ActivationToken activationToken = ActivationToken.builder()
