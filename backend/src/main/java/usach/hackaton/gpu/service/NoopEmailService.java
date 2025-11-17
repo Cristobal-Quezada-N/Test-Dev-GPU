@@ -1,23 +1,25 @@
 package usach.hackaton.gpu.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import usach.hackaton.gpu.utils.LinkBuilder;
 
 @Service
+@RequiredArgsConstructor
 @Profile("noemail")
 @Slf4j
 public class NoopEmailService implements EmailService {
+    private final LinkBuilder linkBuilder;
+
     @Value("${spring.mail.properties.mail.from}")
     private String from;
 
-    @Value("${app.url}")
-    private String baseUrl;
-
     @Override
     public void sendActivationEmail(String to, String token) {
-        String activationLink = baseUrl + "/api/auth/activate?token=%s".formatted(token);
+        String activationLink = linkBuilder.buildActivation(token);
         sendEmail(to, "Activacion de Cuenta", activationLink);
     }
 

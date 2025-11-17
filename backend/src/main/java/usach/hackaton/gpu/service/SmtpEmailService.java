@@ -1,26 +1,26 @@
 package usach.hackaton.gpu.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
+import usach.hackaton.gpu.utils.LinkBuilder;
 
 @Profile("!noemail")
 @RequiredArgsConstructor
 @Service
 public class SmtpEmailService implements EmailService {
     private final JavaMailSender mailSender;
+    private final LinkBuilder linkBuilder;
+
     @Value("${spring.mail.properties.mail.from}")
     private String from;
-    @Value("${app.url}")
-    private String baseUrl;
 
     @Override
     public void sendActivationEmail(String to, String token) {
-        String activationLink = baseUrl + "/api/auth/activate?token=%s".formatted(token);
+        String activationLink = linkBuilder.buildActivation(token);
         final String bodyMessage = templateActivationEmail(activationLink);
         sendEmail(to, "Activacion de Cuenta", bodyMessage);
     }
