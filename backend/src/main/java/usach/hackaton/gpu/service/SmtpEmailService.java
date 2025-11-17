@@ -6,19 +6,17 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 @Profile("!noemail")
+@RequiredArgsConstructor
 @Service
 public class SmtpEmailService implements EmailService {
     private final JavaMailSender mailSender;
-    private final String from;
-    private final String baseUrl;
-
-    public SmtpEmailService(JavaMailSender mailSender, @Value("${spring.mail.properties.mail.from}") String from,
-        @Value("${app.url}") String baseUrl) {
-        this.mailSender = mailSender;
-        this.from = from;
-        this.baseUrl = baseUrl;
-    }
+    @Value("${spring.mail.properties.mail.from}")
+    private String from;
+    @Value("${app.url}")
+    private String baseUrl;
 
     @Override
     public void sendActivationEmail(String to, String token) {
