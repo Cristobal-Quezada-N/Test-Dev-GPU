@@ -39,16 +39,8 @@ public class JwtFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        // Omitir rutas públicas
-        if (isPublicRoute(request)) {
+        if (shouldNotFilter(request)) {
             filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Omitir preflights
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            filterChain.doFilter(request, response);
-            return;
         }
 
         // Header
@@ -118,8 +110,16 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private boolean isPublicRoute(HttpServletRequest request) {
-        String uri = request.getServletPath();
-        return uri.equals("/api/auth") || uri.startsWith("/api/auth/");
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        // CORS Preflights
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
+        // Public Routes
+        return path.equals("/api/auth") || path.startsWith("/api/auth/");
     }
 }
