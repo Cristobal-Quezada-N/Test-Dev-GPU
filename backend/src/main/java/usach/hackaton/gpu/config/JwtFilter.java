@@ -58,12 +58,17 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Verificar usuario valido
+        // Autentificar Usuario
         String userEmail = jwtUtil.getEmail(jwtToken);
+        authenticateUser(userEmail, request);
 
+        filterChain.doFilter(request, response);
+    }
+
+    private void authenticateUser(String userEmail, HttpServletRequest request) {
+        // Verificar usuario valido
         Optional<AppUser> validUserOpt = validUser(userEmail);
         if (validUserOpt.isEmpty()) {
-            filterChain.doFilter(request, response);
             return;
         }
 
@@ -72,7 +77,6 @@ public class JwtFilter extends OncePerRequestFilter {
         // Verificar metodos de autenticacion
         boolean hasValidFactor = validAuthFactor(user);
         if (!hasValidFactor) {
-            filterChain.doFilter(request, response);
             return;
         }
 
@@ -85,7 +89,6 @@ public class JwtFilter extends OncePerRequestFilter {
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        filterChain.doFilter(request, response);
     }
 
     private String extractToken(HttpServletRequest request) {
