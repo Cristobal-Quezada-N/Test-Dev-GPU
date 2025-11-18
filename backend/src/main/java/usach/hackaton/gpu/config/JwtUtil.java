@@ -10,35 +10,36 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
-
-    private final Algorithm ALGORITHM;
+    private final Algorithm tokenAlgorithm;
     private final String dbName;
 
-    public JwtUtil(@Value("${security.jwt.secret}") String secret, @Value("${DB_NAME:no-database}") String dbName) {
-        this.ALGORITHM = Algorithm.HMAC256(secret);
+    public JwtUtil(@Value("${security.jwt.secret}") String jwtSignSecret,
+        @Value("${DB_NAME:no-database}") String dbName) {
+        this.tokenAlgorithm = Algorithm.HMAC256(jwtSignSecret);
         this.dbName = dbName;
     }
 
     // Este metodo crea un JWT con el nombre de usuario
-    public String create(String email) {
-        return JWT.create().withSubject(email).withIssuer(dbName).withIssuedAt(new Date())
+    public String createToken(String userEmail) {
+        return JWT.create().withSubject(userEmail).withIssuer(dbName).withIssuedAt(new Date())
             // Modifica este valor para cambiar la duración del token
-            .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(60))).sign(ALGORITHM);
+            .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(60)))
+            .sign(tokenAlgorithm);
     }
 
     // Este metodo verifica si un JWT es válido
-    public boolean isValid(String jwt) {
+    public boolean isValidToken(String jwtToken) {
         try {
-            JWT.require(ALGORITHM).build().verify(jwt);
+            JWT.require(tokenAlgorithm).build().verify(jwtToken);
             return true;
         } catch (JWTVerificationException e) {
-            System.out.println("Token inválido: " + jwt);
+            System.out.println("Token inválido: " + jwtToken);
             return false;
         }
     }
 
     // Este metodo extrae el nombre de usuario de un JWT
-    public String getEmail(String jwt) {
-        return JWT.require(ALGORITHM).build().verify(jwt).getSubject();
+    public String getEmail(String jwtToken) {
+        return JWT.require(tokenAlgorithm).build().verify(jwtToken).getSubject();
     }
 }

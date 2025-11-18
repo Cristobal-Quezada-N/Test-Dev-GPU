@@ -32,7 +32,7 @@ public class AuthService {
 
         validateUserStatus(user);
 
-        final String jwtToken = jwtUtil.create(user.getEmail());
+        final String jwtToken = jwtUtil.createToken(user.getEmail());
 
         return new LoginResponse(
             user.getId().toString(),

@@ -54,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (!jwtUtil.isValid(jwtToken)) {
+            if (!jwtUtil.isValidToken(jwtToken)) {
                 log.debug(
                     "[JWT] Invalid token (signature/expiry): {} {}", request.getMethod(), request.getRequestURI()
                 );
