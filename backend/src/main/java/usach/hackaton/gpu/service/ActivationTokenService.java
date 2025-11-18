@@ -41,25 +41,25 @@ public class ActivationTokenService {
     }
 
     @Transactional
-    public void markAsExpired(ActivationToken token) {
+    public ActivationToken markAsExpired(ActivationToken token) {
         ActivationTokenStatus expiredStatus = activationTokenStatusService.getExpired();
         token.setStatus(expiredStatus);
-        save(token);
+        return save(token);
     }
 
     @Transactional
-    public void markAsRevoked(ActivationToken token) {
+    public ActivationToken markAsRevoked(ActivationToken token) {
         ActivationTokenStatus revokedStatus = activationTokenStatusService.getRevoked();
         token.setStatus(revokedStatus);
-        save(token);
+        return save(token);
     }
 
     @Transactional
-    public void markAsUsed(ActivationToken token) {
+    public ActivationToken markAsUsed(ActivationToken token) {
         ActivationTokenStatus usedStatus = activationTokenStatusService.getUsed();
         token.setStatus(usedStatus);
         token.setUsedAt(LocalDateTime.now());
-        save(token);
+        return save(token);
     }
 
     @Transactional
@@ -88,11 +88,11 @@ public class ActivationTokenService {
     }
 
     @Transactional
-    public boolean validateAndUse(String stringToken) {
+    public ActivationToken validateAndUse(String stringToken) {
         Optional<ActivationToken> optionalToken = findByToken(stringToken);
 
         if (optionalToken.isEmpty()) {
-            return false;
+            return null;
         }
 
         ActivationToken token = optionalToken.get();
@@ -100,12 +100,11 @@ public class ActivationTokenService {
         if (!isTokenValid(token)) {
             if (!ActivationTokenStatusCode.PENDING.name().equals(token.getStatus().getCode())
                 && token.getExpirationDate().isBefore(LocalDateTime.now())) {
-                markAsExpired(token);
+                return markAsExpired(token);
             }
-            return false;
+            return null;
         }
 
-        markAsUsed(token);
-        return true;
+        return markAsUsed(token);
     }
 }

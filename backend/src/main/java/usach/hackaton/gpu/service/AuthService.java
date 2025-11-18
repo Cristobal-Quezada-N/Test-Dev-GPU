@@ -17,7 +17,6 @@ import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
-import usach.hackaton.gpu.repositories.ActivationTokenRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 
 @Service
@@ -32,7 +31,6 @@ public class AuthService {
     private final AuthFactorRepository authFactorRepository;
     private final AuthFactorService authFactorService;
     private final EmailService emailService;
-    private final ActivationTokenRepository activationTokenRepository;
     private final ActivationTokenService activationTokenService;
 
     public LoginResponse login(LoginRequest loginRequest) {
@@ -84,16 +82,10 @@ public class AuthService {
     }
 
     @Transactional
-    public boolean activateUser(String token) {
-        Optional<ActivationToken> optionalActivationToken = activationTokenRepository.findByToken(token);
+    public boolean activateUser(String rawActivationToken) {
+        ActivationToken activationToken = activationTokenService.validateAndUse(rawActivationToken);
 
-        if (optionalActivationToken.isEmpty()) {
-            return false;
-        }
-
-        ActivationToken activationToken = optionalActivationToken.get();
-
-        if (!activationTokenService.validateAndUse(activationToken.getToken())) {
+        if (activationToken == null) {
             return false;
         }
 
