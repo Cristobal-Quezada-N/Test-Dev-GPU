@@ -1,10 +1,11 @@
 package usach.hackaton.gpu.service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 import usach.hackaton.gpu.enums.AuthFactorCode;
@@ -20,10 +21,10 @@ public class AuthFactorService {
         return authFactorRepository.save(authFactor);
     }
 
-    public AuthFactor createRegisterFactor(UUID userId) {
+    public AuthFactor createRegisterFactor(AppUser user) {
         AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorCode.REGISTER);
         AuthFactor factor = AuthFactor.builder()
-            .userId(userId)
+            .user(user)
             .type(registerType)
             .used(true)
             .creationDate(LocalDateTime.now())

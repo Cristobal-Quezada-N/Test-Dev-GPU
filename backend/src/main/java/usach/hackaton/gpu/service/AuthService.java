@@ -73,7 +73,7 @@ public class AuthService {
 
         AppUser newUser = userService.createPendingUser(dto);
 
-        authFactorService.createRegisterFactor(newUser.getId());
+        authFactorService.createRegisterFactor(newUser);
 
         ActivationToken newRegisterActivationToken = activationTokenService.createActivationToken(newUser);
 
