@@ -7,8 +7,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,23 +25,14 @@ import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
-import usach.hackaton.gpu.repositories.RoleRepository;
-import usach.hackaton.gpu.repositories.UserStatusRepository;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final AppUserRepository userRepository;
     private final AuthFactorRepository authFactorRepository;
-
-    @Autowired
-    public JwtFilter(JwtUtil jwtUtil, AppUserRepository userRepository, RoleRepository roleRepository,
-        UserStatusRepository statusRepository, AuthFactorRepository authFactorRepository) {
-        this.jwtUtil = jwtUtil;
-        this.userRepository = userRepository;
-        this.authFactorRepository = authFactorRepository;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
