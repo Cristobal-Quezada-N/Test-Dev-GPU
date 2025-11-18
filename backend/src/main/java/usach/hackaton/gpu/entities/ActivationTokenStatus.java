@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import usach.hackaton.gpu.enums.ActivationTokenStatusCode;
 
 @Entity
 @Table(name = "activation_token_status")
@@ -27,4 +28,25 @@ public class ActivationTokenStatus {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    public boolean hasCode(ActivationTokenStatusCode statusCode) {
+        return statusCode != null && statusCode.name().equals(this.code);
+    }
+
+    public boolean isPending() {
+        return hasCode(ActivationTokenStatusCode.PENDING);
+    }
+
+    public boolean isUsed() {
+        return hasCode(ActivationTokenStatusCode.USED);
+
+    }
+
+    public boolean isExpired() {
+        return hasCode(ActivationTokenStatusCode.EXPIRED);
+    }
+
+    public boolean isRevoked() {
+        return hasCode(ActivationTokenStatusCode.REVOKED);
+    }
 }

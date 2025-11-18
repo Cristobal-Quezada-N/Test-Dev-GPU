@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.ActivationTokenStatus;
 import usach.hackaton.gpu.entities.AppUser;
-import usach.hackaton.gpu.enums.ActivationTokenStatusCode;
 import usach.hackaton.gpu.repositories.ActivationTokenRepository;
 
 @Service
@@ -26,18 +25,6 @@ public class ActivationTokenService {
 
     public Optional<ActivationToken> findByToken(String token) {
         return activationTokenRepository.findByToken(token);
-    }
-
-    private boolean isTokenValid(ActivationToken token) {
-        if (!ActivationTokenStatusCode.PENDING.name().equals(token.getStatus().getCode())) {
-            return false;
-        }
-
-        if (token.getExpirationDate().isBefore(LocalDateTime.now())) {
-            return false;
-        }
-
-        return true;
     }
 
     @Transactional
@@ -97,10 +84,9 @@ public class ActivationTokenService {
 
         ActivationToken token = optionalToken.get();
 
-        if (!isTokenValid(token)) {
-            if (!ActivationTokenStatusCode.PENDING.name().equals(token.getStatus().getCode())
-                && token.getExpirationDate().isBefore(LocalDateTime.now())) {
-                return markAsExpired(token);
+        if (!token.isValid()) {
+            if (token.isPending() && token.hasExpired()) {
+                markAsExpired(token);
             }
             return null;
         }
