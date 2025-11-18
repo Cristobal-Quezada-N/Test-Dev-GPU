@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 import usach.hackaton.gpu.enums.AuthFactorCode;
@@ -29,5 +30,10 @@ public class AuthFactorService {
             .expirationDate(LocalDateTime.now().plusYears(1))
             .build();
         return save(factor);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        authFactorRepository.deleteById(id);
     }
 }

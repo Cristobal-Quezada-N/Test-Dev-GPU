@@ -15,7 +15,6 @@ import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
-import usach.hackaton.gpu.repositories.AuthFactorRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,6 @@ public class AuthService {
     private final AppUserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final AuthFactorRepository authFactorRepository;
     private final AuthFactorService authFactorService;
     private final EmailService emailService;
     private final ActivationTokenService activationTokenService;
@@ -99,10 +97,5 @@ public class AuthService {
         activationTokenService.delete(activationToken);
 
         return true;
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        authFactorRepository.deleteById(id);
     }
 }
