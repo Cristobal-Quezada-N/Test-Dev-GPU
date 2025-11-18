@@ -45,23 +45,30 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
 
-        // Verificar Token JWT
-        String jwtToken = extractToken(request);
+        try {
+            // Verificar Token JWT
+            String jwtToken = extractToken(request);
 
-        if (jwtToken == null) {
-            filterChain.doFilter(request, response);
-            return;
+            if (jwtToken == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (!jwtUtil.isValid(jwtToken)) {
+                log.debug(
+                    "[JWT] Invalid token (signature/expiry): {} {}", request.getMethod(), request.getRequestURI()
+                );
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // Autentificar Usuario
+            String userEmail = jwtUtil.getEmail(jwtToken);
+            authenticateUser(userEmail, request);
+        } catch (Exception e) {
+            log.error("[JWT] Authetication error: {}", e.getMessage(), e);
+            SecurityContextHolder.clearContext();
         }
-
-        if (!jwtUtil.isValid(jwtToken)) {
-            log.debug("[JWT] Invalid token (signature/expiry): {} {}", request.getMethod(), request.getRequestURI());
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // Autentificar Usuario
-        String userEmail = jwtUtil.getEmail(jwtToken);
-        authenticateUser(userEmail, request);
 
         filterChain.doFilter(request, response);
     }
