@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +22,6 @@ import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
-import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 
@@ -63,43 +63,28 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String email = jwtUtil.getEmail(token);
+        // Verificar usuario valido
+        String userEmail = jwtUtil.getEmail(token);
 
-        // Buscar usuario
-        AppUser user = userRepository.findByEmail(email).orElse(null);
-        if (user == null) {
+        Optional<AppUser> validUserOpt = validUser(userEmail);
+        if (validUserOpt.isEmpty()) {
             filterChain.doFilter(request, response);
-            log.debug("[JWT] No user for email: {}", email);
             return;
         }
 
-        // Validar estado del usuario
-        UserStatus status = user.getStatus();
-        if (!UserStatusCode.ACTIVE.name().equals(status.getCode())) {
-            filterChain.doFilter(request, response);
-            log.debug("[JWT] Not active status for email: ", email);
-            return;
-        }
-
-        // Validar rol
-        Role role = user.getRole();
-        if (role == null) {
-            filterChain.doFilter(request, response);
-            log.debug("[JWT] Missing role for email: {}", email);
-            return;
-        }
+        AppUser user = validUserOpt.get();
 
         // Validar AuthFactor vigente (opcional)
         List<AuthFactor> factors = authFactorRepository.findByUserId(user.getId());
         boolean hasValidFactor = factors.stream().anyMatch(f -> f.getExpirationDate().isAfter(LocalDateTime.now()));
         if (!hasValidFactor) {
             filterChain.doFilter(request, response);
-            log.debug("[JWT] No valid AuthFactor for email: {}", email);
+            log.debug("[JWT] No valid AuthFactor for email: {}", userEmail);
             return;
         }
 
         // Construir authorities
-        var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
+        var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getCode()));
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             user.getEmail(), null, authorities
@@ -108,6 +93,33 @@ public class JwtFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
+    }
+
+    private Optional<AppUser> validUser(String userEmail) {
+        // Buscar usuario
+        Optional<AppUser> optionalUser = userRepository.findByEmail(userEmail);
+        if (optionalUser.isEmpty()) {
+            log.debug("[JWT] No user for email: {}", userEmail);
+            return Optional.empty();
+        }
+
+        AppUser user = optionalUser.get();
+
+        // Validar estado del usuario
+        UserStatus status = user.getStatus();
+        if (!status.isActive()) {
+            log.debug("[JWT] Not active status for email: ", userEmail);
+            return Optional.empty();
+        }
+
+        // Validar rol
+        Role role = user.getRole();
+        if (role == null) {
+            log.debug("[JWT] Missing role for email: {}", userEmail);
+            return Optional.empty();
+        }
+
+        return Optional.of(user);
     }
 
     @Override
