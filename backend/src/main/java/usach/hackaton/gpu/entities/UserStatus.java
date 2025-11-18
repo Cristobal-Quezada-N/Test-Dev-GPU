@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import usach.hackaton.gpu.enums.UserStatusCode;
 
 @Entity
 @Table(name = "user_status")
@@ -28,4 +29,20 @@ public class UserStatus {
 
     @Column(nullable = false)
     private String name;
+
+    public boolean hasCode(UserStatusCode statusCode) {
+        return statusCode != null && statusCode.name().equals(this.code);
+    }
+
+    public boolean isActive() {
+        return hasCode(UserStatusCode.ACTIVE);
+    }
+
+    public boolean isPending() {
+        return hasCode(UserStatusCode.PENDING);
+    }
+
+    public boolean isBanned() {
+        return hasCode(UserStatusCode.BANNED);
+    }
 }

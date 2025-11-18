@@ -12,7 +12,7 @@ import usach.hackaton.gpu.dtos.LoginResponse;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.AppUser;
-import usach.hackaton.gpu.enums.UserStatusCode;
+import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
@@ -39,14 +39,14 @@ public class AuthService {
 
         AppUser user = OptionalUser.get();
 
-        final UserStatusCode statusCode = UserStatusCode.valueOf(user.getStatus().getCode());
+        final UserStatus userStatus = user.getStatus();
 
-        switch (statusCode) {
-            case ACTIVE -> {
-            }
-            case PENDING -> throw new AccountNotVerificatedException();
-            case BANNED -> throw new AccountBannedException();
-            default -> throw new BadCredentialsException("Estado de cuenta inválido. Contacta al administrador");
+        if (userStatus.isPending()) {
+            throw new AccountNotVerificatedException();
+        }
+
+        if (userStatus.isBanned()) {
+            throw new AccountBannedException();
         }
 
         final String token = jwtUtil.create(user.getEmail());
@@ -54,7 +54,7 @@ public class AuthService {
         return new LoginResponse(
             user.getId().toString(),
             user.getEmail(),
-            statusCode.name(),
+            userStatus.getCode(),
             roleCode,
             token
         );
