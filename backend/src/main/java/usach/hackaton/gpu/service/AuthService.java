@@ -30,15 +30,22 @@ public class AuthService {
     private final ActivationTokenService activationTokenService;
 
     public LoginResponse login(LoginRequest loginRequest) {
-        Optional<AppUser> OptionalUser = userService.findByEmail(loginRequest.email());
+        AppUser user = validateCredentials(loginRequest);
 
-        if (OptionalUser.isEmpty()
-            || !passwordEncoder.matches(loginRequest.password(), OptionalUser.get().getPassword())) {
-            throw new BadCredentialsException("Usuario o contraseña incorrectos");
-        }
+        validateUserStatus(user);
 
-        AppUser user = OptionalUser.get();
+        final String jwtToken = jwtUtil.create(user.getEmail());
 
+        return new LoginResponse(
+            user.getId().toString(),
+            user.getEmail(),
+            user.getStatus().getCode(),
+            user.getRole().getCode(),
+            jwtToken
+        );
+    }
+
+    private void validateUserStatus(AppUser user) {
         final UserStatus userStatus = user.getStatus();
 
         if (userStatus.isPending()) {
@@ -48,16 +55,18 @@ public class AuthService {
         if (userStatus.isBanned()) {
             throw new AccountBannedException();
         }
+    }
 
-        final String token = jwtUtil.create(user.getEmail());
-        final String roleCode = user.getRole().getCode();
-        return new LoginResponse(
-            user.getId().toString(),
-            user.getEmail(),
-            userStatus.getCode(),
-            roleCode,
-            token
-        );
+    private AppUser validateCredentials(LoginRequest loginRequest) {
+        Optional<AppUser> OptionalUser = userService.findByEmail(loginRequest.email());
+
+        if (OptionalUser.isEmpty()
+            || !passwordEncoder.matches(loginRequest.password(), OptionalUser.get().getPassword())) {
+            throw new BadCredentialsException("Usuario o contraseña incorrectos");
+        }
+
+        AppUser user = OptionalUser.get();
+        return user;
     }
 
     @Transactional
