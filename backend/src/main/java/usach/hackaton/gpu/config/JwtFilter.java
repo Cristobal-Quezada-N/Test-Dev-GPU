@@ -29,6 +29,7 @@ import usach.hackaton.gpu.service.AuthFactorService;
 public class JwtFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final int BEARER_PREFIX_LENGTH = 7;
+    private static final String ROLE_PREFIX = "ROLE_";
 
     private final JwtUtil jwtUtil;
     private final AppUserRepository userRepository;
@@ -80,8 +81,15 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
+        setAuthentication(user, request);
+        log.debug("[JWT] Successfully authenticated user: {}", user.getEmail());
+    }
+
+    private void setAuthentication(AppUser user, HttpServletRequest request) {
         // Construir authorities
-        var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getCode()));
+        List<SimpleGrantedAuthority> authorities = List.of(
+            new SimpleGrantedAuthority(ROLE_PREFIX + user.getRole().getCode())
+        );
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
             user.getEmail(), null, authorities
