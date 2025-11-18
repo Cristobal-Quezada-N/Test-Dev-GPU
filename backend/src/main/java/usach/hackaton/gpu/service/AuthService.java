@@ -12,8 +12,6 @@ import usach.hackaton.gpu.dtos.LoginResponse;
 import usach.hackaton.gpu.dtos.RegisterRequestDTO;
 import usach.hackaton.gpu.entities.ActivationToken;
 import usach.hackaton.gpu.entities.AppUser;
-import usach.hackaton.gpu.entities.Role;
-import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.enums.UserStatusCode;
 import usach.hackaton.gpu.exception.AccountBannedException;
 import usach.hackaton.gpu.exception.AccountNotVerificatedException;
@@ -26,8 +24,6 @@ public class AuthService {
     private final AppUserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final RoleService roleService;
-    private final UserStatusService userStatusService;
     private final AuthFactorRepository authFactorRepository;
     private final AuthFactorService authFactorService;
     private final EmailService emailService;
@@ -43,8 +39,7 @@ public class AuthService {
 
         AppUser user = OptionalUser.get();
 
-        final UserStatus userStatus = userStatusService.getById(user.getStatusId());
-        final UserStatusCode statusCode = UserStatusCode.valueOf(userStatus.getCode());
+        final UserStatusCode statusCode = UserStatusCode.valueOf(user.getStatus().getCode());
 
         switch (statusCode) {
             case ACTIVE -> {
@@ -55,12 +50,12 @@ public class AuthService {
         }
 
         final String token = jwtUtil.create(user.getEmail());
-        final Role role = roleService.getById(user.getRoleId());
+        final String roleCode = user.getRole().getCode();
         return new LoginResponse(
             user.getId().toString(),
             user.getEmail(),
             statusCode.name(),
-            role.getCode(),
+            roleCode,
             token
         );
     }

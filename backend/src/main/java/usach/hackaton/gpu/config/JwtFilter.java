@@ -32,8 +32,6 @@ import usach.hackaton.gpu.repositories.UserStatusRepository;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final AppUserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final UserStatusRepository statusRepository;
     private final AuthFactorRepository authFactorRepository;
 
     @Autowired
@@ -41,8 +39,6 @@ public class JwtFilter extends OncePerRequestFilter {
         UserStatusRepository statusRepository, AuthFactorRepository authFactorRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.statusRepository = statusRepository;
         this.authFactorRepository = authFactorRepository;
     }
 
@@ -93,7 +89,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // Validar estado del usuario
-        UserStatus status = statusRepository.findById(user.getStatusId()).orElse(null);
+        UserStatus status = user.getStatus();
         if (!UserStatusCode.ACTIVE.name().equals(status.getCode())) {
             filterChain.doFilter(request, response);
             log.debug("[JWT] Not active status for email: ", email);
@@ -101,7 +97,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         // Validar rol
-        Role role = roleRepository.findById(user.getRoleId()).orElse(null);
+        Role role = user.getRole();
         if (role == null) {
             filterChain.doFilter(request, response);
             log.debug("[JWT] Missing role for email: {}", email);

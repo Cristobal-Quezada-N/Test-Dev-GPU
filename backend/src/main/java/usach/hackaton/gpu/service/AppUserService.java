@@ -28,7 +28,7 @@ public class AppUserService {
 
     public void activateUser(AppUser user) {
         UserStatus activeStatus = userStatusService.getByCode(UserStatusCode.ACTIVE);
-        user.setStatusId(activeStatus.getId());
+        user.setStatus(activeStatus);
         save(user);
     }
 
@@ -79,7 +79,7 @@ public class AppUserService {
         return appUserRepository.findById(id);
     }
 
-    public AppUser updateStatus(UUID id, Long statusId) {
+    public AppUser updateStatus(UUID id, UserStatus userStatus) {
         Optional<AppUser> optionalUser = appUserRepository.findById(id);
 
         if (optionalUser.isEmpty()) {
@@ -87,7 +87,7 @@ public class AppUserService {
         }
 
         AppUser user = optionalUser.get();
-        user.setStatusId(statusId); // 👈 asegúrate de que AppUser tenga este campo y su setter
+        user.setStatus(userStatus);
         return save(user);
     }
 
@@ -99,8 +99,8 @@ public class AppUserService {
         AppUser newUser = AppUser.builder()
             .email(dto.getEmail())
             .password(passwordEncoder.encode(dto.getPassword()))
-            .roleId(role.getId())
-            .statusId(userStatus.getId())
+            .role(role)
+            .status(userStatus)
             .build();
         return save(newUser);
 

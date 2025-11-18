@@ -10,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import usach.hackaton.gpu.entities.AppUser;
+import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.service.AppUserService;
 import usach.hackaton.gpu.service.AuthService;
+import usach.hackaton.gpu.service.UserStatusService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,11 +21,14 @@ import usach.hackaton.gpu.service.AuthService;
 public class AppUserController {
 
     private final AppUserService appUserService;
+    private final UserStatusService userStatusService;
     private final AuthService authService;
 
-    public AppUserController(AppUserService appUserService, AuthService authService) {
+    public AppUserController(AppUserService appUserService, AuthService authService,
+        UserStatusService userStatusService) {
         this.appUserService = appUserService;
         this.authService = authService;
+        this.userStatusService = userStatusService;
     }
 
     // Obtener todos los usuarios
@@ -71,7 +76,8 @@ public class AppUserController {
     public ResponseEntity<AppUser> updateUserStatus(@PathVariable UUID id, @RequestBody Map<String, Long> body) {
 
         Long statusId = body.get("statusId");
-        AppUser updatedUser = appUserService.updateStatus(id, statusId);
+        UserStatus userStatus = userStatusService.getById(statusId);
+        AppUser updatedUser = appUserService.updateStatus(id, userStatus);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -82,7 +88,7 @@ public class AppUserController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("email", user.getEmail());
-        response.put("statusId", user.getStatusId());
+        response.put("statusId", user.getStatus().getId());
 
         return ResponseEntity.ok(response);
     }
