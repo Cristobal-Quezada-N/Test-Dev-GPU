@@ -43,4 +43,17 @@ public class AuthFactor {
 
     @Column(name = "expiration_date", nullable = false)
     private LocalDateTime expirationDate;
+
+    public boolean isExpired() {
+        return expirationDate.isBefore(LocalDateTime.now());
+    }
+
+    public boolean isActive() {
+        return expirationDate.isAfter(LocalDateTime.now());
+    }
+
+    public boolean isValid() {
+        return isActive() && used;
+    }
+
 }

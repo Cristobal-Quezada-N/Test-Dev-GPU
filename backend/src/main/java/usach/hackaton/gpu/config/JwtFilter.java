@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +18,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import usach.hackaton.gpu.entities.AppUser;
-import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.repositories.AppUserRepository;
-import usach.hackaton.gpu.repositories.AuthFactorRepository;
+import usach.hackaton.gpu.service.AuthFactorService;
 
 @Slf4j
 @Component
@@ -31,7 +29,7 @@ import usach.hackaton.gpu.repositories.AuthFactorRepository;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final AppUserRepository userRepository;
-    private final AuthFactorRepository authFactorRepository;
+    private final AuthFactorService authFactorService;
 
     @Override
     protected void doFilterInternal(
@@ -74,12 +72,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         AppUser user = validUserOpt.get();
 
-        // Validar AuthFactor vigente (opcional)
-        List<AuthFactor> factors = authFactorRepository.findByUserId(user.getId());
-        boolean hasValidFactor = factors.stream().anyMatch(f -> f.getExpirationDate().isAfter(LocalDateTime.now()));
+        // Verificar metodos de autenticacion
+        boolean hasValidFactor = validAuthFactor(user);
         if (!hasValidFactor) {
             filterChain.doFilter(request, response);
-            log.debug("[JWT] No valid AuthFactor for email: {}", userEmail);
             return;
         }
 
@@ -93,6 +89,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
+    }
+
+    private boolean validAuthFactor(AppUser user) {
+        boolean hasValidFactor = authFactorService.userHasValidAuthFactor(user);
+
+        if (!hasValidFactor) {
+            log.debug("[JWT] No valid AuthFactor for email: {}", user.getEmail());
+        }
+
+        return hasValidFactor;
     }
 
     private Optional<AppUser> validUser(String userEmail) {

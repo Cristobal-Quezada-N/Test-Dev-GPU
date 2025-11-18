@@ -1,10 +1,10 @@
 package usach.hackaton.gpu.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.AuthFactor;
 import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
@@ -36,5 +36,10 @@ public class AuthFactorService {
     @Transactional
     public void delete(Long id) {
         authFactorRepository.deleteById(id);
+    }
+
+    public boolean userHasValidAuthFactor(AppUser user) {
+        List<AuthFactor> authFactors = authFactorRepository.findByUserId(user.getId());
+        return authFactors.stream().anyMatch(authFactor -> authFactor.isActive());
     }
 }
