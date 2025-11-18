@@ -27,6 +27,9 @@ import usach.hackaton.gpu.service.AuthFactorService;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
+    private static final String BEARER_PREFIX = "Bearer ";
+    private static final int BEARER_PREFIX_LENGTH = 7;
+
     private final JwtUtil jwtUtil;
     private final AppUserRepository userRepository;
     private final AuthFactorService authFactorService;
@@ -41,28 +44,22 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         }
 
-        // Header
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.debug(
-                "[JWT] Missing/invalid Authorization header: {} {}",
-                request.getMethod(),
-                request.getRequestURI()
-            );
+        // Verificar Token JWT
+        String jwtToken = extractToken(request);
+
+        if (jwtToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);
-
-        if (!jwtUtil.isValid(token)) {
+        if (!jwtUtil.isValid(jwtToken)) {
             log.debug("[JWT] Invalid token (signature/expiry): {} {}", request.getMethod(), request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
 
         // Verificar usuario valido
-        String userEmail = jwtUtil.getEmail(token);
+        String userEmail = jwtUtil.getEmail(jwtToken);
 
         Optional<AppUser> validUserOpt = validUser(userEmail);
         if (validUserOpt.isEmpty()) {
@@ -89,6 +86,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
+    }
+
+    private String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+            log.debug(
+                "[JWT] Missing/invalid Authorization header: {} {}",
+                request.getMethod(),
+                request.getRequestURI()
+            );
+            return null;
+        }
+        return authHeader.substring(BEARER_PREFIX_LENGTH);
     }
 
     private boolean validAuthFactor(AppUser user) {
