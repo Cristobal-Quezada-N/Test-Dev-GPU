@@ -11,19 +11,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
     private final Algorithm tokenAlgorithm;
-    private final String dbName;
+    private final String issuer;
+    private final long tokenExpirationMinutes;
 
-    public JwtUtil(@Value("${security.jwt.secret}") String jwtSignSecret,
-        @Value("${DB_NAME:no-database}") String dbName) {
+    public JwtUtil(
+        @Value("${security.jwt.secret}") String jwtSignSecret,
+        @Value("${security.jwt.issuer}") String issuer,
+        @Value("${security.jwt.expiration-minutes:60}") long tokenExpirationMinutes) {
         this.tokenAlgorithm = Algorithm.HMAC256(jwtSignSecret);
-        this.dbName = dbName;
+        this.issuer = issuer;
+        this.tokenExpirationMinutes = tokenExpirationMinutes;
     }
 
     // Este metodo crea un JWT con el nombre de usuario
     public String createToken(String userEmail) {
-        return JWT.create().withSubject(userEmail).withIssuer(dbName).withIssuedAt(new Date())
+        return JWT.create().withSubject(userEmail).withIssuer(issuer).withIssuedAt(new Date())
             // Modifica este valor para cambiar la duración del token
-            .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(60)))
+            .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(tokenExpirationMinutes)))
             .sign(tokenAlgorithm);
     }
 
