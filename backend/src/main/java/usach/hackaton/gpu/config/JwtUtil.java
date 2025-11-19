@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -65,8 +66,17 @@ public class JwtUtil {
         }
     }
 
-    // Este metodo extrae el nombre de usuario de un JWT
+    // Extrae el email del usuario desde un JWT
     public String getEmail(String jwtToken) {
-        return JWT.require(tokenAlgorithm).build().verify(jwtToken).getSubject();
+        if (!isValidToken(jwtToken)) {
+            throw new IllegalArgumentException("Token cannot be null or empty");
+        }
+        try {
+            DecodedJWT decodedJWT = jwtVerifier.verify(jwtToken);
+            return decodedJWT.getSubject();
+        } catch (JWTVerificationException e) {
+            log.error("[JWT] Failed to extract user email from token: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 }
