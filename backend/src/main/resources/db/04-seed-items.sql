@@ -1,12 +1,12 @@
 -- ========== Items  ==========
-INSERT INTO item (id, name, description, category, min_people) VALUES
-(1, 'Plumones Permanentes', 'Set de 12 plumones permanentes de colores variados, marca Sharpie', 'PENS', 1),
-(2, 'Calculadora Científica Casio FX-991', 'Calculadora científica avanzada con 417 funciones', 'CALCULATOR', 1),
-(3, 'Tabla Periódica Plastificada', 'Tabla periódica de los elementos tamaño poster (90x60cm)', 'LECTURE_MATERIAL', 1),
-(4, 'Laptop HP ProBook 450', 'Laptop HP ProBook i5, 8GB RAM, 256GB SSD, Windows 11 Pro', 'LAPTOP', 1),
-(5, 'Laptop Dell Latitude 5420', 'Laptop Dell i7, 16GB RAM, 512GB SSD, Windows 11 Pro', 'LAPTOP', 1),
-(6, 'Mesa Ping Pong Profesional', 'Mesa de ping pong profesional plegable marca Stiga, incluye red y raquetas', 'GAME', 2),
-(7, 'Mesa de Futbolito', 'Mesa de futbolito/taca-taca tamaño estándar, 6 jugadores por lado', 'GAME', 4);
+INSERT INTO item (name, description, category, min_people) VALUES
+('Plumones Permanentes', 'Set de 12 plumones permanentes de colores variados, marca Sharpie', 'PENS', 1),
+('Calculadora Científica Casio FX-991', 'Calculadora científica avanzada con 417 funciones', 'CALCULATOR', 1),
+('Tabla Periódica Plastificada', 'Tabla periódica de los elementos tamaño poster (90x60cm)', 'LECTURE_MATERIAL', 1),
+('Laptop HP ProBook 450', 'Laptop HP ProBook i5, 8GB RAM, 256GB SSD, Windows 11 Pro', 'LAPTOP', 1),
+('Laptop Dell Latitude 5420', 'Laptop Dell i7, 16GB RAM, 512GB SSD, Windows 11 Pro', 'LAPTOP', 1),
+('Mesa Ping Pong Profesional', 'Mesa de ping pong profesional plegable marca Stiga, incluye red y raquetas', 'GAME', 2),
+('Mesa de Futbolito', 'Mesa de futbolito/taca-taca tamaño estándar, 6 jugadores por lado', 'GAME', 4);
 
 -- ========== Items Copies ==========
 -- COPIAS: Plumones Permanentes (5 sets)
@@ -67,3 +67,7 @@ INSERT INTO item_copy (item_id, copy_number, condition, status, acquisition_date
 (7, 'TACA-001', 'GOOD', 'AVAILABLE', '2023-06-01', 'Ubicada en sala de juegos piso 1, incluye 3 pelotas de repuesto', NOW()),
 (7, 'TACA-002', 'GOOD', 'AVAILABLE', '2023-06-01', 'Ubicada en sala de juegos piso 2, incluye 3 pelotas de repuesto', NOW()),
 (7, 'TACA-003', 'DAMAGED', 'MAINTENANCE', '2023-06-01', 'Barra de portero atascada, en reparación', NOW());
+
+-- Resetear secuencias
+ALTER TABLE item ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM item);
+ALTER TABLE item_copy ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM item_copy);
