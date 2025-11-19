@@ -1,6 +1,7 @@
 package usach.hackaton.gpu.config;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import java.time.Instant;
@@ -16,6 +17,7 @@ public class JwtUtil {
     private final Algorithm tokenAlgorithm;
     private final String issuer;
     private final long tokenExpirationMinutes;
+    private final JWTVerifier jwtVerifier;
 
     public JwtUtil(
         @Value("${security.jwt.secret}") String jwtSignSecret,
@@ -24,6 +26,9 @@ public class JwtUtil {
         this.tokenAlgorithm = Algorithm.HMAC256(jwtSignSecret);
         this.issuer = issuer;
         this.tokenExpirationMinutes = tokenExpirationMinutes;
+        this.jwtVerifier = JWT.require(tokenAlgorithm)
+            .withIssuer(issuer)
+            .build();
     }
 
     // Este metodo crea un JWT con el nombre de usuario
@@ -47,11 +52,15 @@ public class JwtUtil {
 
     // Este metodo verifica si un JWT es válido
     public boolean isValidToken(String jwtToken) {
+        if (jwtToken == null || jwtToken.isBlank()) {
+            return false;
+        }
+
         try {
-            JWT.require(tokenAlgorithm).build().verify(jwtToken);
+            jwtVerifier.verify(jwtToken);
             return true;
         } catch (JWTVerificationException e) {
-            System.out.println("Token inválido: " + jwtToken);
+            log.debug("[JWT] Invalid token: {}", e.getMessage());
             return false;
         }
     }
