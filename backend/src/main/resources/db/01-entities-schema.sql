@@ -39,10 +39,12 @@ CREATE TABLE item_copy (
 CREATE TABLE loan (
     id                SERIAL PRIMARY KEY,
     user_id           VARCHAR(50) NOT NULL REFERENCES app_user(id)    ON UPDATE RESTRICT ON DELETE RESTRICT,
-    item_id           INTEGER     NOT NULL REFERENCES item(id)        ON UPDATE RESTRICT ON DELETE RESTRICT,
-    status_id         INTEGER     NOT NULL REFERENCES user_status(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+    item_copy_id      INTEGER     NOT NULL REFERENCES item_copy(id)   ON UPDATE CASCADE  ON DELETE RESTRICT,
+    status_id         INTEGER     NOT NULL REFERENCES loan_status(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     creation_date     TIMESTAMP   WITH TIME ZONE NOT NULL,
-    expiration_date   TIMESTAMP   WITH TIME ZONE NOT NULL
+    due_date          TIMESTAMP   WITH TIME ZONE NOT NULL,
+    returned_date     TIMESTAMP   WITH TIME ZONE NOT NULL,
+    notes             TEXT
 );
 
 CREATE TABLE activation_token (
