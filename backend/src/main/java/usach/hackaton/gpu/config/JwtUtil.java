@@ -3,11 +3,14 @@ package usach.hackaton.gpu.config;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class JwtUtil {
     private final Algorithm tokenAlgorithm;
@@ -25,10 +28,21 @@ public class JwtUtil {
 
     // Este metodo crea un JWT con el nombre de usuario
     public String createToken(String userEmail) {
-        return JWT.create().withSubject(userEmail).withIssuer(issuer).withIssuedAt(new Date())
-            // Modifica este valor para cambiar la duración del token
-            .withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(tokenExpirationMinutes)))
+        if (userEmail == null || userEmail.isBlank()) {
+            throw new IllegalArgumentException("User email cannot be null or empty");
+        }
+        Instant instantTime = Instant.now();
+        Instant expirationTime = instantTime.plus(tokenExpirationMinutes, ChronoUnit.MINUTES);
+
+        String jwtToken = JWT.create()
+            .withSubject(userEmail)
+            .withIssuer(issuer)
+            .withIssuedAt(Date.from(instantTime))
+            .withExpiresAt(Date.from(expirationTime))
             .sign(tokenAlgorithm);
+
+        log.debug("[JWT] Created token for user: {} (expires in {} minutes)", userEmail, tokenExpirationMinutes);
+        return jwtToken;
     }
 
     // Este metodo verifica si un JWT es válido
