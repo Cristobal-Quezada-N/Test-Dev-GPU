@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,17 +30,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final CorsConfigurationSource corsConfigurationSource;
     private final ObjectMapper objectMapper;
-
-    public SecurityConfig(JwtFilter jwtFilter, CorsConfigurationSource corsConfigurationSource,
-        ObjectMapper objectMapper) {
-        this.jwtFilter = jwtFilter;
-        this.corsConfigurationSource = corsConfigurationSource;
-        this.objectMapper = objectMapper;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
