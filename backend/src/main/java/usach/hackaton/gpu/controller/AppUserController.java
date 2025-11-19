@@ -1,6 +1,8 @@
 package usach.hackaton.gpu.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,24 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.UserStatus;
 import usach.hackaton.gpu.service.AppUserService;
-import usach.hackaton.gpu.service.AuthService;
 import usach.hackaton.gpu.service.UserStatusService;
 
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AppUserController {
-
     private final AppUserService appUserService;
     private final UserStatusService userStatusService;
-    private final AuthService authService;
-
-    public AppUserController(AppUserService appUserService, AuthService authService,
-        UserStatusService userStatusService) {
-        this.appUserService = appUserService;
-        this.authService = authService;
-        this.userStatusService = userStatusService;
-    }
 
     // Obtener todos los usuarios
     @GetMapping("/getUsers")
