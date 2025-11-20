@@ -1,3 +1,4 @@
+-- ========== Usuarios ==========
 INSERT INTO app_user (id, role_id, status_id, email, password) VALUES
 
   -- ========== Admin User ==========
@@ -14,3 +15,20 @@ INSERT INTO app_user (id, role_id, status_id, email, password) VALUES
   --     email: test@demo.test
   --     password: test1234
   ('e0428af7-8ce6-4791-b6ee-b1367afa6841', 2, 1,  'test@demo.test', '$2a$10$ELKDfio4ybSuN6taPzrti.JjW0mztx3nc8sc2.QCoqkzq/sSBNw6W');
+
+-- ========== Factores de Autentificacion ==========
+INSERT INTO auth_factor (user_id, type_id, used, creation_date, expiration_date) VALUES
+('69ab8cf7-54de-469d-9602-6d89bec8280e',
+    (SELECT id FROM auth_factor_type WHERE code = 'EMAIL'),
+    true,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP + INTERVAL '1' YEAR
+);
+
+INSERT INTO auth_factor (user_id, type_id, used, creation_date, expiration_date) VALUES
+('5604d67c-a015-4f6b-9849-931c66ff95a0',
+    (SELECT id FROM auth_factor_type WHERE code = 'EMAIL'),
+    true,
+    CURRENT_TIMESTAMP,
+    CURRENT_TIMESTAMP + INTERVAL '1' YEAR
+);

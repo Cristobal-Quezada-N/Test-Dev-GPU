@@ -21,7 +21,8 @@ INSERT INTO role (code, name) VALUES
 INSERT INTO auth_factor_type (code, name) VALUES
 ('TOTP',     'TOTP'),
 ('REGISTER', 'Registro'),
-('LOAN',     'Prestamo');
+('LOAN',     'Prestamo'),
+('EMAIL',     'Email');
 
 -- ========== Activation Token Status  ==========
 INSERT INTO activation_token_status (code, name) VALUES
