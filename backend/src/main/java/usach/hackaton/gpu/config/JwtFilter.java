@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import usach.hackaton.gpu.entities.AppUser;
 import usach.hackaton.gpu.entities.Role;
 import usach.hackaton.gpu.entities.UserStatus;
+import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.repositories.AppUserRepository;
 import usach.hackaton.gpu.service.AuthFactorService;
 
@@ -120,7 +121,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean validAuthFactor(AppUser user) {
-        boolean hasValidFactor = authFactorService.userHasValidAuthFactor(user);
+        boolean hasValidFactor = authFactorService.userHasValidAuthFactor(user, AuthFactorCode.EMAIL);
 
         if (!hasValidFactor) {
             log.debug("[JWT] No valid AuthFactor for email: {}", user.getEmail());

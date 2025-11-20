@@ -94,6 +94,8 @@ public class AuthService {
         AppUser activateUser = activationToken.getUser();
         userService.activateUser(activateUser);
 
+        authFactorService.markEmailAsVerified(activateUser);
+
         activationTokenService.delete(activationToken);
 
         return true;

@@ -1,8 +1,9 @@
 package usach.hackaton.gpu.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import usach.hackaton.gpu.entities.AppUser;
@@ -11,6 +12,7 @@ import usach.hackaton.gpu.entities.AuthFactorTypeLookup;
 import usach.hackaton.gpu.enums.AuthFactorCode;
 import usach.hackaton.gpu.repositories.AuthFactorRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthFactorService {
@@ -22,15 +24,38 @@ public class AuthFactorService {
     }
 
     public AuthFactor createRegisterFactor(AppUser user) {
+        // Crear factor de autentificacion para registro
         AuthFactorTypeLookup registerType = authFactorTypeLookupService.getByCode(AuthFactorCode.REGISTER);
         AuthFactor factor = AuthFactor.builder()
             .user(user)
             .type(registerType)
-            .used(true)
+            .used(false)
             .creationDate(LocalDateTime.now())
-            .expirationDate(LocalDateTime.now().plusYears(1))
+            .expirationDate(LocalDateTime.now().plusHours(24))
             .build();
+
         return save(factor);
+    }
+
+    @Transactional(readOnly = true)
+    public AuthFactor getAuthFactorByUserId(UUID userId, AuthFactorCode authFactorCode) {
+        return authFactorRepository.findByUserId(userId).stream()
+            .filter(authFactor -> authFactorCode.name().equals(authFactor.getType().getCode())).findFirst()
+            .orElseThrow(
+                () -> new IllegalStateException(
+                    "Factor not found: factor =  " + authFactorCode.name() + " user = " + userId
+                )
+            );
+    }
+
+    @Transactional
+    public void markEmailAsVerified(AppUser user) {
+        AuthFactor emailFactor = getAuthFactorByUserId(user.getId(), AuthFactorCode.REGISTER);
+
+        emailFactor.setUsed(true);
+        save(emailFactor);
+
+        log.debug("Email Factor marked as verified for user: {}", user.getEmail());
     }
 
     @Transactional
@@ -38,8 +63,7 @@ public class AuthFactorService {
         authFactorRepository.deleteById(id);
     }
 
-    public boolean userHasValidAuthFactor(AppUser user) {
-        List<AuthFactor> authFactors = authFactorRepository.findByUserId(user.getId());
-        return authFactors.stream().anyMatch(authFactor -> authFactor.isActive());
+    public boolean userHasValidAuthFactor(AppUser user, AuthFactorCode authFactorCode) {
+        return getAuthFactorByUserId(user.getId(), authFactorCode).isValid();
     }
 }
