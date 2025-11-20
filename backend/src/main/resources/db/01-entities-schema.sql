@@ -2,16 +2,11 @@
 -- Entities
 -- ==========
 
-DROP TABLE IF EXISTS item             CASCADE;
 DROP TABLE IF EXISTS app_user         CASCADE;
 DROP TABLE IF EXISTS auth_factor      CASCADE;
+DROP TABLE IF EXISTS item_copy        CASCADE;
 DROP TABLE IF EXISTS loan             CASCADE;
 DROP TABLE IF EXISTS activation_token CASCADE;
-
-CREATE TABLE item (
-    id    SERIAL PRIMARY KEY,
-    name  VARCHAR(50) NOT NULL
-);
 
 CREATE TABLE app_user (
     id        VARCHAR(50) PRIMARY KEY,
@@ -28,6 +23,17 @@ CREATE TABLE auth_factor (
     used            BOOLEAN     NOT NULL,
     creation_date   TIMESTAMP   WITH TIME ZONE NOT NULL,
     expiration_date TIMESTAMP   WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE item_copy (
+    id                SERIAL PRIMARY KEY,
+    item_id           INTEGER     NOT NULL REFERENCES item(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    copy_number       VARCHAR(20) NOT NULL UNIQUE,
+    condition         VARCHAR(20) NOT NULL,
+    status            VARCHAR(20) NOT NULL,
+    acquisition_date  DATE        NOT NULL,
+    notes             TEXT,
+    created_at        TIMESTAMP   WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE loan (
