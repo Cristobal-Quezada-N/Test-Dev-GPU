@@ -1,53 +1,98 @@
 package usach.hackaton.gpu.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import usach.hackaton.gpu.entities.Item;
+import usach.hackaton.gpu.entities.ItemCopy;
+import usach.hackaton.gpu.repositories.ItemCopyRepository;
 import usach.hackaton.gpu.repositories.ItemRepository;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ItemService {
+    private final ItemRepository itemRepository;
+    private final ItemCopyRepository itemCopyRepository;
 
-    @Autowired
-    private ItemRepository itemRepository;
-
-    public Item saveItem(Item item) {
-        if (item.getStock() <= 0) {
-            item.setAvailable(false);
-        } else {
-            item.setAvailable(item.getAvailable());
-        }
-
+    @Transactional
+    public Item save(Item item) {
         return itemRepository.save(item);
     }
 
+    @Transactional
+    public Item createItem(Item item) {
+        item.setCreatedAt(LocalDateTime.now());
+        Item savedItem = itemRepository.save(item);
+
+        log.debug("Item created: id = {}, name = {}", savedItem.getId(), savedItem.getName());
+        return savedItem;
+    }
+
+    @Transactional(readOnly = true)
     public List<Item> getAllItems() {
         return itemRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public List<Item> getAllAvailableItems() {
+        return itemRepository.findAllWithAvailableCopies();
+    }
+
+    @Transactional(readOnly = true)
     public Optional<Item> getItemById(Long id) {
         return itemRepository.findById(id);
     }
 
-    public void deleteItem(Long id) {
-        itemRepository.deleteById(id);
+    @Transactional(readOnly = true)
+    public Item getItemByIdOrThrow(Long id) {
+        return itemRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Item not found with id: " + id));
     }
 
-    public Optional<Item> updateItem(Long id, Item updatedItem) {
-        return itemRepository.findById(id).map(item -> {
-            item.setName(updatedItem.getName());
-            item.setStock(updatedItem.getStock());
-            item.setAvailable(updatedItem.getAvailable());
+    @Transactional(readOnly = true)
+    public List<Item> getItemsByCategory(String category) {
+        return itemRepository.findByCategory(category);
+    }
 
-            if (updatedItem.getStock() <= 0) {
-                item.setAvailable(false);
-            } else {
-                item.setAvailable(updatedItem.getAvailable());
-            }
+    @Transactional
+    public Item updateItem(Long id, Item updatedItem) {
+        Item item = getItemByIdOrThrow(id);
 
-            return itemRepository.save(item);
-        });
+        item.setName(updatedItem.getName());
+        item.setDescription(updatedItem.getDescription());
+        item.setCategory(updatedItem.getCategory());
+        item.setMinPeople(updatedItem.getMinPeople());
+        item.setMaxUsageMinutes(updatedItem.getMaxUsageMinutes());
+        item.setImageURL(updatedItem.getImageURL());
+
+        Item itemSaved = itemRepository.save(item);
+        log.debug("Item updated: id = {}, name = {}", item.getId(), item.getName());
+
+        return itemSaved;
+    }
+
+    @Transactional
+    public void deleteItem(Long id) {
+        Item item = getItemByIdOrThrow(id);
+
+        long loanedCopies = item.getCopies().stream()
+            .filter(copy -> "LOANED".equals(copy.getStatus()))
+            .count();
+
+        if (loanedCopies > 0) {
+            throw new RuntimeException("Cannot delete item: has {} loadned copies" + loanedCopies);
+        }
+        itemRepository.deleteById(id);
+        log.debug("Item deleted: id = {}, name = {}", id, item.getName());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ItemCopy> getAvailableCopies(Item item) {
+        return itemCopyRepository.findAvailableByItemId(item.getId());
     }
 }

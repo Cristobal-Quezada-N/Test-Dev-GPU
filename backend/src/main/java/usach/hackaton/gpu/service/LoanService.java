@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import usach.hackaton.gpu.entities.Item;
+import usach.hackaton.gpu.entities.ItemCopy;
 import usach.hackaton.gpu.entities.Loan;
 import usach.hackaton.gpu.repositories.ItemRepository;
 import usach.hackaton.gpu.repositories.LoanRepository;
@@ -18,26 +19,21 @@ public class LoanService {
     @Autowired
     private ItemRepository itemRepository;
 
+    @Autowired
+    private ItemCopyService itemCopyService;
+
     // Crear o actualizar un préstamo
     public Loan saveLoan(Loan loan) {
         // Buscar el ítem relacionado
         Item item = itemRepository.findById(loan.getItemId())
             .orElseThrow(() -> new IllegalArgumentException("Ítem no encontrado con ID: " + loan.getItemId()));
 
-        // Validar stock disponible
-        if (item.getStock() <= 0) {
-            throw new IllegalStateException("El ítem no tiene stock disponible");
-        }
+        ItemCopy itemCopy = itemCopyService.getNextAvailableCopy(item.getId());
 
-        // Restar 1 al stock
-        item.setStock(item.getStock() - 1);
+        // Marcar como prestado
+        itemCopy.setStatus("LOANED");
 
-        // Si llega a 0, marcar como no disponible
-        if (item.getStock() == 0) {
-            item.setAvailable(false);
-        }
-
-        itemRepository.save(item);
+        itemCopyService.save(itemCopy);
 
         // Forzar estado inicial del préstamo
         loan.setStatusId(1L);

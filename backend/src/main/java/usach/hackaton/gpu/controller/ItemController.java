@@ -26,7 +26,7 @@ public class ItemController {
 
     @PostMapping("/createItem")
     public ResponseEntity<Item> createItem(@RequestBody Item item) {
-        Item savedItem = itemService.saveItem(item);
+        Item savedItem = itemService.save(item);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedItem);
     }
 
@@ -48,7 +48,11 @@ public class ItemController {
 
     @PutMapping("/updateItem/{id}")
     public ResponseEntity<Item> updateItem(@PathVariable Long id, @RequestBody Item updatedItem) {
-        return itemService.updateItem(id, updatedItem).map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        try {
+            Item updatableNewItem = itemService.updateItem(id, updatedItem);
+            return ResponseEntity.ok(updatableNewItem);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
