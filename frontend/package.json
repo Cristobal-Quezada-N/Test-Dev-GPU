@@ -11,12 +11,13 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --fix",
     "lint:fix": "eslint . --fix --fix-type=problem,suggestion,layout --cache",
-    "postinstall": "if [ -d .git ]; then git config core.hooksPath frontend/.husky; else echo 'Skipping husky install (no .git)'; fi",
+    "postinstall": "if [ -d ../.git ]; then git config core.hooksPath frontend/.husky; else echo 'Skipping husky install (no .git)'; fi",
     "prepare": "husky"
   },
   "lint-staged": {
-    "frontend/**/*.{ts,tsx,js,vue}":
-        ["eslint --fix --fix-type=problem,suggestion,layout"]
+    "frontend/**/*.{ts,tsx,js,vue}": [
+      "eslint --fix --fix-type=problem,suggestion,layout"
+    ]
   },
   "dependencies": {
     "@fontsource/roboto": "5.2.6",
