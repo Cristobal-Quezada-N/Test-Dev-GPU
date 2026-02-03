@@ -1,7 +1,7 @@
+import type { User } from '@/types/auth.types'
 // Utilities
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { type User } from '@/types/auth.types'
 
 export const useAppStore = defineStore('app', () => {
   // State
@@ -11,8 +11,8 @@ export const useAppStore = defineStore('app', () => {
   const drawer = ref(true)
 
   // Computed
-  const isAdmin = computed(() => user.value?.role === 'admin')
-  const isUser = computed(() => user.value?.role === 'user')
+  const isAdmin = computed(() => user.value?.role === 'ADMIN')
+  const isUser = computed(() => user.value?.role === 'USER')
   const userInitials = computed(() => {
     if (!user.value?.name) {
       return ''

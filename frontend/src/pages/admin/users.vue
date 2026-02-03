@@ -91,7 +91,7 @@
 
           <template #item.role="{ item }">
             <v-chip
-              :color="item.raw.role === 'admin' ? 'error' : 'primary'"
+              :color="item.raw.role === 'ADMIN' ? 'error' : 'primary'"
               size="small"
               variant="tonal"
             >
@@ -271,7 +271,7 @@
   const userForm = ref({
     name: '',
     email: '',
-    role: 'user',
+    role: 'USER',
     status: 'active',
     password: '',
     confirmPassword: '',
@@ -283,7 +283,7 @@
       id: 1,
       name: 'John Doe',
       email: 'john.doe@example.com',
-      role: 'admin',
+      role: 'ADMIN',
       status: 'active',
       lastLogin: '2024-01-12T10:30:00Z',
     },
@@ -291,7 +291,7 @@
       id: 2,
       name: 'Jane Smith',
       email: 'jane.smith@example.com',
-      role: 'user',
+      role: 'USER',
       status: 'active',
       lastLogin: '2024-01-11T15:45:00Z',
     },
@@ -299,7 +299,7 @@
       id: 3,
       name: 'Mike Johnson',
       email: 'mike.johnson@example.com',
-      role: 'user',
+      role: 'USER',
       status: 'inactive',
       lastLogin: '2024-01-05T09:20:00Z',
     },
@@ -307,7 +307,7 @@
       id: 4,
       name: 'Sarah Wilson',
       email: 'sarah.wilson@example.com',
-      role: 'user',
+      role: 'USER',
       status: 'active',
       lastLogin: '2024-01-12T14:15:00Z',
     },
@@ -315,8 +315,8 @@
 
   const roleOptions = ref([
     { title: 'All Roles', value: 'all' },
-    { title: 'Admin', value: 'admin' },
-    { title: 'User', value: 'user' },
+    { title: 'Admin', value: 'ADMIN' },
+    { title: 'User', value: 'USER' },
   ])
 
   const statusOptions = ref([
@@ -376,7 +376,7 @@
       : {
         name: '',
         email: '',
-        role: 'user',
+        role: 'USER',
         status: 'active',
         password: '',
         confirmPassword: '',

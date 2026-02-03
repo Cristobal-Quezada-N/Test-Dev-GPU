@@ -14,7 +14,7 @@ export const AUTH_API = {
 //     name: 'Administrador',
 //     email: 'admin@demo.com',
 //     password: 'admin123',
-//     role: 'admin',
+//     role: 'ADMIN',
 //     avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
 //   },
 //   {
@@ -22,7 +22,7 @@ export const AUTH_API = {
 //     name: 'Usuario Demo',
 //     email: 'user@demo.com',
 //     password: 'user123',
-//     role: 'user',
+//     role: 'USER',
 //     avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
 //   },
 //   {
@@ -30,7 +30,7 @@ export const AUTH_API = {
 //     name: 'Juan Pérez',
 //     email: 'juan@demo.com',
 //     password: 'juan123',
-//     role: 'user',
+//     role: 'USER',
 //     avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
 //   },
 // ]

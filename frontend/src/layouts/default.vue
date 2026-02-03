@@ -199,42 +199,42 @@
       subtitle: 'Solicitar un préstamo',
       icon: 'mdi-file-document-plus',
       to: '/solicitar',
-      roles: ['user'],
+      roles: ['USER'],
     },
     {
       title: 'Solicitudes',
       subtitle: 'Ver solicitudes de préstamos',
       icon: 'mdi-file-document',
       to: '/solicitudes',
-      roles: ['admin'],
+      roles: ['ADMIN'],
     },
     {
       title: 'Inventario',
       subtitle: 'Gestionar el inventario',
       icon: 'mdi-package-variant',
       to: '/inventario',
-      roles: ['admin'],
+      roles: ['ADMIN'],
     },
     {
       title: 'Préstamos',
       subtitle: 'Gestionar los préstamos',
       icon: 'mdi-history',
       to: '/prestamos',
-      roles: ['admin'],
+      roles: ['ADMIN'],
     },
     {
       title: 'Usuarios',
       subtitle: 'Gestionar los usuarios',
       icon: 'mdi-account-group',
       to: '/usuarios',
-      roles: ['admin'],
+      roles: ['ADMIN'],
     },
   ]
 
   // Filtered navigation items based on user role
   const userNavigationItems = computed(() => {
     return allNavigationItems.filter(item =>
-      item.roles.includes(appStore.user?.role ?? 'user'),
+      item.roles.includes(appStore.user?.role ?? 'USER'),
     )
   })
 
