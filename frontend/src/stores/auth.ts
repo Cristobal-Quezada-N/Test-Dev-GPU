@@ -172,7 +172,7 @@ export const useAuthStore = defineStore('auth', () => {
         // Validate stored token
         appStore.login(storedUser)
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.warn('Auth initialization failed, clearing stored data:', error)
       // Clear invalid stored data
       removeStoredToken()
@@ -270,11 +270,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       resetRegisterForm()
       router.push('/login')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(' Error en register:', error)
-
-      errorMessage.value = error.response ? error.response.data.message || 'Error al registrarse' : error.message || 'Error desconocido'
-
+      errorMessage.value = error instanceof Error ? error.message : 'Error desconocido'
       showError.value = true
     } finally {
       loading.value = false

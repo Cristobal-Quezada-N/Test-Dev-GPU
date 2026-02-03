@@ -15,6 +15,5 @@ export interface LoginForm {
 export interface AuthResponse {
   user: User
   token: string
-  // #MOCK
   // refreshToken: string
 }
