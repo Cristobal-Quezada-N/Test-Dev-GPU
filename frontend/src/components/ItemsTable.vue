@@ -64,42 +64,42 @@
 </template>
 
 <script setup lang="ts">
-const searchModel = defineModel<string>('search', { default: '' })
+  const searchModel = defineModel<string>('search', { default: '' })
 
-type Header = {
-  title: string
-  key: string
-  align?: 'start' | 'end' | 'center'
-  sortable?: boolean
-  width?: string | number
-}
+  type Header = {
+    title: string
+    key: string
+    align?: 'start' | 'end' | 'center'
+    sortable?: boolean
+    width?: string | number
+  }
 
-const props = withDefaults(defineProps<{
-  // Contenedor
-  fluid?: boolean
-  containerClass?: string
-  elevation?: number
+  const props = withDefaults(defineProps<{
+    // Contenedor
+    fluid?: boolean
+    containerClass?: string
+    elevation?: number
 
-  // Titulo
-  title?: string
+    // Titulo
+    title?: string
 
-  // Tabla
-  headers: Header[]
-  items: Record<string, any>[]
+    // Tabla
+    headers: Header[]
+    items: Record<string, any>[]
 
-  // Available
-  availableTrueText?: string
-  availableFalseText?: string
-  availableTrueColor?: string
-  availableFalseColor?: string
-}>(), {
-  fluid: true,
-  containerClass: '',
-  elevation: 2,
-  title: '',
-  availableTrueText: 'Disponible',
-  availableFalseText: 'No disponible',
-  availableTrueColor: 'success',
-  availableFalseColor: 'error',
-})
+    // Available
+    availableTrueText?: string
+    availableFalseText?: string
+    availableTrueColor?: string
+    availableFalseColor?: string
+  }>(), {
+    fluid: true,
+    containerClass: '',
+    elevation: 2,
+    title: '',
+    availableTrueText: 'Disponible',
+    availableFalseText: 'No disponible',
+    availableTrueColor: 'success',
+    availableFalseColor: 'error',
+  })
 </script>

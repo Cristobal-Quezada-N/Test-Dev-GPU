@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 import queryClient from '../query.client'
 import { authService } from './auth.services'
 
-export const useLogin = () => {
+export function useLogin () {
   const authStore = useAuthStore()
   const appStore = useAppStore()
   return useMutation({
@@ -17,7 +17,7 @@ export const useLogin = () => {
   }, queryClient)
 }
 
-export const useRegister = () => {
+export function useRegister () {
   const router = useRouter()
   const notificationStore = useNotificationStore()
 

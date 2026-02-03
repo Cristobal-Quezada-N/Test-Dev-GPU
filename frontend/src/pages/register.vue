@@ -7,8 +7,10 @@
     <v-card class="login-card elevation-12">
       <!-- Header -->
       <div class="login-header text-center pa-6">
-        <v-avatar size="80" color="primary" class="mb-4">
-          <v-icon size="40" color="white">mdi-account-plus</v-icon>
+        <v-avatar class="mb-4" color="primary" size="80">
+          <v-icon color="white" size="40">
+            mdi-account-plus
+          </v-icon>
         </v-avatar>
         <h1 class="text-h4 font-weight-bold text-primary mb-2">
           Registrarse
@@ -77,8 +79,8 @@
             <v-btn
               color="primary"
               size="small"
-              variant="text"
               :to="{ path: '/login' }"
+              variant="text"
             >
               Inicia sesión aquí
             </v-btn>
@@ -108,20 +110,20 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+  import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
+  const authStore = useAuthStore()
 
-definePage({
-  meta: {
-    layout: 'auth',
-    requiresAuth: false,
-  },
-})
+  definePage({
+    meta: {
+      layout: 'auth',
+      requiresAuth: false,
+    },
+  })
 
-const handleRegister = () => {
-  authStore.handleRegister()
-}
+  function handleRegister () {
+    authStore.handleRegister()
+  }
 </script>
 
 <style scoped>

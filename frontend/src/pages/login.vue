@@ -102,13 +102,13 @@
               @click="authStore.register"
             >
               <v-btn
-              color="primary"
-              size="small"
-              variant="text"
-              :to="{ path: '/register' }"
+                color="primary"
+                size="small"
+                :to="{ path: '/register' }"
+                variant="text"
               >
-              Regístrate aquí
-            </v-btn>
+                Regístrate aquí
+              </v-btn>
             </v-btn>
           </p>
         </div>
@@ -155,50 +155,48 @@
   const notificationStore = useNotificationStore()
 
   // Handle form submission with validation
-const handleSubmit = async () => {
-  try {
-    login(loginForm, {
-      onSuccess: async (data: any) => {
-        // 1. Guardar el token provisional
-        localStorage.setItem("auth_token", data.token)
+  async function handleSubmit () {
+    try {
+      login(loginForm, {
+        onSuccess: async (data: any) => {
+          // 1. Guardar el token provisional
+          localStorage.setItem('auth_token', data.token)
 
-        try {
-          // 2. Intentar obtener el perfil con /me
-          const response = await fetch("http://localhost:8090/api/users/me", {
-            headers: {
-              Authorization: `Bearer ${data.token}`,
-            },
-          })
+          try {
+            // 2. Intentar obtener el perfil con /me
+            const response = await fetch('http://localhost:8090/api/users/me', {
+              headers: {
+                Authorization: `Bearer ${data.token}`,
+              },
+            })
 
-          if (!response.ok) {
-            throw new Error("Tu cuenta no está verificada, por favor, verificala")
+            if (!response.ok) {
+              throw new Error('Tu cuenta no está verificada, por favor, verificala')
+            }
+
+            const user = await response.json()
+
+            // 3. Guardar datos del usuario
+            localStorage.setItem('user_id', user.id)
+            localStorage.setItem('user_email', user.email)
+            localStorage.setItem('user_role', user.role?.name)
+
+            // 4. Redirigir al home
+            router.push('/')
+          } catch (error: any) {
+            // Si hubo error con /me → limpiar token y mostrar notificación
+            localStorage.removeItem('auth_token')
+            notificationStore.notify(error.message, 'error')
           }
-
-          const user = await response.json()
-
-          // 3. Guardar datos del usuario
-          localStorage.setItem("user_id", user.id)
-          localStorage.setItem("user_email", user.email)
-          localStorage.setItem("user_role", user.role?.name)
-
-          // 4. Redirigir al home
-          router.push("/")
-        } catch (err: any) {
-          // Si hubo error con /me → limpiar token y mostrar notificación
-          localStorage.removeItem("auth_token")
-          notificationStore.notify(err.message, "error")
-        }
-      },
-      onError: error => {
-        notificationStore.notify(error.message, "error")
-      },
-    })
-  } catch (error) {
-    console.error("Error submitting form:", error)
+        },
+        onError: error => {
+          notificationStore.notify(error.message, 'error')
+        },
+      })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    }
   }
-}
-
-
 
 </script>
 

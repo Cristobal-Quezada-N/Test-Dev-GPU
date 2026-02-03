@@ -1,5 +1,6 @@
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
+import vueTs from '@vue/eslint-config-typescript'
 import vuetify from 'eslint-config-vuetify'
 import unusedImports from 'eslint-plugin-unused-imports'
 import pluginVue from 'eslint-plugin-vue'
@@ -8,8 +9,9 @@ import vueParser from 'vue-eslint-parser'
 export default vuetify(
   {},
   ...pluginVue.configs['flat/recommended'],
+  ...vueTs(),
   {
-    files: ['**/*.{ts,vue}'],
+    files: ['**/*.{js,ts,mts,tsx,vue}'],
     languageOptions: {
       parser: vueParser,
       parserOptions: {
@@ -42,5 +44,8 @@ export default vuetify(
       'vue/attributes-order': 'warn',
       'unicorn/no-empty-file': 'warn',
     },
+  },
+  {
+    ignores: ['dist/**', 'node_modules/**'],
   },
 )

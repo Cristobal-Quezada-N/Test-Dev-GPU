@@ -13,7 +13,7 @@
       <v-list>
         <v-list-item>
           <template #prepend>
-            <v-btn variant="text" class="d-flex align-center" @click="router.push('/')">
+            <v-btn class="d-flex align-center" variant="text" @click="router.push('/')">
               <v-icon color="primary" size="32">
                 mdi-handshake
               </v-icon>
@@ -246,11 +246,11 @@
   })
 
   // Handle logout
-const handleLogout = () => {
-  authStore.logout()
-  userMenu.value = false
-  router.push("/login") // 🚀 Ir directo al login
-}
+  function handleLogout () {
+    authStore.logout()
+    userMenu.value = false
+    router.push('/login') // 🚀 Ir directo al login
+  }
 
 // No need for authentication checks here since router guards handle it
 </script>

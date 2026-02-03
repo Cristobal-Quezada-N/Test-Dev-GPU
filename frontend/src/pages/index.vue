@@ -76,12 +76,12 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
 
-const router = useRouter()
+  const router = useRouter()
 
-const navigateTo = (path: string) => {
-  router.push(path)
-}
+  function navigateTo (path: string) {
+    router.push(path)
+  }
 
 </script>

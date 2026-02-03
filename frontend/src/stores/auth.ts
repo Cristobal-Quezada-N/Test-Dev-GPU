@@ -3,10 +3,9 @@
 // Utilities
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
-import { useAppStore } from './app'
-import { authService } from '@/services/auth/auth.services'
 import router from '@/router'
-
+import { authService } from '@/services/auth/auth.services'
+import { useAppStore, type User } from './app'
 
 export interface LoginForm {
   email: string
@@ -37,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // State
   const loading = ref(false)
-  const demoLoading = ref<string | null>(null)
+  const _demoLoading = ref<string | null>(null)
   const showPassword = ref(false)
   const showError = ref(false)
   const errorMessage = ref('')
@@ -102,12 +101,12 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_token')
   }
 
-  const getStoredUser = (): any => {
+  const getStoredUser = (): object | null => {
     const userStr = localStorage.getItem('auth_user')
     return userStr ? JSON.parse(userStr) : null
   }
 
-  const setStoredUser = (user: any): void => {
+  const setStoredUser = (user: User): void => {
     localStorage.setItem('auth_user', JSON.stringify(user))
   }
 
@@ -187,7 +186,7 @@ export const useAuthStore = defineStore('auth', () => {
       const token = getStoredToken()
       const storedUser = getStoredUser()
       if (token && storedUser) {
-      // Validate stored token
+        // Validate stored token
         appStore.login(storedUser)
       }
     } catch (error) {
@@ -206,11 +205,8 @@ export const useAuthStore = defineStore('auth', () => {
     errorMessage.value = ''
 
     try {
-      
       const response = await authService.login(loginForm.email, loginForm.password)
 
-
-      
       const token = response.auth_token
       const user = JSON.parse(response.auth_user)
       // Store tokens and user data
@@ -281,30 +277,26 @@ export const useAuthStore = defineStore('auth', () => {
     console.log('Register clicked')
   }
 
-const handleRegister = async () => {
-  loading.value = true
-  clearError()
+  const handleRegister = async () => {
+    loading.value = true
+    clearError()
 
-  try {
-    const res = await authService.register(registerForm.email, registerForm.password, 2)
-    console.log(res.message)
+    try {
+      const res = await authService.register(registerForm.email, registerForm.password, 2)
+      console.log(res.message)
 
-    resetRegisterForm()
-    router.push('/login')
-  } catch (err: any) {
-  console.error(" Error en register:", err)
+      resetRegisterForm()
+      router.push('/login')
+    } catch (error: any) {
+      console.error(' Error en register:', error)
 
-  if (err.response) {
-    errorMessage.value = err.response.data.message || 'Error al registrarse'
-  } else {
-    errorMessage.value = err.message || 'Error desconocido'
+      errorMessage.value = error.response ? error.response.data.message || 'Error al registrarse' : error.message || 'Error desconocido'
+
+      showError.value = true
+    } finally {
+      loading.value = false
+    }
   }
-
-  showError.value = true
-}finally {
-    loading.value = false
-  }
-}
 
   const clearError = (): void => {
     showError.value = false

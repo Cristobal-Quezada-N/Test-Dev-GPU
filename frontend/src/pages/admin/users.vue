@@ -347,7 +347,7 @@
   })
 
   // Methods
-  const getUserInitials = (name: string) => {
+  function getUserInitials (name: string) {
     return name
       .split(' ')
       .map(n => n[0])
@@ -356,11 +356,11 @@
       .slice(0, 2)
   }
 
-  const formatDate = (date: string) => {
+  function formatDate (date: string) {
     return new Date(date).toLocaleDateString()
   }
 
-  const openUserDialog = (user?: any) => {
+  function openUserDialog (user?: any) {
     isEditing.value = !!user
     selectedUser.value = user
 
@@ -385,11 +385,11 @@
     userDialog.value = true
   }
 
-  const editUser = (user: any) => {
+  function editUser (user: any) {
     openUserDialog(user)
   }
 
-  const saveUser = async () => {
+  async function saveUser () {
     saving.value = true
 
     // Simulate API call
@@ -424,12 +424,12 @@
     saving.value = false
   }
 
-  const deleteUser = (user: any) => {
+  function deleteUser (user: any) {
     selectedUser.value = user
     deleteDialog.value = true
   }
 
-  const confirmDelete = async () => {
+  async function confirmDelete () {
     deleting.value = true
 
     // Simulate API call

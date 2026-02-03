@@ -57,11 +57,11 @@
     { immediate: true },
   )
 
-  const cancel = () => {
+  function cancel () {
     emit('update:modelValue', false)
   }
 
-  const save = () => {
+  function save () {
     emit('save', localItem.value)
     emit('update:modelValue', false)
     localItem.value = { name: '', stock: 0, available: true }
