@@ -1,6 +1,3 @@
-// #MOCK
-// import type { MockUser } from '@/services/auth/auth.types'
-// Utilities
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import router from '@/router'
@@ -19,7 +16,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   // State
   const loading = ref(false)
-  const _demoLoading = ref<string | null>(null)
   const showPassword = ref(false)
   const showError = ref(false)
   const errorMessage = ref('')
@@ -31,34 +27,6 @@ export const useAuthStore = defineStore('auth', () => {
     password: '',
     rememberMe: false,
   })
-
-  // #MOCK
-  // const mockUsers: MockUser[] = [
-  //   {
-  //     id: '1',
-  //     name: 'Administrador',
-  //     email: 'admin@demo.com',
-  //     password: 'admin123',
-  //     role: 'admin',
-  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-  //   },
-  //   {
-  //     id: '2',
-  //     name: 'Usuario Demo',
-  //     email: 'user@demo.com',
-  //     password: 'user123',
-  //     role: 'user',
-  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-  //   },
-  //   {
-  //     id: '3',
-  //     name: 'Juan Pérez',
-  //     email: 'juan@demo.com',
-  //     password: 'juan123',
-  //     role: 'user',
-  //     avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-  //   },
-  // ]
 
   // Validation rules
   const emailRules = [
@@ -97,74 +65,12 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_user')
   }
 
-  // #MOCK
-  // const mockApiCall = async (delay = 1000): Promise<void> => {
-  //   return new Promise(resolve => {
-  //     setTimeout(resolve, delay)
-  //   })
-  // }
-
-  // const mockLogin = async (email: string, password: string): Promise<AuthResponse> => {
-  //   // Simulate API delay
-  //   await mockApiCall(1500)
-
-  //   // Find user in mock data
-  //   const user = mockUsers.find(u => u.email === email && u.password === password)
-
-  //   if (!user) {
-  //     throw new Error('Credenciales inválidas')
-  //   }
-
-  //   // Generate mock tokens
-  //   const token = `mock_token_${user.id}_${Date.now()}`
-  //   const refreshToken = `mock_refresh_${user.id}_${Date.now()}`
-
-  //   return {
-  //     user: {
-  //       id: user.id,
-  //       name: user.name,
-  //       email: user.email,
-  //       role: user.role,
-  //       avatar: user.avatar,
-  //     },
-  //     token,
-  //     refreshToken,
-  //   }
-  // }
-
-  // const mockValidateToken = async (token: string): Promise<any> => {
-  //   // Simulate API delay
-  //   await mockApiCall(500)
-
-  //   // Extract user ID from mock token
-  //   const tokenParts = token.split('_')
-  //   if (tokenParts.length < 3) {
-  //     throw new Error('Token inválido')
-  //   }
-
-  //   const userId = tokenParts[2]
-  //   const user = mockUsers.find(u => u.id === userId)
-
-  //   if (!user) {
-  //     throw new Error('Usuario no encontrado')
-  //   }
-
-  //   return {
-  //     id: user.id,
-  //     name: user.name,
-  //     email: user.email,
-  //     role: user.role,
-  //     avatar: user.avatar,
-  //   }
-  // }
-
   // Authentication methods
   const initializeAuth = async (): Promise<void> => {
     if (isInitialized.value) {
       return
     }
 
-    // #MOCK
     try {
       const token = getStoredToken()
       const storedUser = getStoredUser()
@@ -208,32 +114,6 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = false
     }
   }
-
-  // #MOCK
-  // const demoLogin = async (role: 'user' | 'admin'): Promise<void> => {
-  //   demoLoading.value = role
-
-  //   try {
-  //     const demoUser = mockUsers.find(u => u.role === role)
-  //     if (!demoUser) {
-  //       throw new Error('Usuario de demostración no encontrado')
-  //     }
-
-  //     const response = await mockLogin(demoUser.email, demoUser.password)
-
-  //     // Store tokens and user data
-  //     setStoredToken(response.token)
-  //     setStoredUser(response.user)
-
-  //     // Update app store
-  //     appStore.login(response.user)
-  //   } catch (error) {
-  //     errorMessage.value = error instanceof Error ? error.message : 'Error al iniciar sesión de demostración'
-  //     showError.value = true
-  //   } finally {
-  //     demoLoading.value = null
-  //   }
-  // }
 
   const logout = (): void => {
     // Clear stored data
@@ -298,7 +178,6 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     // State
     loading,
-    // demoLoading,
     showPassword,
     showError,
     errorMessage,
@@ -311,9 +190,7 @@ export const useAuthStore = defineStore('auth', () => {
     passwordRules,
 
     // Methods
-    // #MOCK
     initializeAuth,
-    // demoLogin,
     handleLogin,
     handleRegister,
     logout,
