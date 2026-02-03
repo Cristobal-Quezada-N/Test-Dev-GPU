@@ -5,31 +5,14 @@ import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import router from '@/router'
 import { authService } from '@/services/auth/auth.services'
-import { useAppStore, type User } from './app'
-
-export interface LoginForm {
-  email: string
-  password: string
-  rememberMe: boolean
-}
+import { type LoginForm } from '@/types/auth.types'
+import { useAppStore } from '@/stores/app'
+import { type User } from '@/types/auth.types'
 
 const registerForm = reactive({
   email: '',
   password: '',
 })
-
-export interface AuthResponse {
-  user: {
-    id: string
-    name: string
-    email: string
-    role: 'admin' | 'user'
-    avatar?: string
-  }
-  token: string
-  // #MOCK
-  // refreshToken: string
-}
 
 export const useAuthStore = defineStore('auth', () => {
   const appStore = useAppStore()
@@ -101,7 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('auth_token')
   }
 
-  const getStoredUser = (): object | null => {
+  const getStoredUser = (): User | null => {
     const userStr = localStorage.getItem('auth_user')
     return userStr ? JSON.parse(userStr) : null
   }
