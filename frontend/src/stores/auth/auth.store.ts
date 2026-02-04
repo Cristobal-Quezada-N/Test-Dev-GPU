@@ -1,17 +1,17 @@
+import type { LoginForm } from '@/types/auth.types'
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
 import router from '@/router'
 import { authService } from '@/services/auth/auth.services'
-import { type LoginForm } from '@/types/auth.types'
 import { useAppStore } from '@/stores/app'
-import { type User } from '@/types/auth.types'
+import { authStorage } from './auth.storage'
 
 const registerForm = reactive({
   email: '',
   password: '',
 })
 
-export const useAuthStore = defineStore('auth', () => {
+export const authStore = defineStore('auth', () => {
   const appStore = useAppStore()
 
   // State
@@ -39,32 +39,6 @@ export const useAuthStore = defineStore('auth', () => {
     (v: string) => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
   ]
 
-  // Token management
-  const getStoredToken = (): string | null => {
-    return localStorage.getItem('auth_token')
-  }
-
-  const setStoredToken = (token: string): void => {
-    localStorage.setItem('auth_token', token)
-  }
-
-  const removeStoredToken = (): void => {
-    localStorage.removeItem('auth_token')
-  }
-
-  const getStoredUser = (): User | null => {
-    const userStr = localStorage.getItem('auth_user')
-    return userStr ? JSON.parse(userStr) : null
-  }
-
-  const setStoredUser = (user: User): void => {
-    localStorage.setItem('auth_user', JSON.stringify(user))
-  }
-
-  const removeStoredUser = (): void => {
-    localStorage.removeItem('auth_user')
-  }
-
   // Authentication methods
   const initializeAuth = async (): Promise<void> => {
     if (isInitialized.value) {
@@ -72,8 +46,8 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      const token = getStoredToken()
-      const storedUser = getStoredUser()
+      const token = authStorage.getToken()
+      const storedUser = authStorage.getUser()
       if (token && storedUser) {
         // Validate stored token
         appStore.login(storedUser)
@@ -81,8 +55,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error: unknown) {
       console.warn('Auth initialization failed, clearing stored data:', error)
       // Clear invalid stored data
-      removeStoredToken()
-      removeStoredUser()
+      authStorage.clearAll()
     } finally {
       isInitialized.value = true
     }
@@ -99,8 +72,8 @@ export const useAuthStore = defineStore('auth', () => {
       const token = response.auth_token
       const user = JSON.parse(response.auth_user)
       // Store tokens and user data
-      setStoredToken(token)
-      setStoredUser(user)
+      authStorage.setToken(token)
+      authStorage.setUser(user)
 
       // Update app store
       appStore.login(user)
@@ -117,8 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const logout = (): void => {
     // Clear stored data
-    removeStoredToken()
-    removeStoredUser()
+    authStorage.clearAll()
 
     // Update app store
     appStore.logout()
@@ -198,7 +170,5 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     clearError,
     resetForm,
-    setStoredToken,
-    setStoredUser,
   }
 })

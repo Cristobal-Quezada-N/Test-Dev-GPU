@@ -1,17 +1,16 @@
 import { useMutation } from '@tanstack/vue-query'
 import { useAppStore } from '@/stores/app'
-import { useAuthStore } from '@/stores/auth'
+import { authStorage } from '@/stores/auth/auth.storage'
 import queryClient from '../query.client'
 import { authService } from './auth.services'
 
-export function useLogin () {
-  const authStore = useAuthStore()
+export function useLogin() {
   const appStore = useAppStore()
   return useMutation({
     mutationFn: (data: any) => authService.login(data.email, data.password),
     onSuccess: data => {
-      authStore.setStoredToken(data.token)
-      authStore.setStoredUser(data.user)
+      authStorage.setToken(data.token)
+      authStorage.setUser(data.user)
       appStore.login(data.user)
     },
   }, queryClient)

@@ -12,7 +12,7 @@
       </v-btn>
     </template>
   </v-snackbar>
-  <LoadingScreen v-if="!authStore.isInitialized" />
+  <LoadingScreen v-if="!useAuthStore.isInitialized" />
   <router-view v-else />
 </template>
 
@@ -20,8 +20,8 @@
   import { onMounted } from 'vue'
   import LoadingScreen from '@/components/LoadingScreen.vue'
   import { useAppStore } from '@/stores/app'
-  import { useAuthStore } from '@/stores/auth'
   import { useNotificationStore } from '@/stores/notification'
+import { authStore } from '@/stores/auth/auth.store'
 
   const authStore = useAuthStore()
   const appStore = useAppStore()

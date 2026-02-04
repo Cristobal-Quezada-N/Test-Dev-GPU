@@ -180,11 +180,11 @@
   import { computed, ref } from 'vue'
   import { useRouter } from 'vue-router'
   import { useAppStore } from '@/stores/app'
-  import { useAuthStore } from '@/stores/auth'
+  import { authStore } from '@/stores/auth'
 
   const router = useRouter()
   const appStore = useAppStore()
-  const authStore = useAuthStore()
+  const useAuthStore = authStore()
 
   // Local state
   const rail = ref(true)
@@ -247,7 +247,7 @@
 
   // Handle logout
   function handleLogout () {
-    authStore.logout()
+    useAuthStore.logout()
     userMenu.value = false
     router.push('/login') // 🚀 Ir directo al login
   }
