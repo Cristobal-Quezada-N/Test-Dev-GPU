@@ -15,9 +15,13 @@ import App from './App.vue'
 
 // Styles
 import 'unfonts.css'
+import { devBypass } from './plugins/dev-auth'
 
 const app = createApp(App)
 
 registerPlugins(app)
+
+// Development bypass
+devBypass()
 
 app.mount('#app')
