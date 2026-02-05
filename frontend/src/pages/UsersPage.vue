@@ -3,21 +3,21 @@
     <!-- Tabla de Usuarios -->
     <ItemsTable :headers="headers" :items="users" :search="search" title="Usuarios">
       <!-- Rol como Chip -->
-      <template #item.roleId="{ item }">
+      <template #[`item.roleId`]="{ item }">
         <v-chip class="ma-1" :color="getRoleColor(item.roleId)" label variant="tonal">
-          {{ getRoleLabel(item.roleId) }}
+          {{ item.roleId }}
         </v-chip>
       </template>
 
       <!-- Estado como Chip -->
-      <template #item.statusId="{ item }">
+      <template #[`item.statusId`]="{ item }">
         <v-chip class="ma-1" :color="getStatusColor(item.statusId)" label variant="tonal">
           {{ getStatusLabel(item.statusId) }}
         </v-chip>
       </template>
 
       <!-- Acciones -->
-      <template #item.actions="{ item }">
+      <template #[`item.actions`]="{ item }">
         <v-btn color="blue" @click="viewUser(item)">
           Ver
         </v-btn>
@@ -62,8 +62,8 @@
 
           <p>
             <strong>Rol:</strong>
-            <v-chip class="ma-1" :color="getRoleColor(selectedUser?.roleId)" label variant="tonal">
-              {{ getRoleLabel(selectedUser?.roleId) }}
+            <v-chip class="ma-1" :color="getRoleColor(selectedUser?.role)" label variant="tonal">
+              {{ getRoleLabel(selectedUser?.role) }}
             </v-chip>
           </p>
 
@@ -105,20 +105,22 @@ v-model="editableStatus" density="compact" item-title="label" item-value="id"
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import ItemsTable from '@/components/ItemsTable.vue'
+import type { Header } from '@/types/table.types'
+import type { User } from '@/types/auth.types'
 
-const headers = [
+const headers: Header[] = [
   { title: 'Correo', key: 'email', align: 'start' },
   { title: 'Rol', key: 'roleId', align: 'center' },
   { title: 'Estado', key: 'statusId', align: 'center' },
   { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
 ]
 
-const users = ref<any[]>([])
+const users = ref<User[]>([])
 const search = ref('')
 const showDeleteDialog = ref(false)
 const showViewDialog = ref(false)
-const selectedUser = ref<any | null>(null)
-const editableStatus = ref<number | null>(null)
+const selectedUser = ref<User | null>(null)
+const editableStatus = ref<string | null>(null)
 const accesoPermitido = ref(false)
 
 const statusOptions = [
@@ -151,30 +153,23 @@ async function fetchUsers() {
   }
 }
 
-// Funciones para roles
-function getRoleLabel(roleId: number) {
-  switch (roleId) {
-    case 1: {
+function getRoleLabel(role: string | undefined) {
+  switch (role) {
+    case 'ADMIN':
       return 'Administrador'
-    }
-    case 2: {
+    case 'USER':
       return 'Usuario'
-    }
-    case 3: {
-      return 'Invitado'
-    }
-    default: {
-      return 'Desconocido'
-    }
+    default:
+      return 'Desconocido';
   }
 }
 
-function getRoleColor(roleId: number) {
-  switch (roleId) {
-    case 1: {
+function getRoleColor(role: string) {
+  switch (role) {
+    case 'ADMIN': {
       return 'red'
     }
-    case 2: {
+    case 'USER': {
       return 'green'
     }
     default: {
@@ -219,7 +214,7 @@ function getStatusColor(statusId: number) {
 }
 
 // Abrir diálogo de confirmación eliminar
-function confirmDelete(user: any) {
+function confirmDelete(user: User) {
   selectedUser.value = user
   showDeleteDialog.value = true
 }
@@ -245,9 +240,9 @@ async function deleteUser() {
 }
 
 // Ver usuario
-function viewUser(user: any) {
+function viewUser(user: User) {
   selectedUser.value = user
-  editableStatus.value = user.statusId
+  editableStatus.value = user.id
   showViewDialog.value = true
 }
 

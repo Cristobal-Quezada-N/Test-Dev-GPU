@@ -171,7 +171,7 @@ const allNavigationItems = [
     title: 'Usuarios',
     subtitle: 'Gestionar los usuarios',
     icon: 'mdi-account-group',
-    to: '/usuarios',
+    to: '/UsersPage',
     roles: ['ADMIN'],
   },
 ]
