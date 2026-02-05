@@ -39,9 +39,9 @@ class="elevation-1" fixed-header :headers="headers" :items="items" :search="sear
         </template>
 
         <!-- Slot genérico para TODAS las demás columnas -->
-        <template v-for="header in headers" #[`item.${header.key}`]="{ item }">
-          <slot :item="item" :name="`item.${header.key}`">
-            {{ item[header.key] }}
+        <template v-for="header in headers">
+          <slot :item="header" :name="header.key">
+            {{ header.key }}
           </slot>
         </template>
       </v-data-table-virtual>

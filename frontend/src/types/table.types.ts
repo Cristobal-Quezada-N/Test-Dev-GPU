@@ -6,7 +6,14 @@ export interface Header {
   width?: string | number
 }
 
-export interface ItemTableProps<T = Record<string, unknown>> {
+export interface Item {
+  id: number
+  name: string
+  stock: number
+  available: boolean
+}
+
+export interface ItemTableProps {
   // Contenedor
   fluid?: boolean
   containerClass?: string
@@ -15,7 +22,7 @@ export interface ItemTableProps<T = Record<string, unknown>> {
   title?: string
   // Tabla
   headers: Header[]
-  items: T[]
+  items: Item[]
   // Available
   availableTrueText?: string
   availableFalseText?: string
