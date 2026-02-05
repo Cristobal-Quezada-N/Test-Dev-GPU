@@ -18,14 +18,14 @@
 class="elevation-1" fixed-header :headers="headers" :items="items" :search="searchModel"
         v-bind="$attrs">
         <!-- Stock -->
-        <template #item.stock="{ item }">
+        <template #[`item.stock`]="{ item }">
           <slot :item="item" name="item.stock">
             <span>{{ item.stock }}</span>
           </slot>
         </template>
 
         <!-- Available -->
-        <template #item.available="{ item }">
+        <template #[`item.available`]="{ item }">
           <slot :item="item" name="item.available">
             <v-chip :color="item.available ? availableTrueColor : availableFalseColor">
               {{ item.available ? availableTrueText : availableFalseText }}
@@ -34,7 +34,7 @@ class="elevation-1" fixed-header :headers="headers" :items="items" :search="sear
         </template>
 
         <!-- Acciones -->
-        <template #item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <slot :item="item" name="item.actions" />
         </template>
 
@@ -53,35 +53,11 @@ class="elevation-1" fixed-header :headers="headers" :items="items" :search="sear
 </template>
 
 <script setup lang="ts">
+import type { ItemTableProps } from '@/types/table.types'
+
 const searchModel = defineModel<string>('search', { default: '' })
 
-type Header = {
-  title: string
-  key: string
-  align?: 'start' | 'end' | 'center'
-  sortable?: boolean
-  width?: string | number
-}
-
-const props = withDefaults(defineProps<{
-  // Contenedor
-  fluid?: boolean
-  containerClass?: string
-  elevation?: number
-
-  // Titulo
-  title?: string
-
-  // Tabla
-  headers: Header[]
-  items: Record<string, any>[]
-
-  // Available
-  availableTrueText?: string
-  availableFalseText?: string
-  availableTrueColor?: string
-  availableFalseColor?: string
-}>(), {
+withDefaults(defineProps<ItemTableProps>(), {
   fluid: true,
   containerClass: '',
   elevation: 2,
