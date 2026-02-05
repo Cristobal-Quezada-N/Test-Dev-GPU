@@ -250,206 +250,206 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, onMounted, ref } from 'vue'
-  import { useAppStore } from '@/stores/app'
+import { computed, onMounted, ref } from 'vue'
+import { useAppStore } from '@/stores/app'
 
-  const appStore = useAppStore()
+const appStore = useAppStore()
 
-  // State
-  const loading = ref(false)
-  const saving = ref(false)
-  const deleting = ref(false)
-  const userDialog = ref(false)
-  const deleteDialog = ref(false)
-  const isEditing = ref(false)
-  const selectedUser = ref<any>(null)
-  const searchQuery = ref('')
-  const selectedRole = ref('all')
-  const selectedStatus = ref('all')
+// State
+const loading = ref(false)
+const saving = ref(false)
+const deleting = ref(false)
+const userDialog = ref(false)
+const deleteDialog = ref(false)
+const isEditing = ref(false)
+const selectedUser = ref<any>(null)
+const searchQuery = ref('')
+const selectedRole = ref('all')
+const selectedStatus = ref('all')
 
-  // Form data
-  const userForm = ref({
-    name: '',
-    email: '',
+// Form data
+const userForm = ref({
+  name: '',
+  email: '',
+  role: 'USER',
+  status: 'active',
+  password: '',
+  confirmPassword: '',
+})
+
+// Mock data
+const users = ref([
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    role: 'ADMIN',
+    status: 'active',
+    lastLogin: '2024-01-12T10:30:00Z',
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
     role: 'USER',
     status: 'active',
-    password: '',
-    confirmPassword: '',
-  })
+    lastLogin: '2024-01-11T15:45:00Z',
+  },
+  {
+    id: 3,
+    name: 'Mike Johnson',
+    email: 'mike.johnson@example.com',
+    role: 'USER',
+    status: 'inactive',
+    lastLogin: '2024-01-05T09:20:00Z',
+  },
+  {
+    id: 4,
+    name: 'Sarah Wilson',
+    email: 'sarah.wilson@example.com',
+    role: 'USER',
+    status: 'active',
+    lastLogin: '2024-01-12T14:15:00Z',
+  },
+])
 
-  // Mock data
-  const users = ref([
-    {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      role: 'ADMIN',
-      status: 'active',
-      lastLogin: '2024-01-12T10:30:00Z',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      role: 'USER',
-      status: 'active',
-      lastLogin: '2024-01-11T15:45:00Z',
-    },
-    {
-      id: 3,
-      name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      role: 'USER',
-      status: 'inactive',
-      lastLogin: '2024-01-05T09:20:00Z',
-    },
-    {
-      id: 4,
-      name: 'Sarah Wilson',
-      email: 'sarah.wilson@example.com',
-      role: 'USER',
-      status: 'active',
-      lastLogin: '2024-01-12T14:15:00Z',
-    },
-  ])
+const roleOptions = ref([
+  { title: 'All Roles', value: 'all' },
+  { title: 'Admin', value: 'ADMIN' },
+  { title: 'User', value: 'USER' },
+])
 
-  const roleOptions = ref([
-    { title: 'All Roles', value: 'all' },
-    { title: 'Admin', value: 'ADMIN' },
-    { title: 'User', value: 'USER' },
-  ])
+const statusOptions = ref([
+  { title: 'All Status', value: 'all' },
+  { title: 'Active', value: 'active' },
+  { title: 'Inactive', value: 'inactive' },
+])
 
-  const statusOptions = ref([
-    { title: 'All Status', value: 'all' },
-    { title: 'Active', value: 'active' },
-    { title: 'Inactive', value: 'inactive' },
-  ])
+const headers = [
+  { title: 'Avatar', key: 'avatar', sortable: false },
+  { title: 'Name', key: 'name', sortable: false },
+  { title: 'Role', key: 'role', sortable: false },
+  { title: 'Status', key: 'status', sortable: false },
+  { title: 'Last Login', key: 'lastLogin', sortable: false },
+  { title: 'Actions', key: 'actions', sortable: false },
+]
 
-  const headers = [
-    { title: 'Avatar', key: 'avatar', sortable: false },
-    { title: 'Name', key: 'name', sortable: false },
-    { title: 'Role', key: 'role', sortable: false },
-    { title: 'Status', key: 'status', sortable: false },
-    { title: 'Last Login', key: 'lastLogin', sortable: false },
-    { title: 'Actions', key: 'actions', sortable: false },
-  ]
-
-  // Computed
-  const filteredUsers = computed(() => {
-    return users.value.filter(user => {
-      const matchesSearch = user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+// Computed
+const filteredUsers = computed(() => {
+  return users.value.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         || user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
-      const matchesRole = selectedRole.value === 'all' || user.role === selectedRole.value
-      const matchesStatus = selectedStatus.value === 'all' || user.status === selectedStatus.value
+    const matchesRole = selectedRole.value === 'all' || user.role === selectedRole.value
+    const matchesStatus = selectedStatus.value === 'all' || user.status === selectedStatus.value
 
-      return matchesSearch && matchesRole && matchesStatus
-    })
+    return matchesSearch && matchesRole && matchesStatus
   })
+})
 
-  // Methods
-  function getUserInitials (name: string) {
-    return name
-      .split(' ')
-      .map(n => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
-  }
+// Methods
+function getUserInitials (name: string) {
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}
 
-  function formatDate (date: string) {
-    return new Date(date).toLocaleDateString()
-  }
+function formatDate (date: string) {
+  return new Date(date).toLocaleDateString()
+}
 
-  function openUserDialog (user?: any) {
-    isEditing.value = !!user
-    selectedUser.value = user
+function openUserDialog (user?: any) {
+  isEditing.value = !!user
+  selectedUser.value = user
 
-    userForm.value = user
-      ? {
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status,
-        password: '',
-        confirmPassword: '',
-      }
-      : {
-        name: '',
-        email: '',
-        role: 'USER',
-        status: 'active',
-        password: '',
-        confirmPassword: '',
-      }
+  userForm.value = user
+    ? {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      password: '',
+      confirmPassword: '',
+    }
+    : {
+      name: '',
+      email: '',
+      role: 'USER',
+      status: 'active',
+      password: '',
+      confirmPassword: '',
+    }
 
-    userDialog.value = true
-  }
+  userDialog.value = true
+}
 
-  function editUser (user: any) {
-    openUserDialog(user)
-  }
+function editUser (user: any) {
+  openUserDialog(user)
+}
 
-  async function saveUser () {
-    saving.value = true
+async function saveUser () {
+  saving.value = true
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000))
 
-    if (isEditing.value) {
-      // Update existing user
-      const index = users.value.findIndex(u => u.id === selectedUser.value.id)
-      if (index !== -1) {
-        users.value[index] = {
-          ...users.value[index],
-          name: userForm.value.name,
-          email: userForm.value.email,
-          role: userForm.value.role,
-          status: userForm.value.status,
-        }
-      }
-    } else {
-      // Create new user
-      const newUser = {
-        id: users.value.length + 1,
+  if (isEditing.value) {
+    // Update existing user
+    const index = users.value.findIndex(u => u.id === selectedUser.value.id)
+    if (index !== -1) {
+      users.value[index] = {
+        ...users.value[index],
         name: userForm.value.name,
         email: userForm.value.email,
         role: userForm.value.role,
         status: userForm.value.status,
-        lastLogin: null,
       }
-      users.value.push(newUser)
     }
-
-    userDialog.value = false
-    saving.value = false
-  }
-
-  function deleteUser (user: any) {
-    selectedUser.value = user
-    deleteDialog.value = true
-  }
-
-  async function confirmDelete () {
-    deleting.value = true
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    const index = users.value.findIndex(u => u.id === selectedUser.value.id)
-    if (index !== -1) {
-      users.value.splice(index, 1)
+  } else {
+    // Create new user
+    const newUser = {
+      id: users.value.length + 1,
+      name: userForm.value.name,
+      email: userForm.value.email,
+      role: userForm.value.role,
+      status: userForm.value.status,
+      lastLogin: null,
     }
-
-    deleteDialog.value = false
-    deleting.value = false
+    users.value.push(newUser)
   }
 
-  onMounted(() => {
-    loading.value = true
-    setTimeout(() => {
-      loading.value = false
-    }, 500)
-  })
+  userDialog.value = false
+  saving.value = false
+}
+
+function deleteUser (user: any) {
+  selectedUser.value = user
+  deleteDialog.value = true
+}
+
+async function confirmDelete () {
+  deleting.value = true
+
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
+  const index = users.value.findIndex(u => u.id === selectedUser.value.id)
+  if (index !== -1) {
+    users.value.splice(index, 1)
+  }
+
+  deleteDialog.value = false
+  deleting.value = false
+}
+
+onMounted(() => {
+  loading.value = true
+  setTimeout(() => {
+    loading.value = false
+  }, 500)
+})
 </script>
 
 <route lang="yaml">

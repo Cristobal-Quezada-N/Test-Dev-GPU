@@ -16,7 +16,7 @@ export function useLogin() {
   }, queryClient)
 }
 
-export function useRegister () {
+export function useRegister() {
   const router = useRouter()
   const notificationStore = useNotificationStore()
 

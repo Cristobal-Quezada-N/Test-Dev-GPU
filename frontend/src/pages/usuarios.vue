@@ -1,32 +1,17 @@
 <template>
   <v-container v-if="accesoPermitido">
     <!-- Tabla de Usuarios -->
-    <ItemsTable
-      :headers="headers"
-      :items="users"
-      :search="search"
-      title="Usuarios"
-    >
+    <ItemsTable :headers="headers" :items="users" :search="search" title="Usuarios">
       <!-- Rol como Chip -->
       <template #item.roleId="{ item }">
-        <v-chip
-          class="ma-1"
-          :color="getRoleColor(item.roleId)"
-          label
-          variant="tonal"
-        >
+        <v-chip class="ma-1" :color="getRoleColor(item.roleId)" label variant="tonal">
           {{ getRoleLabel(item.roleId) }}
         </v-chip>
       </template>
 
       <!-- Estado como Chip -->
       <template #item.statusId="{ item }">
-        <v-chip
-          class="ma-1"
-          :color="getStatusColor(item.statusId)"
-          label
-          variant="tonal"
-        >
+        <v-chip class="ma-1" :color="getStatusColor(item.statusId)" label variant="tonal">
           {{ getStatusLabel(item.statusId) }}
         </v-chip>
       </template>
@@ -77,12 +62,7 @@
 
           <p>
             <strong>Rol:</strong>
-            <v-chip
-              class="ma-1"
-              :color="getRoleColor(selectedUser?.roleId)"
-              label
-              variant="tonal"
-            >
+            <v-chip class="ma-1" :color="getRoleColor(selectedUser?.roleId)" label variant="tonal">
               {{ getRoleLabel(selectedUser?.roleId) }}
             </v-chip>
           </p>
@@ -90,31 +70,16 @@
           <p>
             <strong>Estado:</strong>
             <v-select
-              v-model="editableStatus"
-              density="compact"
-              item-title="label"
-              item-value="id"
-              :items="statusOptions"
-              variant="outlined"
-            >
+v-model="editableStatus" density="compact" item-title="label" item-value="id"
+              :items="statusOptions" variant="outlined">
               <template #selection="{ item }">
-                <v-chip
-                  class="ma-1"
-                  :color="getStatusColor(item.value)"
-                  label
-                  variant="tonal"
-                >
+                <v-chip class="ma-1" :color="getStatusColor(item.value)" label variant="tonal">
                   {{ item.title }}
                 </v-chip>
               </template>
               <template #item="{ props, item }">
                 <v-list-item v-bind="props">
-                  <v-chip
-                    class="ma-1"
-                    :color="getStatusColor(item.value)"
-                    label
-                    variant="tonal"
-                  >
+                  <v-chip class="ma-1" :color="getStatusColor(item.value)" label variant="tonal">
                     {{ item.title }}
                   </v-chip>
                 </v-list-item>
@@ -137,172 +102,172 @@
 </template>
 
 <script setup lang="ts">
-  import axios from 'axios'
-  import { onMounted, ref } from 'vue'
-  import ItemsTable from '@/components/ItemsTable.vue'
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import ItemsTable from '@/components/ItemsTable.vue'
 
-  const headers = [
-    { title: 'Correo', key: 'email', align: 'start' },
-    { title: 'Rol', key: 'roleId', align: 'center' },
-    { title: 'Estado', key: 'statusId', align: 'center' },
-    { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
-  ]
+const headers = [
+  { title: 'Correo', key: 'email', align: 'start' },
+  { title: 'Rol', key: 'roleId', align: 'center' },
+  { title: 'Estado', key: 'statusId', align: 'center' },
+  { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
+]
 
-  const users = ref<any[]>([])
-  const search = ref('')
-  const showDeleteDialog = ref(false)
-  const showViewDialog = ref(false)
-  const selectedUser = ref<any | null>(null)
-  const editableStatus = ref<number | null>(null)
-  const accesoPermitido = ref(false)
+const users = ref<any[]>([])
+const search = ref('')
+const showDeleteDialog = ref(false)
+const showViewDialog = ref(false)
+const selectedUser = ref<any | null>(null)
+const editableStatus = ref<number | null>(null)
+const accesoPermitido = ref(false)
 
-  const statusOptions = [
-    { id: 1, label: 'Recibido' },
-    { id: 2, label: 'Aceptado' },
-    { id: 3, label: 'Denegado' },
-  ]
+const statusOptions = [
+  { id: 1, label: 'Recibido' },
+  { id: 2, label: 'Aceptado' },
+  { id: 3, label: 'Denegado' },
+]
 
-  onMounted(() => {
-    const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}')
-    if (userRole.roleId === 1) {
-      accesoPermitido.value = true
-      fetchUsers()
-    } else {
-      accesoPermitido.value = false
-      alert('No tienes permiso para acceder a esta página.')
+onMounted(() => {
+  const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}')
+  if (userRole.roleId === 1) {
+    accesoPermitido.value = true
+    fetchUsers()
+  } else {
+    accesoPermitido.value = false
+    alert('No tienes permiso para acceder a esta página.')
+  }
+})
+
+// Llamar API
+async function fetchUsers() {
+  try {
+    const token = localStorage.getItem('auth_token')
+    const res = await axios.get('http://localhost:8090/api/users/getUsers', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    users.value = res.data
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error)
+  }
+}
+
+// Funciones para roles
+function getRoleLabel(roleId: number) {
+  switch (roleId) {
+    case 1: {
+      return 'Administrador'
     }
-  })
+    case 2: {
+      return 'Usuario'
+    }
+    case 3: {
+      return 'Invitado'
+    }
+    default: {
+      return 'Desconocido'
+    }
+  }
+}
 
-  // Llamar API
-  async function fetchUsers () {
-    try {
-      const token = localStorage.getItem('auth_token')
-      const res = await axios.get('http://localhost:8090/api/users/getUsers', {
+function getRoleColor(roleId: number) {
+  switch (roleId) {
+    case 1: {
+      return 'red'
+    }
+    case 2: {
+      return 'green'
+    }
+    default: {
+      return 'grey'
+    }
+  }
+}
+
+// Funciones para estado
+function getStatusLabel(statusId: number) {
+  switch (statusId) {
+    case 1: {
+      return 'Recibido'
+    }
+    case 2: {
+      return 'Aceptado'
+    }
+    case 3: {
+      return 'Denegado'
+    }
+    default: {
+      return 'Desconocido'
+    }
+  }
+}
+
+function getStatusColor(statusId: number) {
+  switch (statusId) {
+    case 1: {
+      return 'yellow'
+    }
+    case 2: {
+      return 'green'
+    }
+    case 3: {
+      return 'red'
+    }
+    default: {
+      return 'grey'
+    }
+  }
+}
+
+// Abrir diálogo de confirmación eliminar
+function confirmDelete(user: any) {
+  selectedUser.value = user
+  showDeleteDialog.value = true
+}
+
+// Eliminar usuario
+async function deleteUser() {
+  if (!selectedUser.value) return
+  try {
+    const token = localStorage.getItem('auth_token')
+    await axios.delete(
+      `http://localhost:8090/api/users/deleteUser/${selectedUser.value.id}`,
+      {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      users.value = res.data
-    } catch (error) {
-      console.error('Error al obtener usuarios:', error)
-    }
+      },
+    )
+    fetchUsers()
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error)
+  } finally {
+    showDeleteDialog.value = false
+    selectedUser.value = null
   }
+}
 
-  // Funciones para roles
-  function getRoleLabel (roleId: number) {
-    switch (roleId) {
-      case 1: {
-        return 'Administrador'
-      }
-      case 2: {
-        return 'Usuario'
-      }
-      case 3: {
-        return 'Invitado'
-      }
-      default: {
-        return 'Desconocido'
-      }
-    }
+// Ver usuario
+function viewUser(user: any) {
+  selectedUser.value = user
+  editableStatus.value = user.statusId
+  showViewDialog.value = true
+}
+
+// Actualizar estado
+async function updateStatus() {
+  if (!selectedUser.value) return
+  try {
+    const token = localStorage.getItem('auth_token')
+    await axios.put(
+      `http://localhost:8090/api/users/updateStatus/${selectedUser.value.id}`,
+      { statusId: editableStatus.value },
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
+    fetchUsers()
+  } catch (error) {
+    console.error('Error al actualizar estado:', error)
+  } finally {
+    showViewDialog.value = false
   }
+}
 
-  function getRoleColor (roleId: number) {
-    switch (roleId) {
-      case 1: {
-        return 'red'
-      }
-      case 2: {
-        return 'green'
-      }
-      default: {
-        return 'grey'
-      }
-    }
-  }
-
-  // Funciones para estado
-  function getStatusLabel (statusId: number) {
-    switch (statusId) {
-      case 1: {
-        return 'Recibido'
-      }
-      case 2: {
-        return 'Aceptado'
-      }
-      case 3: {
-        return 'Denegado'
-      }
-      default: {
-        return 'Desconocido'
-      }
-    }
-  }
-
-  function getStatusColor (statusId: number) {
-    switch (statusId) {
-      case 1: {
-        return 'yellow'
-      }
-      case 2: {
-        return 'green'
-      }
-      case 3: {
-        return 'red'
-      }
-      default: {
-        return 'grey'
-      }
-    }
-  }
-
-  // Abrir diálogo de confirmación eliminar
-  function confirmDelete (user: any) {
-    selectedUser.value = user
-    showDeleteDialog.value = true
-  }
-
-  // Eliminar usuario
-  async function deleteUser () {
-    if (!selectedUser.value) return
-    try {
-      const token = localStorage.getItem('auth_token')
-      await axios.delete(
-        `http://localhost:8090/api/users/deleteUser/${selectedUser.value.id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      )
-      fetchUsers()
-    } catch (error) {
-      console.error('Error al eliminar usuario:', error)
-    } finally {
-      showDeleteDialog.value = false
-      selectedUser.value = null
-    }
-  }
-
-  // Ver usuario
-  function viewUser (user: any) {
-    selectedUser.value = user
-    editableStatus.value = user.statusId
-    showViewDialog.value = true
-  }
-
-  // Actualizar estado
-  async function updateStatus () {
-    if (!selectedUser.value) return
-    try {
-      const token = localStorage.getItem('auth_token')
-      await axios.put(
-        `http://localhost:8090/api/users/updateStatus/${selectedUser.value.id}`,
-        { statusId: editableStatus.value },
-        { headers: { Authorization: `Bearer ${token}` } },
-      )
-      fetchUsers()
-    } catch (error) {
-      console.error('Error al actualizar estado:', error)
-    } finally {
-      showViewDialog.value = false
-    }
-  }
-
-  onMounted(fetchUsers)
+onMounted(fetchUsers)
 </script>

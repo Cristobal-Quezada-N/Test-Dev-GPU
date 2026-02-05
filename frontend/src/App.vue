@@ -1,9 +1,5 @@
 <template>
-  <v-snackbar
-    v-model="notificationStore.show"
-    :color="notificationStore.color"
-    :timeout="notificationStore.timeout"
-  >
+  <v-snackbar v-model="notificationStore.show" :color="notificationStore.color" :timeout="notificationStore.timeout">
     {{ notificationStore.message }}
 
     <template #actions>
@@ -17,26 +13,26 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted } from 'vue'
-  import LoadingScreen from '@/components/LoadingScreen.vue'
-  import { useAppStore } from '@/stores/app'
-  import { useNotificationStore } from '@/stores/notification'
+import { onMounted } from 'vue'
+import LoadingScreen from '@/components/LoadingScreen.vue'
+import { useAppStore } from '@/stores/app'
 import { authStore } from '@/stores/auth/auth.store'
+import { useNotificationStore } from '@/stores/notification'
 
-  const authStore = useAuthStore()
-  const appStore = useAppStore()
-  const notificationStore = useNotificationStore()
+const useAuthStore = authStore()
+const appStore = useAppStore()
+const notificationStore = useNotificationStore()
 
-  onMounted(async () => {
-    if (!authStore.isInitialized) {
-      appStore.setLoading(true)
-      try {
-        await authStore.initializeAuth()
-      } catch (error) {
-        console.error('Auth initialization error:', error)
-      } finally {
-        appStore.setLoading(false)
-      }
+onMounted(async () => {
+  if (!useAuthStore.isInitialized) {
+    appStore.setLoading(true)
+    try {
+      await useAuthStore.initializeAuth()
+    } catch (error) {
+      console.error('Auth initialization error:', error)
+    } finally {
+      appStore.setLoading(false)
     }
-  })
+  }
+})
 </script>

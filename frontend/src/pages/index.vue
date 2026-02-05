@@ -21,49 +21,29 @@
             <v-row>
               <v-col cols="12" md="3" sm="6">
                 <v-btn
-                  block
-                  class="mb-2"
-                  color="primary"
-                  prepend-icon="mdi-file-document-plus"
-                  variant="outlined"
-                  @click="navigateTo('/solicitar')"
-                >
+block class="mb-2" color="primary" prepend-icon="mdi-file-document-plus" variant="outlined"
+                  @click="navigateTo('/solicitar')">
                   Solicitar Préstamo
                 </v-btn>
               </v-col>
               <v-col cols="12" md="3" sm="6">
                 <v-btn
-                  block
-                  class="mb-2"
-                  color="secondary"
-                  prepend-icon="mdi-history"
-                  variant="outlined"
-                  @click="navigateTo('/my-loans')"
-                >
+block class="mb-2" color="secondary" prepend-icon="mdi-history" variant="outlined"
+                  @click="navigateTo('/my-loans')">
                   Mis Préstamos
                 </v-btn>
               </v-col>
               <v-col cols="12" md="3" sm="6">
                 <v-btn
-                  block
-                  class="mb-2"
-                  color="info"
-                  prepend-icon="mdi-package-variant"
-                  variant="outlined"
-                  @click="navigateTo('/inventario')"
-                >
+block class="mb-2" color="info" prepend-icon="mdi-package-variant" variant="outlined"
+                  @click="navigateTo('/inventario')">
                   Ver Inventario
                 </v-btn>
               </v-col>
               <v-col cols="12" md="3" sm="6">
                 <v-btn
-                  block
-                  class="mb-2"
-                  color="warning"
-                  prepend-icon="mdi-file-document"
-                  variant="outlined"
-                  @click="navigateTo('/requests')"
-                >
+block class="mb-2" color="warning" prepend-icon="mdi-file-document" variant="outlined"
+                  @click="navigateTo('/requests')">
                   Ver Solicitudes
                 </v-btn>
               </v-col>
@@ -76,12 +56,11 @@
 </template>
 
 <script setup lang="ts">
-  import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-  const router = useRouter()
-
-  function navigateTo (path: string) {
-    router.push(path)
-  }
+function navigateTo(path: string) {
+  router.push(path)
+}
 
 </script>

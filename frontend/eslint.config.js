@@ -1,15 +1,18 @@
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
-import vueTs from '@vue/eslint-config-typescript'
 import vuetify from 'eslint-config-vuetify'
 import unusedImports from 'eslint-plugin-unused-imports'
 import pluginVue from 'eslint-plugin-vue'
 import vueParser from 'vue-eslint-parser'
+import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
+import pluginUnicorn from 'eslint-plugin-unicorn'
 
-export default vuetify(
-  {},
+export default defineConfigWithVueTs(
+  vuetify(),
   ...pluginVue.configs['flat/recommended'],
-  ...vueTs(),
+  vueTsConfigs.recommended,
+  skipFormatting,
   {
     files: ['**/*.{js,ts,mts,tsx,vue}'],
     languageOptions: {
@@ -24,12 +27,11 @@ export default vuetify(
     plugins: {
       '@typescript-eslint': tsPlugin,
       'unused-imports': unusedImports,
+      'unicorn': pluginUnicorn
     },
     rules: {
-      '@stylistic/no-multiple-empty-lines': 'warn',
-      '@stylistic/eol-last': 'off',
       'import/no-duplicates': 'off',
-      'no-duplicate-imports': ['error', { allowSeparateTypeImports: true }],
+      'no-duplicate-imports': ['warn', { allowSeparateTypeImports: true }],
 
       '@typescript-eslint/consistent-type-imports': ['warn', { fixStyle: 'inline-type-imports' }],
 

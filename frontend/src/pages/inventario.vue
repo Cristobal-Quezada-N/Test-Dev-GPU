@@ -1,12 +1,7 @@
 <template>
   <v-container v-if="accesoPermitido" />
   <!-- Tabla de Items -->
-  <ItemsTable
-    :headers="headers"
-    :items="items"
-    :search="search"
-    title="Inventario de Juegos"
-  >
+  <ItemsTable :headers="headers" :items="items" :search="search" title="Inventario de Juegos">
     <!-- Slot para personalizar la columna Estado -->
     <template #item.available="{ item }">
       <v-chip :color="getAvailableColor(item.available)" dark>
@@ -27,12 +22,7 @@
     <template #bottom>
       <!-- boton agregar -->
       <div class="d-flex justify-end mt-4">
-        <v-chip
-          color="primary"
-          pill
-          text-color="white"
-          @click="openDialog()"
-        >
+        <v-chip color="primary" pill text-color="white" @click="openDialog()">
           <v-icon start>
             mdi-plus
           </v-icon>
@@ -69,134 +59,134 @@
 </template>
 
 <script setup lang="ts">
-  import axios from 'axios'
-  import { onMounted, ref } from 'vue'
-  import ItemsTable from '@/components/ItemsTable.vue'
-  import router from '@/router'
-  import ItemDialog from '../components/ItemDialog.vue'
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import ItemsTable from '@/components/ItemsTable.vue'
+import router from '@/router'
+import ItemDialog from '../components/ItemDialog.vue'
 
-  interface Item {
-    id: number
-    name: string
-    stock: number
-    available: boolean
+interface Item {
+  id: number
+  name: string
+  stock: number
+  available: boolean
+}
+
+const search = ref('')
+const dialog = ref(false)
+const selectedItem = ref<Item | undefined>(undefined)
+
+const confirmDialog = ref(false)
+const itemToDelete = ref<Item | null>(null)
+
+const accesoPermitido = ref(false)
+
+onMounted(() => {
+  const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}')
+  if (userRole.roleId === 1) {
+    accesoPermitido.value = true
+    fetchItems()
+  } else {
+    accesoPermitido.value = false
+    router.push('/')
+    alert('No tienes permiso para acceder a esta página.')
   }
+})
 
-  const search = ref('')
-  const dialog = ref(false)
-  const selectedItem = ref<Item | undefined>(undefined)
+const headers = [
+  { title: 'ID', key: 'id', align: 'start' },
+  { title: 'Nombre', key: 'name', align: 'start' },
+  { title: 'Stock', key: 'stock', align: 'end' },
+  { title: 'Estado', key: 'available', align: 'center' },
+  { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
+]
 
-  const confirmDialog = ref(false)
-  const itemToDelete = ref<Item | null>(null)
+const items = ref<Item[]>([])
 
-  const accesoPermitido = ref(false)
+function getAvailableColor(available: boolean) {
+  return available ? 'green' : 'red'
+}
 
-  onMounted(() => {
-    const userRole = JSON.parse(localStorage.getItem('auth_user') || '{}')
-    if (userRole.roleId === 1) {
-      accesoPermitido.value = true
-      fetchItems()
+async function fetchItems() {
+  try {
+    const token = localStorage.getItem('auth_token')
+    const response = await axios.get<Item[]>(
+      'http://localhost:8090/api/items/getItems',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    items.value = response.data
+  } catch (error) {
+    console.error('Error al obtener el inventario:', error)
+  }
+}
+
+function openDialog(item?: Item) {
+  selectedItem.value = item ? { ...item } : undefined
+  dialog.value = true
+}
+
+function confirmDelete(item: Item) {
+  itemToDelete.value = item
+  confirmDialog.value = true
+}
+
+async function deleteConfirmed() {
+  if (!itemToDelete.value) return
+  try {
+    const token = localStorage.getItem('auth_token')
+    await axios.delete(
+      `http://localhost:8090/api/items/deleteItem/${itemToDelete.value.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    items.value = items.value.filter(item => item.id !== itemToDelete.value?.id)
+  } catch (error) {
+    console.error('Error al eliminar el juego:', error)
+  } finally {
+    confirmDialog.value = false
+    itemToDelete.value = null
+  }
+}
+
+async function saveItem(item: Item) {
+  try {
+    const token = localStorage.getItem('auth_token')
+
+    if (item.id) {
+      const response = await axios.put(
+        `http://localhost:8090/api/items/updateItem/${item.id}`,
+        item,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      const index = items.value.findIndex(i => i.id === item.id)
+      if (index !== -1) items.value[index] = response.data
     } else {
-      accesoPermitido.value = false
-      router.push('/')
-      alert('No tienes permiso para acceder a esta página.')
-    }
-  })
-
-  const headers = [
-    { title: 'ID', key: 'id', align: 'start' },
-    { title: 'Nombre', key: 'name', align: 'start' },
-    { title: 'Stock', key: 'stock', align: 'end' },
-    { title: 'Estado', key: 'available', align: 'center' },
-    { title: 'Acciones', key: 'actions', align: 'center', sortable: false },
-  ]
-
-  const items = ref<Item[]>([])
-
-  function getAvailableColor (available: boolean) {
-    return available ? 'green' : 'red'
-  }
-
-  async function fetchItems () {
-    try {
-      const token = localStorage.getItem('auth_token')
-      const response = await axios.get<Item[]>(
-        'http://localhost:8090/api/items/getItems',
+      const response = await axios.post(
+        'http://localhost:8090/api/items/createItem',
+        item,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
       )
-      items.value = response.data
-    } catch (error) {
-      console.error('Error al obtener el inventario:', error)
+      items.value.push(response.data)
     }
+  } catch (error) {
+    console.error('Error al guardar el juego:', error)
   }
+}
 
-  function openDialog (item?: Item) {
-    selectedItem.value = item ? { ...item } : undefined
-    dialog.value = true
-  }
-
-  function confirmDelete (item: Item) {
-    itemToDelete.value = item
-    confirmDialog.value = true
-  }
-
-  async function deleteConfirmed () {
-    if (!itemToDelete.value) return
-    try {
-      const token = localStorage.getItem('auth_token')
-      await axios.delete(
-        `http://localhost:8090/api/items/deleteItem/${itemToDelete.value.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      )
-      items.value = items.value.filter(item => item.id !== itemToDelete.value?.id)
-    } catch (error) {
-      console.error('Error al eliminar el juego:', error)
-    } finally {
-      confirmDialog.value = false
-      itemToDelete.value = null
-    }
-  }
-
-  async function saveItem (item: Item) {
-    try {
-      const token = localStorage.getItem('auth_token')
-
-      if (item.id) {
-        const response = await axios.put(
-          `http://localhost:8090/api/items/updateItem/${item.id}`,
-          item,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-        const index = items.value.findIndex(i => i.id === item.id)
-        if (index !== -1) items.value[index] = response.data
-      } else {
-        const response = await axios.post(
-          'http://localhost:8090/api/items/createItem',
-          item,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-        items.value.push(response.data)
-      }
-    } catch (error) {
-      console.error('Error al guardar el juego:', error)
-    }
-  }
-
-  onMounted(fetchItems)
+onMounted(fetchItems)
 </script>

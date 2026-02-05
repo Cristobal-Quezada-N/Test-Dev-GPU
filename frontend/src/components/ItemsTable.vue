@@ -7,13 +7,7 @@
           {{ title }}
         </slot>
         <v-spacer />
-        <v-text-field
-          v-model="searchModel"
-          clearable
-          hide-details
-          label="Buscar"
-          prepend-icon="mdi-magnify"
-        />
+        <v-text-field v-model="searchModel" clearable hide-details label="Buscar" prepend-icon="mdi-magnify" />
       </v-card-title>
 
       <!-- Elementos en Top -->
@@ -21,13 +15,8 @@
 
       <!-- Tabla -->
       <v-data-table-virtual
-        class="elevation-1"
-        fixed-header
-        :headers="headers"
-        :items="items"
-        :search="searchModel"
-        v-bind="$attrs"
-      >
+class="elevation-1" fixed-header :headers="headers" :items="items" :search="searchModel"
+        v-bind="$attrs">
         <!-- Stock -->
         <template #item.stock="{ item }">
           <slot :item="item" name="item.stock">
@@ -64,42 +53,42 @@
 </template>
 
 <script setup lang="ts">
-  const searchModel = defineModel<string>('search', { default: '' })
+const searchModel = defineModel<string>('search', { default: '' })
 
-  type Header = {
-    title: string
-    key: string
-    align?: 'start' | 'end' | 'center'
-    sortable?: boolean
-    width?: string | number
-  }
+type Header = {
+  title: string
+  key: string
+  align?: 'start' | 'end' | 'center'
+  sortable?: boolean
+  width?: string | number
+}
 
-  const props = withDefaults(defineProps<{
-    // Contenedor
-    fluid?: boolean
-    containerClass?: string
-    elevation?: number
+const props = withDefaults(defineProps<{
+  // Contenedor
+  fluid?: boolean
+  containerClass?: string
+  elevation?: number
 
-    // Titulo
-    title?: string
+  // Titulo
+  title?: string
 
-    // Tabla
-    headers: Header[]
-    items: Record<string, any>[]
+  // Tabla
+  headers: Header[]
+  items: Record<string, any>[]
 
-    // Available
-    availableTrueText?: string
-    availableFalseText?: string
-    availableTrueColor?: string
-    availableFalseColor?: string
-  }>(), {
-    fluid: true,
-    containerClass: '',
-    elevation: 2,
-    title: '',
-    availableTrueText: 'Disponible',
-    availableFalseText: 'No disponible',
-    availableTrueColor: 'success',
-    availableFalseColor: 'error',
-  })
+  // Available
+  availableTrueText?: string
+  availableFalseText?: string
+  availableTrueColor?: string
+  availableFalseColor?: string
+}>(), {
+  fluid: true,
+  containerClass: '',
+  elevation: 2,
+  title: '',
+  availableTrueText: 'Disponible',
+  availableFalseText: 'No disponible',
+  availableTrueColor: 'success',
+  availableFalseColor: 'error',
+})
 </script>

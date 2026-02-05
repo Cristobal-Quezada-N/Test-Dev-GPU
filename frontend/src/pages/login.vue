@@ -27,60 +27,30 @@
         <v-form @submit.prevent="handleSubmit">
           <!-- Email Field -->
           <v-text-field
-            v-model="authStore.loginForm.email"
-            autocomplete="username"
-            class="mb-4"
-            label="Correo Electrónico"
-            prepend-inner-icon="mdi-email"
-            required
-            :rules="authStore.emailRules"
-            type="email"
-            variant="outlined"
-          />
+v-model="useAuthStore.loginForm.email" autocomplete="username" class="mb-4"
+            label="Correo Electrónico" prepend-inner-icon="mdi-email" required :rules="useAuthStore.emailRules"
+            type="email" variant="outlined" />
 
           <!-- Password Field -->
           <v-text-field
-            v-model="authStore.loginForm.password"
-            :append-inner-icon="authStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            autocomplete="current-password"
-            class="mb-6"
-            label="Contraseña"
-            prepend-inner-icon="mdi-lock"
-            required
-            :rules="authStore.passwordRules"
-            :type="authStore.showPassword ? 'text' : 'password'"
-            variant="outlined"
-            @click:append-inner="authStore.showPassword = !authStore.showPassword"
-          />
+v-model="useAuthStore.loginForm.password"
+            :append-inner-icon="useAuthStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'" autocomplete="current-password"
+            class="mb-6" label="Contraseña" prepend-inner-icon="mdi-lock" required :rules="useAuthStore.passwordRules"
+            :type="useAuthStore.showPassword ? 'text' : 'password'" variant="outlined"
+            @click:append-inner="useAuthStore.showPassword = !useAuthStore.showPassword" />
 
           <!-- Remember Me & Forgot Password -->
           <div class="d-flex justify-space-between align-center mb-6">
-            <v-checkbox
-              v-model="authStore.loginForm.rememberMe"
-              color="primary"
-              hide-details
-              label="Recordarme"
-            />
-            <v-btn
-              color="primary"
-              size="small"
-              variant="text"
-              @click="authStore.forgotPassword"
-            >
+            <v-checkbox v-model="useAuthStore.loginForm.rememberMe" color="primary" hide-details label="Recordarme" />
+            <v-btn color="primary" size="small" variant="text" @click="useAuthStore.forgotPassword">
               ¿Olvidaste tu contraseña?
             </v-btn>
           </div>
 
           <!-- Login Button -->
           <v-btn
-            block
-            class="mb-4"
-            color="primary"
-            :disabled="authStore.loading"
-            :loading="authStore.loading"
-            size="large"
-            type="submit"
-          >
+block class="mb-4" color="primary" :disabled="useAuthStore.loading" :loading="useAuthStore.loading"
+            size="large" type="submit">
             <v-icon left>
               mdi-login
             </v-icon>
@@ -95,18 +65,8 @@
           <p class="text-caption text-medium-emphasis">
             ¿No tienes una cuenta?
             <!-- Para #MOCK  plicar en v-btn -->
-            <v-btn
-              color="primary"
-              size="small"
-              variant="text"
-              @click="authStore.register"
-            >
-              <v-btn
-                color="primary"
-                size="small"
-                :to="{ path: '/register' }"
-                variant="text"
-              >
+            <v-btn color="primary" size="small" variant="text" @click="useAuthStore.register">
+              <v-btn color="primary" size="small" :to="{ path: '/register' }" variant="text">
                 Regístrate aquí
               </v-btn>
             </v-btn>
@@ -116,18 +76,10 @@
     </v-card>
 
     <!-- Error Snackbar -->
-    <v-snackbar
-      v-model="authStore.showError"
-      color="error"
-      location="top"
-      timeout="5000"
-    >
-      {{ authStore.errorMessage }}
+    <v-snackbar v-model="useAuthStore.showError" color="error" location="top" timeout="5000">
+      {{ useAuthStore.errorMessage }}
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="authStore.clearError"
-        >
+        <v-btn variant="text" @click="useAuthStore.clearError">
           Cerrar
         </v-btn>
       </template>
@@ -136,67 +88,67 @@
 </template>
 
 <script setup lang="ts">
-  import { useLogin } from '@/services/auth/auth.mutations'
-  import { useAuthStore } from '@/stores/auth'
-  import { useNotificationStore } from '@/stores/notification'
+import { useLogin } from '@/services/auth/auth.mutations'
+import { authStore } from '@/stores/auth/auth.store'
+import { useNotificationStore } from '@/stores/notification'
 
-  // Define page meta to use auth layout
-  definePage({
-    meta: {
-      layout: 'auth',
-      requiresAuth: false,
-    },
-  })
+// Define page meta to use auth layout
+definePage({
+  meta: {
+    layout: 'auth',
+    requiresAuth: false,
+  },
+})
 
-  const authStore = useAuthStore()
-  const loginForm = authStore.loginForm
-  const router = useRouter()
-  const { mutate: login } = useLogin()
-  const notificationStore = useNotificationStore()
+const useAuthStore = authStore()
+const loginForm = useAuthStore.loginForm
+const router = useRouter()
+const { mutate: login } = useLogin()
+const notificationStore = useNotificationStore()
 
-  // Handle form submission with validation
-  async function handleSubmit () {
-    try {
-      login(loginForm, {
-        onSuccess: async (data: any) => {
-          // 1. Guardar el token provisional
-          localStorage.setItem('auth_token', data.token)
+// Handle form submission with validation
+async function handleSubmit() {
+  try {
+    login(loginForm, {
+      onSuccess: async (data: any) => {
+        // 1. Guardar el token provisional
+        localStorage.setItem('auth_token', data.token)
 
-          try {
-            // 2. Intentar obtener el perfil con /me
-            const response = await fetch('http://localhost:8090/api/users/me', {
-              headers: {
-                Authorization: `Bearer ${data.token}`,
-              },
-            })
+        try {
+          // 2. Intentar obtener el perfil con /me
+          const response = await fetch('http://localhost:8090/api/users/me', {
+            headers: {
+              Authorization: `Bearer ${data.token}`,
+            },
+          })
 
-            if (!response.ok) {
-              throw new Error('Tu cuenta no está verificada, por favor, verificala')
-            }
-
-            const user = await response.json()
-
-            // 3. Guardar datos del usuario
-            localStorage.setItem('user_id', user.id)
-            localStorage.setItem('user_email', user.email)
-            localStorage.setItem('user_role', user.role?.name)
-
-            // 4. Redirigir al home
-            router.push('/')
-          } catch (error: any) {
-            // Si hubo error con /me → limpiar token y mostrar notificación
-            localStorage.removeItem('auth_token')
-            notificationStore.notify(error.message, 'error')
+          if (!response.ok) {
+            throw new Error('Tu cuenta no está verificada, por favor, verificala')
           }
-        },
-        onError: error => {
+
+          const user = await response.json()
+
+          // 3. Guardar datos del usuario
+          localStorage.setItem('user_id', user.id)
+          localStorage.setItem('user_email', user.email)
+          localStorage.setItem('user_role', user.role?.name)
+
+          // 4. Redirigir al home
+          router.push('/')
+        } catch (error: any) {
+          // Si hubo error con /me → limpiar token y mostrar notificación
+          localStorage.removeItem('auth_token')
           notificationStore.notify(error.message, 'error')
-        },
-      })
-    } catch (error) {
-      console.error('Error submitting form:', error)
-    }
+        }
+      },
+      onError: error => {
+        notificationStore.notify(error.message, 'error')
+      },
+    })
+  } catch (error) {
+    console.error('Error submitting form:', error)
   }
+}
 
 </script>
 
@@ -267,6 +219,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
