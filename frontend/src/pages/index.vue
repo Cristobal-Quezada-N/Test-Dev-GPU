@@ -53,6 +53,7 @@ block class="mb-2" color="warning" prepend-icon="mdi-file-document" variant="out
       </v-col>
     </v-row>
   </div>
+  <AppFooter />
 </template>
 
 <script setup lang="ts">
