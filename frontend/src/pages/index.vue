@@ -36,7 +36,7 @@ block class="mb-2" color="secondary" prepend-icon="mdi-history" variant="outline
               <v-col cols="12" md="3" sm="6">
                 <v-btn
 block class="mb-2" color="info" prepend-icon="mdi-package-variant" variant="outlined"
-                  @click="navigateTo('/inventario')">
+                  @click="navigateTo('/InventoryPage')">
                   Ver Inventario
                 </v-btn>
               </v-col>

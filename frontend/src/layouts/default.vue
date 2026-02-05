@@ -157,7 +157,7 @@ const allNavigationItems = [
     title: 'Inventario',
     subtitle: 'Gestionar el inventario',
     icon: 'mdi-package-variant',
-    to: '/inventario',
+    to: '/InventoryPage',
     roles: ['ADMIN'],
   },
   {

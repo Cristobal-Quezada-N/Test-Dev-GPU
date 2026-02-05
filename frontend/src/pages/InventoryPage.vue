@@ -3,13 +3,13 @@
   <!-- Tabla de Items -->
   <ItemsTable :headers="headers" :items="items" :search="search" title="Inventario de Juegos">
     <!-- Slot para personalizar la columna Estado -->
-    <template #item.available="{ item }">
+    <template #[`item.available`]="{ item }">
       <v-chip :color="getAvailableColor(item.available)" dark>
         {{ item.available ? 'Disponible' : 'No disponible' }}
       </v-chip>
     </template>
 
-    <template #item.actions="{ item }">
+    <template #[`item.actions`]="{ item }">
       <v-btn color="blue" icon @click="openDialog(item)">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
@@ -64,13 +64,7 @@ import { onMounted, ref } from 'vue'
 import ItemsTable from '@/components/ItemsTable.vue'
 import router from '@/router'
 import ItemDialog from '../components/ItemDialog.vue'
-
-interface Item {
-  id: number
-  name: string
-  stock: number
-  available: boolean
-}
+import type { Header, Item } from '@/types/table.types'
 
 const search = ref('')
 const dialog = ref(false)
@@ -93,7 +87,7 @@ onMounted(() => {
   }
 })
 
-const headers = [
+const headers: Header[] = [
   { title: 'ID', key: 'id', align: 'start' },
   { title: 'Nombre', key: 'name', align: 'start' },
   { title: 'Stock', key: 'stock', align: 'end' },
