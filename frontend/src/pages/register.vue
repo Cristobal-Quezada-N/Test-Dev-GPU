@@ -27,42 +27,22 @@
         <v-form @submit.prevent="handleRegister">
           <!-- Email Field -->
           <v-text-field
-            v-model="authStore.registerForm.email"
-            autocomplete="username"
-            class="mb-4"
-            label="Correo Electrónico"
-            prepend-inner-icon="mdi-email"
-            required
-            :rules="authStore.emailRules"
-            type="email"
-            variant="outlined"
-          />
+v-model="authStore.registerForm.email" autocomplete="username" class="mb-4"
+            label="Correo Electrónico" prepend-inner-icon="mdi-email" required :rules="authValidation.emailRules"
+            type="email" variant="outlined" />
 
           <!-- Password Field -->
           <v-text-field
-            v-model="authStore.registerForm.password"
-            :append-inner-icon="authStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            autocomplete="new-password"
-            class="mb-6"
-            label="Contraseña"
-            prepend-inner-icon="mdi-lock"
-            required
-            :rules="authStore.passwordRules"
-            :type="authStore.showPassword ? 'text' : 'password'"
-            variant="outlined"
-            @click:append-inner="authStore.showPassword = !authStore.showPassword"
-          />
+v-model="authStore.registerForm.password"
+            :append-inner-icon="authStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'" autocomplete="new-password"
+            class="mb-6" label="Contraseña" prepend-inner-icon="mdi-lock" required :rules="authValidation.passwordRules"
+            :type="authStore.showPassword ? 'text' : 'password'" variant="outlined"
+            @click:append-inner="authStore.showPassword = !authStore.showPassword" />
 
           <!-- Register Button -->
           <v-btn
-            block
-            class="mb-4"
-            color="primary"
-            :disabled="authStore.loading"
-            :loading="authStore.loading"
-            size="large"
-            type="submit"
-          >
+block class="mb-4" color="primary" :disabled="authStore.loading" :loading="authStore.loading"
+            size="large" type="submit">
             <v-icon left>
               mdi-account-plus
             </v-icon>
@@ -76,12 +56,7 @@
         <div class="text-center w-100">
           <p class="text-caption text-medium-emphasis">
             ¿Ya tienes una cuenta?
-            <v-btn
-              color="primary"
-              size="small"
-              :to="{ path: '/login' }"
-              variant="text"
-            >
+            <v-btn color="primary" size="small" :to="{ path: '/login' }" variant="text">
               Inicia sesión aquí
             </v-btn>
           </p>
@@ -90,18 +65,10 @@
     </v-card>
 
     <!-- Error Snackbar -->
-    <v-snackbar
-      v-model="authStore.showError"
-      color="error"
-      location="top"
-      timeout="5000"
-    >
+    <v-snackbar v-model="authStore.showError" color="error" location="top" timeout="5000">
       {{ authStore.errorMessage }}
       <template #actions>
-        <v-btn
-          variant="text"
-          @click="authStore.clearError"
-        >
+        <v-btn variant="text" @click="authStore.clearError">
           Cerrar
         </v-btn>
       </template>
@@ -110,20 +77,21 @@
 </template>
 
 <script setup lang="ts">
-  import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth'
+import { authValidation } from '@/stores/auth/auth.validation'
 
-  const authStore = useAuthStore()
+const authStore = useAuthStore()
 
-  definePage({
-    meta: {
-      layout: 'auth',
-      requiresAuth: false,
-    },
-  })
+definePage({
+  meta: {
+    layout: 'auth',
+    requiresAuth: false,
+  },
+})
 
-  function handleRegister () {
-    authStore.handleRegister()
-  }
+function handleRegister() {
+  authStore.handleRegister()
+}
 </script>
 
 <style scoped>
@@ -169,9 +137,11 @@
     margin: 10px;
     border-radius: 12px;
   }
+
   .login-header {
     padding: 24px !important;
   }
+
   .login-card .v-card-text {
     padding: 24px !important;
   }
@@ -187,6 +157,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

@@ -5,6 +5,7 @@ import router from '@/router'
 import { authService } from '@/services/auth/auth.services'
 import { useAppStore } from '@/stores/app'
 import { authStorage } from './auth.storage'
+import { authValidation } from './auth.validation'
 
 const registerForm = reactive({
   email: '',
@@ -27,17 +28,6 @@ export const authStore = defineStore('auth', () => {
     password: '',
     rememberMe: false,
   })
-
-  // Validation rules
-  const emailRules = [
-    (v: string) => !!v || 'El correo electrónico es requerido',
-    (v: string) => /.+@.+\..+/.test(v) || 'El correo electrónico debe ser válido',
-  ]
-
-  const passwordRules = [
-    (v: string) => !!v || 'La contraseña es requerida',
-    (v: string) => v.length >= 6 || 'La contraseña debe tener al menos 6 caracteres',
-  ]
 
   // Authentication methods
   const initializeAuth = async (): Promise<void> => {
@@ -157,9 +147,9 @@ export const authStore = defineStore('auth', () => {
     registerForm,
     isInitialized,
 
-    // Validation
-    emailRules,
-    passwordRules,
+    // Validation rules
+    emailRules: authValidation.emailRules,
+    passwordRules: authValidation.passwordRules,
 
     // Methods
     initializeAuth,

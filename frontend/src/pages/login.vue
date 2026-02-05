@@ -28,14 +28,14 @@
           <!-- Email Field -->
           <v-text-field
 v-model="useAuthStore.loginForm.email" autocomplete="username" class="mb-4"
-            label="Correo Electrónico" prepend-inner-icon="mdi-email" required :rules="useAuthStore.emailRules"
+            label="Correo Electrónico" prepend-inner-icon="mdi-email" required :rules="authValidation.emailRules"
             type="email" variant="outlined" />
 
           <!-- Password Field -->
           <v-text-field
 v-model="useAuthStore.loginForm.password"
             :append-inner-icon="useAuthStore.showPassword ? 'mdi-eye-off' : 'mdi-eye'" autocomplete="current-password"
-            class="mb-6" label="Contraseña" prepend-inner-icon="mdi-lock" required :rules="useAuthStore.passwordRules"
+            class="mb-6" label="Contraseña" prepend-inner-icon="mdi-lock" required :rules="authValidation.passwordRules"
             :type="useAuthStore.showPassword ? 'text' : 'password'" variant="outlined"
             @click:append-inner="useAuthStore.showPassword = !useAuthStore.showPassword" />
 
@@ -90,6 +90,7 @@ block class="mb-4" color="primary" :disabled="useAuthStore.loading" :loading="us
 <script setup lang="ts">
 import { useLogin } from '@/services/auth/auth.mutations'
 import { authStore } from '@/stores/auth/auth.store'
+import { authValidation } from '@/stores/auth/auth.validation'
 import { useNotificationStore } from '@/stores/notification'
 
 // Define page meta to use auth layout
